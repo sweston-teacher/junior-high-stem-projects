@@ -57,7 +57,6 @@ By Friday, you will have built something you'll actually use every day. No more 
 ### Skills You'll Learn
 - 💾 File management (save, save as, file types)
 - 📋 Copy and paste basics
-- 🔍 Finding things with Ctrl+F
 - 🌐 Basic HTML, CSS, and JavaScript
 - 🎨 Customization and design thinking
 
@@ -216,31 +215,6 @@ We're about to save your HTML file to the desktop. Remember: choose "All Files" 
 
 ---
 
-### Finding with Ctrl+F
-**Description:** Searching for text in documents
-
-#### Content:
-## 🔍 Finding Things with Ctrl+F
-
-### Find (Ctrl+F)
-Searches for specific words in your document. Essential for finding things in code and long documents.
-
-### Ctrl+F is a Superpower
-- ⚡ Quickly locate specific words
-- 🎯 Essential for finding challenges in code
-- 💻 Works in almost every program
-- ⏰ Saves tons of scrolling time
-
-### Try This
-Press Ctrl+F right now and search for the word "CHALLENGE" in your HTML code. See how it highlights every instance?
-
-### Where You'll Use This
-- 📝 Finding specific parts of essays
-- 💻 Locating code challenges
-- 📚 Searching through research
-- 🌐 Finding information on websites
-
----
 
 ### What is HTML?
 **Description:** Introduction to web development
@@ -467,20 +441,6 @@ Call to Action:
 Your Turn: Save your HTML file to the desktop
 ```
 
-### Finding Things with Ctrl+F
-```
-Slide Title: Finding Things with Ctrl+F
-
-Definition:
-Find (Ctrl+F) - Searches for specific words in your document
-Essential for finding things in code
-
-Ctrl+F (Find) is a Superpower:
-• Quickly locate specific words
-• Essential for finding challenges in code
-• Works in almost every program
-• Saves tons of scrolling time
-```
 
 ### What is HTML?
 ```
@@ -580,7 +540,6 @@ You Use This When:
   - Ctrl+C = Copy (makes a duplicate)
   - Ctrl+X = Cut (moves, removes original)
   - Ctrl+V = Paste (puts it somewhere new)
-  - Ctrl+F = Find (search for specific words)
 - **Visual Ideas:** Keyboard shortcuts diagram, before/after examples
 
 ### Topic 3: Introduction to Web Technologies
