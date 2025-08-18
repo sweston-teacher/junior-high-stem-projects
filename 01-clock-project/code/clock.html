@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<!-- Welcome to HTML! This is a comment - it won't show on your website but helps explain things -->
+<!-- HTML is like the skeleton of a website - it holds everything together! -->
+<html>
+<head>
+    <!-- The head section has information ABOUT your website, but doesn't show on the page -->
+    <title>YOUR NAME's Clock</title> <!-- ⭐⭐⭐ CHALLENGE 1: Replace "YOUR NAME" with your actual name! ⭐⭐⭐ -->
+    
+    <!-- CSS makes things look pretty! It's like decorating your room -->
+    <style>
+        /* This is a CSS comment! Comments are like secret notes that don't show on your website. */
+        /* We use comments to explain our code and leave helpful messages for ourselves! */
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* A fun, friendly font! */
+            background-color: #F0F0F0; /* ⭐⭐⭐ CHALLENGE 2: Replace #F0F0F0 with your favorite background color! ⭐⭐⭐ */
+            margin: 20px; /* Space around the edges */
+            padding: 0;
+        }
+        .section {
+            margin: 15px 0; /* Space between each colorful box */
+            padding: 10px; /* Space inside each box */
+            border-radius: 10px; /* Rounded corners - so pretty! */
+        }
+        .time-section {
+            background-color: #A3D8F4; /* ⭐⭐⭐ CHALLENGE 3: Replace #A3D8F4 with your time box color! ⭐⭐⭐ */
+            display: block;
+            padding: 10px 20px;
+            text-align: center; /* Centers the time in the middle */
+            font-size: 24px; /* Makes the time nice and big */
+        }
+        .status-section {
+            background-color: #FFDAB9; /* ⭐⭐⭐ CHALLENGE 4: Replace #FFDAB9 with your status box color! ⭐⭐⭐ */
+            display: block;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .controls-section {
+            background-color: #C1E1C1; /* ⭐⭐⭐ CHALLENGE 5: Replace #C1E1C1 with your controls box color! ⭐⭐⭐ */
+            display: block;
+            padding: 10px 20px;
+        }
+        .progress-section {
+            background-color: #E6E6FA; /* ⭐⭐⭐ CHALLENGE 6: Replace #E6E6FA with your progress box color! ⭐⭐⭐ */
+            display: block;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        .customize {
+            background-color: #F5F5DC; /* Beige for customize */
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+        #clock, #status, #timeLeft {
+            margin: 5px 0;
+        }
+        #timeLeft {
+            font-size: 18px;
+        }
+        
+        /* Progress bar container */
+        .progress-container {
+            position: relative;
+            display: block;
+            width: 90%;
+            margin: 10px auto;
+            max-width: 800px;
+        }
+        
+        #progressBar {
+            width: 100%;
+            height: 25px;
+            background-color: #EEEEEE;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        /* Progress bar markings - positioned absolutely within container */
+        .progress-markings {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 25px;
+            pointer-events: none; /* Don't interfere with progress bar */
+        }
+        
+        .quarter-mark {
+            position: absolute;
+            width: 2px;
+            height: 25px;
+            background-color: #000;
+            top: 0;
+        }
+        
+        .quarter-mark.q1 { left: 25%; }
+        .quarter-mark.q2 { left: 50%; }
+        .quarter-mark.q3 { left: 75%; }
+        
+        #progressPercentage {
+            font-size: 16px;
+            margin-top: 5px;
+        }
+        
+        progress::-webkit-progress-value {
+            background-color: #00FF00; /* ⭐⭐⭐ CHALLENGE 7: Replace #00FF00 with your progress bar color! ⭐⭐⭐ */
+            border-radius: 4px;
+        }
+        
+        progress::-webkit-progress-bar {
+            background-color: #EEEEEE;
+            border-radius: 4px;
+        }
+        
+        .controls-row {
+            margin: 10px 0;
+        }
+        
+        label {
+            display: inline-block;
+            margin: 5px 10px 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- This is the body - everything you see on the website goes here! -->
+    <h1>YOUR NAME's Clock</h1> <!-- ⭐⭐⭐ CHALLENGE 8: Replace "YOUR NAME" with your actual name! ⭐⭐⭐ -->
+    
+    <div class="time-section section">
+        <div id="clock"></div>
+    </div>
+    
+    <div class="status-section section">
+        <div id="status"></div>
+        <div id="timeLeft">Time Left:</div>
+    </div>
+    
+    <div class="controls-section section">
+        <div class="controls-row">
+            <label>Lunch: <select id="lunch">
+                <option value="first">First Lunch</option>
+                <option value="second">Second Lunch</option>
+            </select></label>
+            <label>Assembly: <input type="checkbox" id="assembly"></label>
+            <label>5 Minute Alarm: <input type="checkbox" id="alarm" checked></label>
+        </div>
+    </div>
+    
+    <div class="progress-section section">
+        <div>Progress: <span id="progressPercentage">0%</span></div>
+        <div class="progress-container">
+            <progress id="progressBar" value="0" max="100"></progress>
+            <div class="progress-markings">
+                <div class="quarter-mark q1"></div>
+                <div class="quarter-mark q2"></div>
+                <div class="quarter-mark q3"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- This is your color picker section! Use these to try different colors -->
+    <div class="customize section">
+        <h3>🎨 Pick Your Colors!</h3>
+        <p><strong>Try different colors and watch your clock change!</strong> But when you close this tab, it forgets your colors.</p>
+        <p><strong>To remember your colors forever:</strong> Copy the numbers (like #FF5733) and find them in the code!</p>
+        
+        <label><input type="color" id="bgColor" value="#f0f0f0"> Overall Background (Copy this code → <span id="bgHex">#f0f0f0</span>)</label><br>
+        <label><input type="color" id="timeColor" value="#a3d8f4"> Time Box (Copy this code → <span id="timeHex">#a3d8f4</span>)</label><br>
+        <label><input type="color" id="statusColor" value="#ffdab9"> Status Box (Copy this code → <span id="statusHex">#ffdab9</span>)</label><br>
+        <label><input type="color" id="controlsColor" value="#c1e1c1"> Controls Box (Copy this code → <span id="controlsHex">#c1e1c1</span>)</label><br>
+        <label><input type="color" id="progressColor" value="#e6e6fa"> Progress Box (Copy this code → <span id="progressHex">#e6e6fa</span>)</label><br>
+        <label><input type="color" id="progressBarColor" value="#00ff00"> Progress Bar (Copy this code → <span id="barHex">#00ff00</span>)</label><br>
+    </div>
+    
+    <!-- JavaScript makes things DO stuff! It's like the brain of your website -->
+    <script>
+        // This is a JavaScript comment! Comments are secret notes that don't show on your website.
+        // JavaScript makes your clock actually work and tick!
+        
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString();
+            const day = now.toLocaleDateString('en-US', { weekday: 'long' });
+            const date = now.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric' });
+            document.getElementById('clock').innerHTML = `${day}, ${date}<br>${time}`;
+        }
+
+        // Schedule data - edit times here
+        const schedules = {
+            normal: [ // Mon-Thu normal
+                {period: 'Period 1', start: '07:45', end: '08:36'},
+                {period: 'Period 2', start: '08:40', end: '09:31'},
+                {period: 'Announcements', start: '09:31', end: '09:40'},
+                {period: 'Period 3', start: '09:44', end: '10:35'},
+                {period: '1st Lunch', start: '10:35', end: '11:05'},
+                {period: 'Period 4 (1st Lunch)', start: '11:09', end: '12:00'},
+                {period: 'Period 4 (2nd Lunch)', start: '10:39', end: '11:30'},
+                {period: '2nd Lunch', start: '11:30', end: '12:00'},
+                {period: 'Period 5', start: '12:04', end: '12:55'},
+                {period: 'Period 6', start: '12:59', end: '13:50'},
+                {period: 'Period 7', start: '13:54', end: '14:45'}
+            ],
+            friday: [ // Friday normal
+                {period: 'Period 1', start: '07:45', end: '08:18'},
+                {period: 'Period 2', start: '08:22', end: '08:55'},
+                {period: 'Period 3', start: '08:59', end: '09:32'},
+                {period: 'Period 4', start: '09:36', end: '10:09'},
+                {period: '1st Lunch', start: '10:09', end: '10:39'},
+                {period: 'Period 5 (1st Lunch)', start: '10:43', end: '11:17'},
+                {period: 'Period 5 (2nd Lunch)', start: '10:13', end: '10:47'},
+                {period: '2nd Lunch', start: '10:47', end: '11:17'},
+                {period: 'Period 6', start: '11:21', end: '11:54'},
+                {period: 'Period 7', start: '11:58', end: '12:30'}
+            ],
+            assemblyNormal: [ // Afternoon Assembly Mon-Thu
+                {period: 'Period 1', start: '07:45', end: '08:26'},
+                {period: 'Period 2', start: '08:30', end: '09:11'},
+                {period: 'Period 3', start: '09:15', end: '09:56'},
+                {period: '1st Lunch', start: '09:56', end: '10:26'},
+                {period: 'Period 4 (1st Lunch)', start: '10:30', end: '11:11'},
+                {period: 'Period 4 (2nd Lunch)', start: '10:00', end: '10:41'},
+                {period: '2nd Lunch', start: '10:41', end: '11:11'},
+                {period: 'Period 5', start: '11:15', end: '11:56'},
+                {period: 'Period 6', start: '12:00', end: '12:41'},
+                {period: 'Period 7', start: '12:45', end: '13:26'},
+                {period: 'Assembly', start: '13:26', end: '14:45'}
+            ],
+            assemblyFriday: [ // Friday Assembly
+                {period: 'Period 1', start: '07:45', end: '08:08'},
+                {period: 'Period 2', start: '08:12', end: '08:35'},
+                {period: 'Period 3', start: '08:39', end: '09:02'},
+                {period: 'Period 4', start: '09:06', end: '09:29'},
+                {period: '1st Lunch', start: '09:29', end: '09:59'},
+                {period: 'Period 5 (1st Lunch)', start: '10:03', end: '10:29'},
+                {period: 'Period 5 (2nd Lunch)', start: '09:33', end: '09:59'},
+                {period: '2nd Lunch', start: '09:59', end: '10:29'},
+                {period: 'Period 6', start: '10:33', end: '10:56'},
+                {period: 'Period 7', start: '11:00', end: '11:23'},
+                {period: 'Assembly', start: '11:23', end: '12:30'}
+            ]
+        };
+
+        // Default lunch is first lunch - Challenge 2: Change 'first' to 'second' if you have second lunch
+        document.getElementById('lunch').value = 'first';
+
+        // Alarm default - true for on
+        let alarmEnabled = true; // Set to false for default off
+        let lastBeepTime = 0; // Track last beep to prevent spam
+
+        // ⭐⭐⭐ CHALLENGE 9: After you copy all your color codes above, change true to false to hide the color picker! ⭐⭐⭐
+        let showCustomize = true; // Change this to false to hide the Pick Your Colors box
+        if (!showCustomize) {
+            document.querySelector('.customize').style.display = 'none';
+        }
+
+        function getCurrentSchedule() {
+            const now = new Date();
+            const day = now.getDay(); // 0=Sun, 1=Mon, ..., 5=Fri
+            const isFriday = day === 5;
+            const isAssembly = document.getElementById('assembly').checked;
+            const lunch = document.getElementById('lunch').value;
+            
+            let scheduleKey = isFriday ? 'friday' : 'normal';
+            if (isAssembly) scheduleKey = 'assembly' + (isFriday ? 'Friday' : 'Normal');
+            
+            let schedule = [...schedules[scheduleKey]]; // Make a copy
+
+            // Filter schedule based on lunch selection
+            schedule = schedule.filter(period => {
+                if (lunch === 'first') {
+                    return !period.period.includes('(2nd Lunch)') && period.period !== '2nd Lunch';
+                } else {
+                    return !period.period.includes('(1st Lunch)') && period.period !== '1st Lunch';
+                }
+            });
+
+            return schedule;
+        }
+
+        function updateSchedule() {
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes();
+            const schoolStart = new Date(now.getFullYear(), 7, 19, 7, 45); // Monday, August 19, 2025, 7:45 AM
+            
+            // Calculate next school day
+            let nextSchoolDay = new Date(now);
+            if (now.getDay() === 0) { // Sunday
+                nextSchoolDay.setDate(now.getDate() + 1); // Monday
+            } else if (now.getDay() === 6) { // Saturday
+                nextSchoolDay.setDate(now.getDate() + 2); // Monday
+            } else if (now.getDay() === 5 && currentTime >= 12 * 60 + 30) { // Friday after 12:30
+                nextSchoolDay.setDate(now.getDate() + 3); // Monday
+            } else if (currentTime >= 14 * 60 + 45) { // After 2:45 PM on school days
+                nextSchoolDay.setDate(now.getDate() + 1);
+                if (nextSchoolDay.getDay() === 6) nextSchoolDay.setDate(nextSchoolDay.getDate() + 2); // Skip weekend
+            }
+            nextSchoolDay.setHours(7, 45, 0, 0);
+
+            const schedule = getCurrentSchedule();
+            let status = '';
+            let timeLeft = 'Time Left:';
+            let progress = 0;
+
+            // Check if school is out
+            if (now < schoolStart || now.getDay() === 0 || now.getDay() === 6 || 
+                (now.getDay() === 5 && currentTime >= 12 * 60 + 30) ||
+                (now.getDay() >= 1 && now.getDay() <= 4 && currentTime >= 14 * 60 + 45)) {
+                
+                const timeUntil = Math.max(0, Math.floor((nextSchoolDay - now) / 1000 / 60));
+                const days = Math.floor(timeUntil / (24 * 60));
+                const hours = Math.floor((timeUntil % (24 * 60)) / 60);
+                const minutes = timeUntil % 60;
+                status = `School's Out!`;
+                timeLeft += ` ${days} ${days === 1 ? 'day' : 'days'}, ${hours} hours, ${minutes} minutes until school`;
+                
+                // Progress shows time since last school ended until next school starts
+                const lastSchoolEnd = new Date(now);
+                if (now.getDay() === 1 && currentTime < 7 * 60 + 45) { // Monday before school
+                    lastSchoolEnd.setDate(now.getDate() - 3); // Previous Friday
+                    lastSchoolEnd.setHours(12, 30, 0, 0);
+                } else if (now.getDay() === 0) { // Sunday
+                    lastSchoolEnd.setDate(now.getDate() - 2); // Friday
+                    lastSchoolEnd.setHours(12, 30, 0, 0);
+                } else if (now.getDay() === 6) { // Saturday
+                    lastSchoolEnd.setDate(now.getDate() - 1); // Friday
+                    lastSchoolEnd.setHours(12, 30, 0, 0);
+                } else {
+                    lastSchoolEnd.setHours(14, 45, 0, 0); // End of previous school day
+                }
+                
+                progress = Math.min(100, ((now - lastSchoolEnd) / (nextSchoolDay - lastSchoolEnd)) * 100);
+            } else {
+                // During school hours
+                for (let i = 0; i < schedule.length; i++) {
+                    const [sh, sm] = schedule[i].start.split(':').map(Number);
+                    const startMin = sh * 60 + sm;
+                    const [eh, em] = schedule[i].end.split(':').map(Number);
+                    const endMin = eh * 60 + em;
+
+                    if (currentTime >= startMin && currentTime < endMin) {
+                        status = schedule[i].period;
+                        const remaining = endMin - currentTime;
+                        const hours = Math.floor(remaining / 60);
+                        const mins = remaining % 60;
+                        
+                        if (hours > 0) {
+                            timeLeft += ` ${hours}:${mins < 10 ? '0' : ''}${mins}`;
+                        } else {
+                            timeLeft += ` ${mins} minutes`;
+                        }
+                        
+                        progress = ((currentTime - startMin) / (endMin - startMin)) * 100;
+
+                        // Alarm functionality - beep when 5 minutes or less remaining
+                        if (remaining <= 5 && alarmEnabled && (now.getTime() - lastBeepTime) > 60000) {
+                            beep();
+                            lastBeepTime = now.getTime();
+                        }
+                        break;
+                    } else if (i < schedule.length - 1) {
+                        const [nextSh, nextSm] = schedule[i + 1].start.split(':').map(Number);
+                        const nextStartMin = nextSh * 60 + nextSm;
+                        
+                        if (currentTime >= endMin && currentTime < nextStartMin) {
+                            status = `Between ${schedule[i].period} and ${schedule[i + 1].period}`;
+                            const untilNext = nextStartMin - currentTime;
+                            timeLeft += ` ${untilNext} minutes until ${schedule[i + 1].period}`;
+                            progress = 0;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            document.getElementById('status').innerHTML = status;
+            document.getElementById('timeLeft').innerHTML = timeLeft;
+            document.getElementById('progressBar').value = Math.round(progress);
+            document.getElementById('progressPercentage').innerHTML = Math.round(progress) + '%';
+        }
+
+        // Function to update progress bar color
+        function updateProgressBarColor(color) {
+            const style = document.createElement('style');
+            style.innerHTML = `
+                progress::-webkit-progress-value {
+                    background-color: ${color} !important;
+                }
+                progress::-moz-progress-bar {
+                    background-color: ${color} !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // Color picker functions - these make the magic happen when you pick colors!
+        document.getElementById('bgColor').addEventListener('input', function() {
+            document.body.style.backgroundColor = this.value;
+            document.getElementById('bgHex').textContent = this.value;
+        });
+        
+        document.getElementById('timeColor').addEventListener('input', function() {
+            document.querySelector('.time-section').style.backgroundColor = this.value;
+            document.getElementById('timeHex').textContent = this.value;
+        });
+        
+        document.getElementById('statusColor').addEventListener('input', function() {
+            document.querySelector('.status-section').style.backgroundColor = this.value;
+            document.getElementById('statusHex').textContent = this.value;
+        });
+        
+        document.getElementById('controlsColor').addEventListener('input', function() {
+            document.querySelector('.controls-section').style.backgroundColor = this.value;
+            document.getElementById('controlsHex').textContent = this.value;
+        });
+        
+        document.getElementById('progressColor').addEventListener('input', function() {
+            document.querySelector('.progress-section').style.backgroundColor = this.value;
+            document.getElementById('progressHex').textContent = this.value;
+        });
+        
+        document.getElementById('progressBarColor').addEventListener('input', function() {
+            updateProgressBarColor(this.value);
+            document.getElementById('barHex').textContent = this.value;
+        });
+
+        // Add event listeners for schedule controls
+        document.getElementById('assembly').addEventListener('change', updateSchedule);
+        document.getElementById('lunch').addEventListener('change', updateSchedule);
+        document.getElementById('alarm').addEventListener('change', function() {
+            alarmEnabled = this.checked;
+        });
+
+        function beep() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+                
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A note
+                gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                
+                oscillator.start();
+                setTimeout(() => {
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    oscillator.stop(audioCtx.currentTime + 0.5);
+                }, 500);
+            } catch (e) {
+                console.log('Audio not supported');
+            }
+        }
+
+        // Initialize and start updates
+        setInterval(updateClock, 1000);
+        setInterval(updateSchedule, 1000);
+        updateClock();
+        updateSchedule();
+    </script>
+</body>
+</html>
