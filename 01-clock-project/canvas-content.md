@@ -23,37 +23,45 @@
 
 <h3>1. Get the Code</h3>
 <ul>
-<li>📝 <strong>Open Notepad</strong> (search for it in your start menu)</li>
-<li>📋 <strong>Copy the HTML code</strong> from below</li>
-<li>📄 <strong>Paste it into Notepad</strong> (Ctrl+V)</li>
+<li>📝 <strong>Open Notepad</strong> (click the Windows button in bottom-left corner, then search for "notepad")</li>
+<li>📋 <strong>Copy the HTML code from below:</strong>
+  <ul>
+    <li>Click at the very beginning of the code</li>
+    <li>Hold down your mouse button and drag to the very end</li>
+    <li>All the code should be highlighted blue</li>
+    <li>Right-click on the highlighted code and choose "Copy" OR press Ctrl+C</li>
+  </ul>
+</li>
+<li>📄 <strong>Paste it into Notepad:</strong> Click in Notepad and press Ctrl+V</li>
 </ul>
 
 <h3>2. Save Your File</h3>
 <ul>
 <li>💾 <strong>Save as "clock.html" on your desktop</strong></li>
 <li>Click File → Save As</li>
-<li><strong>IMPORTANT:</strong> Change "Save as type" to "All Files" (not Text Document)</li>
-<li>Type: clock.html</li>
-<li>Save location: Desktop</li>
+<li>In the Save window, look for "Desktop" on the left side and click it</li>
+<li><strong>IMPORTANT:</strong> Look for a dropdown that says "Text Documents" and change it to "All Files"</li>
+<li>In the filename box, type: clock.html</li>
+<li>Click Save</li>
 </ul>
 
 <h3>3. See It Work!</h3>
-<p>🌐 <strong>Double-click clock.html on your desktop</strong> - you'll see a working clock in your browser!</p>
+<p>🌐 <strong>Double-click clock.html on your desktop</strong> - you'll see a working clock in your web browser!</p>
 
 <h3>4. Edit Your Code</h3>
 <ul>
-<li>📝 <strong>Go back to Notepad</strong> to edit the code</li>
-<li>🔍 <strong>Use Ctrl+F to find "CHALLENGE 1"</strong> in the code</li>
+<li>📝 <strong>Go back to Notepad:</strong> Click on the Notepad icon in your taskbar (the bar at the bottom of your screen)</li>
+<li>🔍 <strong>Find "CHALLENGE 1":</strong> Scroll through the code and look for stars (⭐⭐⭐) and "CHALLENGE 1"</li>
 <li>✏️ <strong>Make the change described in the challenge</strong></li>
 <li>💾 <strong>Save the file in Notepad</strong> (Ctrl+S)</li>
-<li>🔄 <strong>Go back to your browser and refresh</strong> (F5) - you'll see your change!</li>
+<li>🔄 <strong>Go back to your web browser and refresh</strong> (F5) - you'll see your change!</li>
 <li>🔁 <strong>Repeat for all 9 challenges</strong></li>
 </ul>
 
 <h3>5. Use the Color Picker</h3>
 <ul>
-<li>🎨 <strong>Use the color picker on your clock</strong> to test colors, then copy the hex codes into your challenges</li>
-<li>🔖 <strong>When finished, bookmark your clock</strong> so you can use it every day</li>
+<li>🎨 <strong>Use the color picker on your clock</strong> to test colors, then copy the hex codes (color numbers like #FF0000) into your challenges</li>
+<li>🔖 <strong>When finished, bookmark your clock:</strong> Click the star icon next to the address bar, then click "Done"</li>
 </ul>
 
 <h2>Understanding the Edit-Save-Refresh Process</h2>
@@ -61,9 +69,9 @@
 <ol>
 <li><strong>Edit</strong> the code in Notepad</li>
 <li><strong>Save</strong> the file (Ctrl+S)</li>
-<li><strong>Refresh</strong> the browser (F5) to see changes</li>
+<li><strong>Refresh</strong> the web browser (F5) to see changes</li>
 </ol>
-<p>You're editing the SAME file in two different programs - Notepad shows the code, browser shows the result.</p>
+<p>You're editing the SAME file in two different programs - Notepad shows the code (the instructions), and the web browser reads those instructions and shows you the pretty result.</p>
 
 <h2>The 9 Challenges</h2>
 <ul>

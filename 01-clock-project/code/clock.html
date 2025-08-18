@@ -8,19 +8,25 @@
     
     <!-- CSS makes things look pretty! It's like decorating your room -->
     <style>
-        /* This is a CSS comment! Comments are like secret notes that don't show on your website. */
-        /* We use comments to explain our code and leave helpful messages for ourselves! */
+        /* ============================================================================ */
+        /* 🌟 ALL YOUR CHALLENGES ARE HERE! SCROLL DOWN TO FIND EACH ONE! 🌟 */
+        /* ============================================================================ */
+        
+        /* ========================================
+           🌈 BACKGROUND COLOR - CHALLENGE 2 HERE!
+           This changes the background of the whole page
+           ======================================== */
         body {
             font-family: 'Comic Sans MS', cursive, sans-serif; /* A fun, friendly font! */
             background-color: #F0F0F0; /* ⭐⭐⭐ CHALLENGE 2: Replace #F0F0F0 with your favorite background color! ⭐⭐⭐ */
             margin: 20px; /* Space around the edges */
             padding: 0;
         }
-        .section {
-            margin: 15px 0; /* Space between each colorful box */
-            padding: 10px; /* Space inside each box */
-            border-radius: 10px; /* Rounded corners - so pretty! */
-        }
+        
+        /* ========================================
+           🕐 TIME BOX COLOR - CHALLENGE 3 HERE!
+           This changes the big blue box that shows the time
+           ======================================== */
         .time-section {
             background-color: #A3D8F4; /* ⭐⭐⭐ CHALLENGE 3: Replace #A3D8F4 with your time box color! ⭐⭐⭐ */
             display: block;
@@ -28,22 +34,69 @@
             text-align: center; /* Centers the time in the middle */
             font-size: 24px; /* Makes the time nice and big */
         }
+        
+        /* ========================================
+           📋 STATUS BOX COLOR - CHALLENGE 4 HERE!
+           This changes the box that shows what period you're in
+           ======================================== */
         .status-section {
             background-color: #FFDAB9; /* ⭐⭐⭐ CHALLENGE 4: Replace #FFDAB9 with your status box color! ⭐⭐⭐ */
             display: block;
             padding: 10px 20px;
             text-align: center;
         }
+        
+        /* ========================================
+           ⚙️ CONTROLS BOX COLOR - CHALLENGE 5 HERE!
+           This changes the box with lunch and assembly settings
+           ======================================== */
         .controls-section {
             background-color: #C1E1C1; /* ⭐⭐⭐ CHALLENGE 5: Replace #C1E1C1 with your controls box color! ⭐⭐⭐ */
             display: block;
             padding: 10px 20px;
         }
+        
+        /* ========================================
+           📊 PROGRESS BOX COLOR - CHALLENGE 6 HERE!
+           This changes the box that shows the progress bar
+           ======================================== */
         .progress-section {
             background-color: #E6E6FA; /* ⭐⭐⭐ CHALLENGE 6: Replace #E6E6FA with your progress box color! ⭐⭐⭐ */
             display: block;
             padding: 10px 20px;
             text-align: center;
+        }
+        
+        /* ========================================
+           📏 PROGRESS BAR COLOR - CHALLENGE 7 HERE!
+           This changes the green progress bar itself
+           ======================================== */
+        progress::-webkit-progress-value {
+            background-color: #00FF00; /* ⭐⭐⭐ CHALLENGE 7: Replace #00FF00 with your progress bar color! ⭐⭐⭐ */
+            border-radius: 4px;
+        }
+        
+        /* ========================================
+           📝 PAGE TITLE - CHALLENGE 8 HERE!
+           Scroll down and look for stars (⭐⭐⭐) that say "CHALLENGE 8"
+           ======================================== */
+        /* ⭐⭐⭐ CHALLENGE 8: Scroll down and look for stars (⭐⭐⭐) that say "CHALLENGE 8" to find where to change your name! ⭐⭐⭐ */
+        
+        /* ========================================
+           🙈 HIDE COLOR PICKER - CHALLENGE 9 HERE!
+           After you finish all challenges, come back here!
+           ======================================== */
+        /* ⭐⭐⭐ CHALLENGE 9: After you copy all your color codes above, change "block" to "none" to hide the color picker! ⭐⭐⭐ */
+        .show-customize { display: block; } /* Change "block" to "none" to hide the color picker box */
+        
+        /* ============================================================================ */
+        /* 🔧 TECHNICAL STUFF - YOU DON'T NEED TO CHANGE ANYTHING BELOW HERE! 🔧 */
+        /* ============================================================================ */
+        
+        .section {
+            margin: 15px 0; /* Space between each colorful box */
+            padding: 10px; /* Space inside each box */
+            border-radius: 10px; /* Rounded corners - so pretty! */
         }
         .customize {
             background-color: #F5F5DC; /* Beige for customize */
@@ -102,11 +155,6 @@
             margin-top: 5px;
         }
         
-        progress::-webkit-progress-value {
-            background-color: #00FF00; /* ⭐⭐⭐ CHALLENGE 7: Replace #00FF00 with your progress bar color! ⭐⭐⭐ */
-            border-radius: 4px;
-        }
-        
         progress::-webkit-progress-bar {
             background-color: #EEEEEE;
             border-radius: 4px;
@@ -159,7 +207,7 @@
     </div>
     
     <!-- This is your color picker section! Use these to try different colors -->
-    <div class="customize section">
+    <div class="customize section show-customize">
         <h3>🎨 Pick Your Colors!</h3>
         <p><strong>Try different colors and watch your clock change!</strong> But when you close this tab, it forgets your colors.</p>
         <p><strong>To remember your colors forever:</strong> Copy the numbers (like #FF5733) and find them in the code!</p>
@@ -247,11 +295,6 @@
         let alarmEnabled = true; // Set to false for default off
         let lastBeepTime = 0; // Track last beep to prevent spam
 
-        // ⭐⭐⭐ CHALLENGE 9: After you copy all your color codes above, change true to false to hide the color picker! ⭐⭐⭐
-        let showCustomize = true; // Change this to false to hide the Pick Your Colors box
-        if (!showCustomize) {
-            document.querySelector('.customize').style.display = 'none';
-        }
 
         function getCurrentSchedule() {
             const now = new Date();
