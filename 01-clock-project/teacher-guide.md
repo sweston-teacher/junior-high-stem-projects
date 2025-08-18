@@ -76,19 +76,46 @@ Every website you've ever visited uses HTML, CSS, and JavaScript. By the end of 
 Create your personal desktop clock that shows the current time, class periods, and time remaining - with your name and custom colors!
 
 ### Step-by-Step Instructions
-1. 📝 Open Notepad
-2. 📋 Copy the HTML code from Canvas
-3. 📄 Paste it into Notepad
-4. 💾 Save as "clock.html" on your desktop (choose "All Files")
-5. 🌐 Double-click clock.html to open in your browser - you'll see a working clock!
-6. 📝 Go back to Notepad to edit the code
-7. 🔍 Use Ctrl+F to find "CHALLENGE 1" in the code
-8. ✏️ Make the change described in the challenge
-9. 💾 Save the file in Notepad (Ctrl+S)
-10. 🔄 Go back to your browser and refresh (F5) - you'll see your change!
-11. 🔁 Repeat steps 7-10 for all 9 challenges
-12. 🎨 Use the color picker on your clock to test colors, then copy the hex codes into your challenges
-13. 🔖 When finished, bookmark your clock
+
+#### 1. Get the Code
+- 📝 **Open Notepad:** Click the Windows button in bottom-left corner, then search for "notepad"
+- 📋 **Copy the HTML code from Canvas:**
+  - Click at the very beginning of the code
+  - Hold down your mouse button and drag to the very end
+  - All the code should be highlighted blue
+  - Right-click on the highlighted code and choose "Copy" OR press Ctrl+C
+- 📄 **Paste it into Notepad:** Click in Notepad and press Ctrl+V
+
+#### 2. Save Your File
+- 💾 **Save as "clock.html" on your desktop:**
+  - Click File → Save As
+  - In the Save window, look for "Desktop" on the left side and click it
+  - **IMPORTANT:** Look for a dropdown that says "Text Documents" and change it to "All Files"
+  - In the filename box, type: clock.html
+  - Click Save
+
+#### 3. See It Work!
+- 🌐 **Double-click clock.html on your desktop** - you'll see a working clock in your web browser!
+
+#### 4. Edit Your Code
+- 📝 **Go back to Notepad:** Click on the Notepad icon in your taskbar (the bar at the bottom of your screen)
+- 🔍 **Find "CHALLENGE 1":** Scroll through the code and look for stars (⭐⭐⭐) and "CHALLENGE 1"
+- ✏️ **Make the change described in the challenge**
+- 💾 **Save the file in Notepad** (Ctrl+S)
+- 🔄 **Go back to your web browser and refresh** (F5) - you'll see your change!
+- 🔁 **Repeat for all 9 challenges**
+
+#### 5. Use the Color Picker
+- 🎨 **Use the color picker on your clock** to test colors, then copy the hex codes (color numbers like #FF0000) into your challenges
+- 🔖 **When finished, bookmark your clock:** Click the star icon next to the address bar, then click "Done"
+
+### Understanding the Edit-Save-Refresh Process
+This is something most students have never done before:
+1. **Edit** the code in Notepad
+2. **Save** the file (Ctrl+S)
+3. **Refresh** the web browser (F5) to see changes
+
+You're editing the SAME file in two different programs - Notepad shows the code (the instructions), and the web browser reads those instructions and shows you the pretty result.
 
 ### The 9 Challenges
 - 🏷️ Change browser tab title to include your name

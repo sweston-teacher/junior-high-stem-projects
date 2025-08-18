@@ -1,51 +1,221 @@
-# Teacher Guide - STEM Clock Project
+# Teacher Guide - Clock Project (Static Backup)
 
-## Canvas Discussion Starters (Copy/Paste Ready)
-**Use these in any order based on where your class is - no fixed timeline!**
-**Copy any of these into Canvas Discussion:**
-
-### Foundation Skills: "Copy, Paste & Save Basics"
-```
-💻 Computer Skills Check 💻
-
-Today we're going to use "Copy" and "Paste" a lot. 
-
-Explain what you think happens when you "copy" something on a computer. Where does it go? What's the difference between "copy" and "cut"? 
-
-Also, when you save a file, what's the difference between "Save" and "Save As"?
-
-Use your own words - make your best guesses! Type for 5 minutes.
-```
+**This is a static backup in case the dynamic presentation system fails to load**
 
 ---
 
-### Building Understanding: "File Types & Extensions"
-```
-📁 File Detective Challenge 📁
+## 🔧 First Time Setup
 
-Look at your desktop or any folder on this computer. Find 3 different files and write down their full names (including the letters after the dot).
+### Today Only - Login Process
+1. Log into your computer
+2. Log into Canvas
 
-Examples: essay.docx, photo.jpg, song.mp3, webpage.html
+### Computer Login
+- **Username:** Your 9 number
+- **Password:** First initial (capital) + Last initial (capital) + Shift+Grade level + SSID
 
-What do you think those letters after the dot tell the computer? Why do you think different files have different endings?
+### Canvas Login
+- Ask for help if needed
 
-Make your best detective guesses for 5 minutes!
-```
+### Canvas Tour
+- 📋 Where assignments are
+- 💬 Where discussions are
 
 ---
 
-### Personalization: "Making It Yours"
-```
-🎨 Personalization & Customization 🎨
+## 🚀 Daily Routine
 
-Today we're changing "YOUR NAME" in the code to your actual name and picking custom colors.
+### Do This First Every Day
+1. Log into Canvas
+2. Check for any announcements
+3. Work on and complete discussion starter
 
-Explain WHY you think personalizing projects is important. How does putting your name on something change how you feel about it? 
+---
 
-Also, why do you think we let you pick your own colors instead of everyone having the same colors?
+## 🕐 Project Overview: Personal Desktop Clock
 
-Take 5 minutes to think about ownership and creativity!
-```
+### What You're Building This Week
+You will create your own personalized desktop clock that shows:
+- ✅ Current time and date
+- ✅ What class period you're in
+- ✅ How much time is left in class
+- ✅ Your name and custom colors
+
+### The Big Idea
+By Friday, you will have built something you'll actually use every day. No more asking "What time is it?" - you'll have your own personal clock!
+
+### Skills You'll Learn
+- 💾 File management (save, save as, file types)
+- 📋 Copy and paste basics
+- 🔍 Finding things with Ctrl+F
+- 🌐 Basic HTML, CSS, and JavaScript
+- 🎨 Customization and design thinking
+
+### Real-World Connection
+Every website you've ever visited uses HTML, CSS, and JavaScript. By the end of this week, you'll understand the building blocks of the entire internet!
+
+---
+
+## 📋 Assignment Instructions
+
+### Your Mission
+Create your personal desktop clock that shows the current time, class periods, and time remaining - with your name and custom colors!
+
+### Step-by-Step Instructions
+
+#### 1. Get the Code
+- 📝 **Open Notepad:** Click the Windows button in bottom-left corner, then search for "notepad"
+- 📋 **Copy the HTML code from Canvas:**
+  - Click at the very beginning of the code
+  - Hold down your mouse button and drag to the very end
+  - All the code should be highlighted blue
+  - Right-click on the highlighted code and choose "Copy" OR press Ctrl+C
+- 📄 **Paste it into Notepad:** Click in Notepad and press Ctrl+V
+
+#### 2. Save Your File
+- 💾 **Save as "clock.html" on your desktop:**
+  - Click File → Save As
+  - In the Save window, look for "Desktop" on the left side and click it
+  - **IMPORTANT:** Look for a dropdown that says "Text Documents" and change it to "All Files"
+  - In the filename box, type: clock.html
+  - Click Save
+
+#### 3. See It Work!
+- 🌐 **Double-click clock.html on your desktop** - you'll see a working clock in your web browser!
+
+#### 4. Edit Your Code
+- 📝 **Go back to Notepad:** Click on the Notepad icon in your taskbar (the bar at the bottom of your screen)
+- 🔍 **Find "CHALLENGE 1":** Scroll through the code and look for stars (⭐⭐⭐) and "CHALLENGE 1"
+- ✏️ **Make the change described in the challenge**
+- 💾 **Save the file in Notepad** (Ctrl+S)
+- 🔄 **Go back to your web browser and refresh** (F5) - you'll see your change!
+- 🔁 **Repeat for all 9 challenges**
+
+#### 5. Use the Color Picker
+- 🎨 **Use the color picker on your clock** to test colors, then copy the hex codes (color numbers like #FF0000) into your challenges
+- 🔖 **When finished, bookmark your clock:** Click the star icon next to the address bar, then click "Done"
+
+### Understanding the Edit-Save-Refresh Process
+This is something most students have never done before:
+1. **Edit** the code in Notepad
+2. **Save** the file (Ctrl+S)
+3. **Refresh** the web browser (F5) to see changes
+
+You're editing the SAME file in two different programs - Notepad shows the code (the instructions), and the web browser reads those instructions and shows you the pretty result.
+
+---
+
+## 💾 File Management Basics
+
+### File Extension
+The letters after the dot in a filename (.html, .jpg, .docx). Tells the computer what type of file it is.
+
+### Why File Extensions Matter
+- Computer needs to know how to open the file
+- Different programs handle different file types
+- .html files open in web browsers
+- .docx files open in Word
+
+### Try This
+Challenge: Find 3 files with different extensions on your computer
+
+---
+
+## 📋 Copy, Cut, and Paste Superpowers
+
+### Definitions
+- **Copy (Ctrl+C):** Makes a duplicate - original stays, copy goes to clipboard
+- **Cut (Ctrl+X):** Moves something - removes original, puts it on clipboard  
+- **Paste (Ctrl+V):** Takes whatever is on clipboard and puts it somewhere new
+
+### Copy/Paste is Essential Because
+- Saves time and prevents mistakes
+- Works across all programs
+- Fundamental computer skill
+- You'll use it in every class
+
+### Try This
+Copy some text and paste it somewhere else
+
+---
+
+## 💾 Save vs Save As
+
+### Save (Ctrl+S)
+- Saves your work
+- First time = asks where to put it and what to name it
+- After that = just saves changes
+
+### Save As
+- Always asks where to put it and what to name it
+- Use when you want to make a copy with a different name
+
+### Your Turn
+Save your HTML file to the desktop
+
+---
+
+## 🔍 Finding Things with Ctrl+F
+
+### Find (Ctrl+F)
+Searches for specific words in your document. Essential for finding things in code.
+
+### Ctrl+F (Find) is a Superpower
+- Quickly locate specific words
+- Essential for finding challenges in code
+- Works in almost every program
+- Saves tons of scrolling time
+
+---
+
+## 🌐 What is HTML?
+
+### HTML
+**HyperText Markup Language** - The structure/skeleton of every webpage. It tells the browser what goes where.
+
+### HTML is Everywhere
+- 🌐 Every website you've ever seen
+- 📱 Your phone apps use similar code
+- 📺 Social media, games, school websites
+- 😊 Not as hard as it looks!
+
+### Think About It
+Right now you're looking at HTML! This webpage, TikTok, YouTube, Google - all built with HTML. You're about to join millions of people who know how to create for the web.
+
+---
+
+## 🎨 CSS: Making Things Look Good
+
+### CSS
+**Cascading Style Sheets** - Controls how websites look (colors, fonts, layout). Like decorating your room!
+
+### Hex Code
+A way to specify exact colors using numbers/letters. Example: #FF0000 = red
+
+### Why CSS Matters
+- 🎨 Makes websites beautiful instead of boring
+- 🌈 Controls colors, fonts, and layout
+- 📱 Makes sites work on phones and computers
+- ✨ Brings your creative vision to life
+
+### Practice Time
+Change one color in your code using the color picker. Watch how CSS instantly transforms your clock!
+
+---
+
+## ✨ Personalizing Your Code
+
+### Why We Customize
+- 🏠 Makes it yours
+- 🎯 Increases engagement
+- 🧠 Teaches design thinking
+- ⚡ Shows cause and effect
+
+### Your Goal
+Bookmark your finished clock so you can use it every day. This isn't just a school project - it's a tool you'll actually use!
+
+### The Psychology of Ownership
+When you put your name on something and make it your own, you care more about it. That's why we're not just copying code - we're creating something personal that reflects who you are.
 
 ---
 
