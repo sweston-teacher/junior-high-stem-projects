@@ -14,98 +14,90 @@
 
 ## Assignment Description (Copy/Paste into Canvas)
 
-```markdown
-# 🕐 Personal Desktop Clock Project
+<h1>🕐 Personal Desktop Clock Project</h1>
 
-## Your Mission
-Create your personal desktop clock that shows the current time, class periods, and time remaining - with your name and custom colors!
+<h2>Your Mission</h2>
+<p>Create your personal desktop clock that shows the current time, class periods, and time remaining - with your name and custom colors!</p>
 
-## Step-by-Step Instructions
+<h2>Step-by-Step Instructions</h2>
 
-### 1. Get the Code
-📝 **Open Notepad** (search for it in your start menu)
+<h3>1. Get the Code</h3>
+<ul>
+<li>📝 <strong>Open Notepad</strong> (search for it in your start menu)</li>
+<li>📋 <strong>Copy the HTML code</strong> from below</li>
+<li>📄 <strong>Paste it into Notepad</strong> (Ctrl+V)</li>
+</ul>
 
-📋 **Copy the HTML code** from below
+<h3>2. Save Your File</h3>
+<ul>
+<li>💾 <strong>Save as "clock.html" on your desktop</strong></li>
+<li>Click File → Save As</li>
+<li><strong>IMPORTANT:</strong> Change "Save as type" to "All Files" (not Text Document)</li>
+<li>Type: clock.html</li>
+<li>Save location: Desktop</li>
+</ul>
 
-📄 **Paste it into Notepad** (Ctrl+V)
+<h3>3. See It Work!</h3>
+<p>🌐 <strong>Double-click clock.html on your desktop</strong> - you'll see a working clock in your browser!</p>
 
-### 2. Save Your File
-💾 **Save as "clock.html" on your desktop**
-- Click File → Save As
-- **IMPORTANT:** Change "Save as type" to "All Files" (not Text Document)
-- Type: clock.html
-- Save location: Desktop
+<h3>4. Edit Your Code</h3>
+<ul>
+<li>📝 <strong>Go back to Notepad</strong> to edit the code</li>
+<li>🔍 <strong>Use Ctrl+F to find "CHALLENGE 1"</strong> in the code</li>
+<li>✏️ <strong>Make the change described in the challenge</strong></li>
+<li>💾 <strong>Save the file in Notepad</strong> (Ctrl+S)</li>
+<li>🔄 <strong>Go back to your browser and refresh</strong> (F5) - you'll see your change!</li>
+<li>🔁 <strong>Repeat for all 9 challenges</strong></li>
+</ul>
 
-### 3. See It Work!
-🌐 **Double-click clock.html on your desktop** - you'll see a working clock in your browser!
+<h3>5. Use the Color Picker</h3>
+<ul>
+<li>🎨 <strong>Use the color picker on your clock</strong> to test colors, then copy the hex codes into your challenges</li>
+<li>🔖 <strong>When finished, bookmark your clock</strong> so you can use it every day</li>
+</ul>
 
-### 4. Edit Your Code
-📝 **Go back to Notepad** to edit the code
+<h2>Understanding the Edit-Save-Refresh Process</h2>
+<p>This is something most of you have never done before:</p>
+<ol>
+<li><strong>Edit</strong> the code in Notepad</li>
+<li><strong>Save</strong> the file (Ctrl+S)</li>
+<li><strong>Refresh</strong> the browser (F5) to see changes</li>
+</ol>
+<p>You're editing the SAME file in two different programs - Notepad shows the code, browser shows the result.</p>
 
-🔍 **Use Ctrl+F to find "CHALLENGE 1"** in the code
+<h2>The 9 Challenges</h2>
+<ul>
+<li>🏷️ <strong>Challenge 1:</strong> Change browser tab title to include your name</li>
+<li>🎨 <strong>Challenge 2:</strong> Customize background color</li>
+<li>🎨 <strong>Challenge 3:</strong> Customize time box color</li>
+<li>🎨 <strong>Challenge 4:</strong> Customize status box color</li>
+<li>🎨 <strong>Challenge 5:</strong> Customize controls box color</li>
+<li>🎨 <strong>Challenge 6:</strong> Customize progress box color</li>
+<li>🎨 <strong>Challenge 7:</strong> Customize progress bar color</li>
+<li>📝 <strong>Challenge 8:</strong> Change page title to include your name</li>
+<li>🙈 <strong>Challenge 9:</strong> Hide color picker when done</li>
+</ul>
 
-✏️ **Make the change described in the challenge**
+<h2>Success Looks Like</h2>
+<p>A working clock with your name in the title, your chosen colors, and a bookmark that opens your personal clock instantly!</p>
 
-💾 **Save the file in Notepad** (Ctrl+S)
+<h2>Assessment</h2>
+<ul>
+<li><strong>4 - Highly Proficient:</strong> HTML file saved, bookmarked, all challenges completed</li>
+<li><strong>3 - Proficient:</strong> HTML file saved and bookmarked</li>
+<li><strong>2 - Approaching Proficient:</strong> HTML file saved</li>
+<li><strong>1 - Below Proficient:</strong> HTML file not saved</li>
+</ul>
 
-🔄 **Go back to your browser and refresh** (F5) - you'll see your change!
+<hr>
 
-🔁 **Repeat for all 9 challenges**
+<h2>The Code</h2>
+<p><strong>Copy ALL of this code into Notepad:</strong></p>
 
-### 5. Use the Color Picker
-🎨 **Use the color picker on your clock** to test colors, then copy the hex codes into your challenges
+<p>[FULL HTML CODE GOES HERE - Insert the complete clock.html content]</p>
 
-🔖 **When finished, bookmark your clock** so you can use it every day
-
-## Understanding the Edit-Save-Refresh Process
-This is something most of you have never done before:
-1. **Edit** the code in Notepad
-2. **Save** the file (Ctrl+S)
-3. **Refresh** the browser (F5) to see changes
-
-You're editing the SAME file in two different programs - Notepad shows the code, browser shows the result.
-
-## The 9 Challenges
-🏷️ **Challenge 1:** Change browser tab title to include your name
-
-🎨 **Challenge 2:** Customize background color
-
-🎨 **Challenge 3:** Customize time box color
-
-🎨 **Challenge 4:** Customize status box color
-
-🎨 **Challenge 5:** Customize controls box color
-
-🎨 **Challenge 6:** Customize progress box color
-
-🎨 **Challenge 7:** Customize progress bar color
-
-📝 **Challenge 8:** Change page title to include your name
-
-🙈 **Challenge 9:** Hide color picker when done
-
-## Success Looks Like
-A working clock with your name in the title, your chosen colors, and a bookmark that opens your personal clock instantly!
-
-## Assessment
-**4 - Highly Proficient:** HTML file saved, bookmarked, all challenges completed
-
-**3 - Proficient:** HTML file saved and bookmarked  
-
-**2 - Approaching Proficient:** HTML file saved
-
-**1 - Below Proficient:** HTML file not saved
-
----
-
-## The Code
-**Copy ALL of this code into Notepad:**
-
-[FULL HTML CODE GOES HERE - Insert the complete clock.html content]
-
----
-*By Friday, you'll have built something you'll actually use every day!*
-```
+<hr>
+<p><em>By Friday, you'll have built something you'll actually use every day!</em></p>
 
 ## Module Setup (Alternative)
 
