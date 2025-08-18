@@ -323,7 +323,7 @@
         function updateSchedule() {
             const now = new Date();
             const currentTime = now.getHours() * 60 + now.getMinutes();
-            const schoolStart = new Date(now.getFullYear(), 7, 19, 7, 45); // Monday, August 19, 2025, 7:45 AM
+            const schoolStart = new Date(now.getFullYear(), 7, 18, 7, 45); // Monday, August 18, 2025, 7:45 AM
             
             // Calculate next school day
             let nextSchoolDay = new Date(now);
@@ -394,8 +394,8 @@
                         
                         progress = ((currentTime - startMin) / (endMin - startMin)) * 100;
 
-                        // Alarm functionality - beep when 5 minutes or less remaining
-                        if (remaining <= 5 && alarmEnabled && (now.getTime() - lastBeepTime) > 60000) {
+                        // Alarm functionality - beep once when exactly 5 minutes remaining
+                        if (remaining === 5 && alarmEnabled && (now.getTime() - lastBeepTime) > 60000) {
                             beep();
                             lastBeepTime = now.getTime();
                         }
