@@ -2,29 +2,6 @@
 
 ## Session Material
 
-### First Time Setup
-**Description:** Password check and Canvas tour
-
-#### Content:
-## 🔧 First Time Setup
-
-### Today Only - Login Process
-1. Log into your computer
-2. Log into Canvas
-
-### Computer Login
-- **Username:** Your 9 number
-- **Password:** First initial (capital) + Last initial (capital) + Shift+Grade level + SSID
-
-### Canvas Login
-- Ask for help if needed
-
-### Canvas Tour
-- 📋 Where assignments are
-- 💬 Where discussions are
-
----
-
 ### Daily Routine
 **Description:** What to do every day
 
@@ -32,9 +9,10 @@
 ## 🚀 Daily Routine
 
 ### Do This First Every Day
-1. Log into Canvas
-2. Check for any announcements
-3. Work on and complete discussion starter
+1. Sign into your computer
+2. Sign into Chrome
+3. Go to Canvas
+4. Find the daily starter in Modules
 
 ---
 
