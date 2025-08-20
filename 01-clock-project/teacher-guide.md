@@ -232,30 +232,20 @@ Copy your name using the mouse method, then paste it using the keyboard method. 
 - clock.html
 - photo.jpg
 - song.mp3
-- essay.docx
+- notes.txt
 
 ### Why Do They Matter?
 **The computer needs to know which program to use!**
 - **.html** files → Open in web browser (Chrome, Firefox)
 - **.jpg** files → Open in photo viewer
 - **.mp3** files → Open in music player
-- **.docx** files → Open in Word
+- **.txt** files → Open in Notepad
 
 ### The "All Files" Mystery
 **When saving in Notepad, you saw a dropdown that said "Text Documents"**
 - **"Text Documents"** → Only saves as .txt files
 - **"All Files"** → Lets you save with ANY extension (like .html)
 - **That's why we picked "All Files"** → So we could save as clock.html
-
-### Common File Types You Know
-- **Photos:** .jpg, .png, .gif
-- **Music:** .mp3, .wav
-- **Videos:** .mp4, .mov
-- **Documents:** .docx, .pdf
-- **Web pages:** .html
-
-### Try This
-Look at your desktop or any folder. Find 3 different files and notice their extensions. What do you think each one does?
 
 ---
 
