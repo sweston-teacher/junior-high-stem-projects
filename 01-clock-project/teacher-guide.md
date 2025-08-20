@@ -132,86 +132,82 @@ A working clock with your name in the title, your chosen colors, and a bookmark 
 
 ---
 
-### File Management Basics
-**Description:** Saving files and understanding extensions
+### Finding Programs and Desktop Basics
+**Description:** How to find stuff and understand your computer's "places"
 
 #### Content:
-## 📁 File Management Basics
+## 🔍 Finding Programs and Understanding Desktop
 
-### File Extension
-The letters after the dot in a filename (.html, .jpg, .docx). These tell the computer what type of file it is and which program should open it.
+### The Magic Search Method
+**When you don't know where something is:**
+1. Click the Windows button (bottom-left corner)
+2. Just start typing what you want (no clicking needed!)
+3. Press Enter when you see what you want
 
-### Why File Extensions Matter
-- 💻 Computer needs to know how to open the file
-- 📄 Different programs handle different file types
-- 🌐 .html files open in web browsers
-- 📝 .docx files open in Word
+### Examples to Try
+- Type "notepad" → finds Notepad
+- Type "calculator" → finds Calculator  
+- Type "chrome" → finds Chrome browser
 
-### Try This: File Detective Challenge
-Look at your desktop or any folder. Find 3 different files and write down their full names (including the letters after the dot). What do you think those letters tell the computer?
+### What is the Desktop?
+- **Like your real desk:** A place to put important papers (files)
+- **Actually a folder:** But it looks like a place
+- **Keyboard shortcut:** Windows + D to see it instantly
+- **Why it matters:** Easy place to save and find your files
 
-### Teaching Tips
-- Show examples on your computer
-- Let students explore their own files
-- Explain that this is like labeling boxes
-- Connect to apps on their phones
+### Window Controls
+- **Minimize (-):** Hides window (like putting paper in drawer)
+- **Maximize (□):** Makes window fill screen (like spreading paper on whole desk)
+- **Close (X):** Shuts down program completely
 
 ---
 
 ### Copy, Cut, and Paste
-**Description:** Essential computer skills
+**Description:** Essential computer skills - Two ways to do everything
 
 #### Content:
 ## ✂️ Copy, Cut, and Paste Superpowers
 
-### The Big Three
-**Copy (Ctrl+C):** Makes a duplicate - original stays, copy goes to clipboard
-**Cut (Ctrl+X):** Moves something - removes original, puts it on clipboard
-**Paste (Ctrl+V):** Takes whatever is on clipboard and puts it somewhere new
+### Two Ways to Do Everything
+**Why learn both?** Sometimes mouse buttons don't work well, so keyboard is your backup!
 
-### Why This is Essential
-- ⚡ Saves time and prevents mistakes
-- 🔄 Works across all programs
-- 🎯 Fundamental computer skill
-- 📚 You'll use it in every class
+### Copy (Making a Duplicate)
+- **Mouse Way:** Highlight text → right-click → click "Copy"
+- **Keyboard Way:** Highlight text → hold Ctrl + press C
+- **What happens:** Original stays, copy goes to invisible clipboard
 
-### Try This Right Now
-Copy some text from this slide and paste it into a new document. Notice how the original text stays here!
+### Paste (Put Copy Somewhere New)
+- **Mouse Way:** Click where you want it → right-click → click "Paste"
+- **Keyboard Way:** Click where you want it → hold Ctrl + press V
+- **What happens:** Whatever you copied appears in new location
 
-### Real-World Uses
-- 📝 Moving quotes in essays
-- 🔗 Sharing links with friends
-- 📊 Copying data between spreadsheets
-- 💻 Any computer-based homework
+### Practice Both Methods
+Copy your name using the mouse method, then paste it using the keyboard method. Try switching between both!
 
 ---
 
 ### Save vs Save As
-**Description:** When to use each command
+**Description:** The Robot Factory Analogy
 
 #### Content:
-## 💾 Save vs Save As
+## 🤖 Save vs Save As: Robot Building
 
-### Save (Ctrl+S)
-Saves your work. First time asks where to put it and what to name it. After that, just saves changes to the same file.
+### Imagine You're Building a Robot...
 
-### Save As
-Always asks where to put it and what to name it. Use when you want to make a copy with a different name.
+### Save (Ctrl+S) = Freeze Your Robot
+- **What it does:** Freezes your robot in time so no parts fall off or get lost
+- **First time:** "What should we call this robot?" and "Where should we store it?"
+- **After that:** Just freezes the current state - same robot, same name, same place
+- **Use when:** Working on the same project, want to keep progress safe
 
-### When to Use Each
-- 💾 **Save:** First time asks for name/location, then just saves changes
-- 📁 **Save As:** Always asks for name/location
-- ✅ Both work for new projects
-- 📄 Save As is useful for making copies
+### Save As = Clone Your Robot
+- **What it does:** Makes an exact copy of your robot, then you work on the copy
+- **Always asks:** "What should we call this NEW robot?" and "Where should we store it?"
+- **Original robot:** Stays exactly as it was
+- **Use when:** Want to try different ideas without messing up your original
 
-### Your Turn
-We're about to save your HTML file to the desktop. Remember: choose "All Files" as the file type, not "Text Document"!
-
-### Pro Tips
-- Save early and save often
-- Use Save As to make backup copies
-- Pay attention to file types
-- Organize files in folders
+### Try This
+Think of a time you'd want to make a copy of something you're working on instead of just saving it.
 
 ---
 
@@ -297,13 +293,19 @@ When you put your name on something and make it your own, you care more about it
 
 ---
 
-Today we're going to use "Copy" and "Paste" a lot. 
+🤖 Robot Factory Challenge 🤖
 
-Explain what you think happens when you "copy" something on a computer. Where does it go? What's the difference between "copy" and "cut"? 
+Using our robot building analogy:
 
-Also, when you save a file, what's the difference between "Save" and "Save As"?
+1. If you "Save" your robot, what happens to it?
+2. If you "Save As" your robot, what happens to the original?
+3. Why might you want to clone your robot instead of just saving it?
 
-Use your own words - make your best guesses! Type for 5 minutes.
+Also think about your computer:
+4. How is your computer desktop like your real desk?
+5. What's the fastest way to find a program when you don't know where it is?
+
+Use the analogies we learned! Take 5 minutes to write your answers.
 ```
 
 ---
