@@ -155,18 +155,18 @@ A working clock with your name in the title, your chosen colors, and a bookmark 
 - **Keyboard shortcut:** Windows + D to see it instantly
 - **Why it matters:** Easy place to save and find your files
 
-### Window Controls
+### Window Controls (Top-Right Corner of Every Window)
 - **Minimize (-):** Hides window (like putting paper in drawer)
 - **Maximize (□):** Makes window fill screen (like spreading paper on whole desk)
 - **Close (X):** Shuts down program completely
 
 ---
 
-### Copy, Cut, and Paste
+### Copy and Paste
 **Description:** Essential computer skills - Two ways to do everything
 
 #### Content:
-## ✂️ Copy, Cut, and Paste Superpowers
+## ✂️ Copy and Paste Superpowers
 
 ### Two Ways to Do Everything
 **Why learn both?** Sometimes mouse buttons don't work well, so keyboard is your backup!
@@ -187,109 +187,75 @@ Copy your name using the mouse method, then paste it using the keyboard method. 
 ---
 
 ### Save vs Save As
-**Description:** The Robot Factory Analogy
+**Description:** When they're the same and when they're different
 
 #### Content:
-## 🤖 Save vs Save As: Robot Building
+## 💾 Save vs Save As
 
-### Imagine You're Building a Robot...
+### For Brand New Files
+**Save and Save As do the exact same thing** - both ask for a name and location. The difference only matters AFTER you've already saved once.
 
-### Save (Ctrl+S) = Freeze Your Robot
-- **What it does:** Freezes your robot in time so no parts fall off or get lost
-- **First time:** "What should we call this robot?" and "Where should we store it?"
+### Save (Ctrl+S)
+- **First time:** Asks "What should we call this?" and "Where should we put it?"
+- **After that:** Just saves your changes to the same file
+- **Use when:** Working on the same document, want to keep your progress safe
+
+### Save As
+- **Always asks:** "What should we call this?" and "Where should we put it?"
+- **Creates:** A copy of your file with a new name
+- **Use when:** Want to make a copy without changing the original
+
+### 🤖 Robot Factory Analogy
+
+**Imagine you're building a robot...**
+
+### Save = Freeze Your Robot
+- **First time:** Robot factory asks "What should we call this robot?" and "Where should we store it?"
 - **After that:** Just freezes the current state - same robot, same name, same place
-- **Use when:** Working on the same project, want to keep progress safe
 
-### Save As = Clone Your Robot
+### Save As = Clone Your Robot  
 - **What it does:** Makes an exact copy of your robot, then you work on the copy
-- **Always asks:** "What should we call this NEW robot?" and "Where should we store it?"
 - **Original robot:** Stays exactly as it was
 - **Use when:** Want to try different ideas without messing up your original
 
+---
+
+
+### File Types and Extensions
+**Description:** Why computers need to know what kind of file you're making
+
+#### Content:
+## 📄 File Types and Extensions
+
+### What Are File Extensions?
+**File extensions are the letters after the dot in a filename**
+- clock.html
+- photo.jpg
+- song.mp3
+- essay.docx
+
+### Why Do They Matter?
+**The computer needs to know which program to use!**
+- **.html** files → Open in web browser (Chrome, Firefox)
+- **.jpg** files → Open in photo viewer
+- **.mp3** files → Open in music player
+- **.docx** files → Open in Word
+
+### The "All Files" Mystery
+**When saving in Notepad, you saw a dropdown that said "Text Documents"**
+- **"Text Documents"** → Only saves as .txt files
+- **"All Files"** → Lets you save with ANY extension (like .html)
+- **That's why we picked "All Files"** → So we could save as clock.html
+
+### Common File Types You Know
+- **Photos:** .jpg, .png, .gif
+- **Music:** .mp3, .wav
+- **Videos:** .mp4, .mov
+- **Documents:** .docx, .pdf
+- **Web pages:** .html
+
 ### Try This
-Think of a time you'd want to make a copy of something you're working on instead of just saving it.
-
----
-
-
-### What is HTML?
-**Description:** Introduction to web development
-
-#### Content:
-## 🌐 What is HTML?
-
-### HTML
-**HyperText Markup Language** - The structure/skeleton of every webpage. It tells the browser what goes where.
-
-### HTML is Everywhere
-- 🌐 Every website you've ever seen
-- 📱 Your phone apps use similar code
-- 📺 Social media, games, school websites
-- 😊 Not as hard as it looks!
-
-### Think About It
-Right now you're looking at HTML! This webpage, TikTok, YouTube, Google - all built with HTML. You're about to join millions of people who know how to create for the web.
-
-### What HTML Does
-- 📖 Creates headings and paragraphs
-- 🔗 Makes links clickable
-- 🖼️ Displays images
-- 📋 Organizes information in lists
-
----
-
-### CSS: Making Things Look Good
-**Description:** Styling and colors
-
-#### Content:
-## 🎨 CSS: Making Things Look Good
-
-### CSS
-**Cascading Style Sheets** - Controls how websites look (colors, fonts, layout). Like decorating your room!
-
-### Hex Code
-A way to specify exact colors using numbers/letters. Example: #FF0000 = red
-
-### Why CSS Matters
-- 🎨 Makes websites beautiful instead of boring
-- 🌈 Controls colors, fonts, and layout
-- 📱 Makes sites work on phones and computers
-- ✨ Brings your creative vision to life
-
-### Practice Time
-Change one color in your code using the color picker. Watch how CSS instantly transforms your clock!
-
-### Color Psychology
-- 🔴 Red: Energy, excitement
-- 🔵 Blue: Calm, trustworthy
-- 🟢 Green: Growth, harmony
-- 🟡 Yellow: Happy, optimistic
-
----
-
-### Personalizing Your Code
-**Description:** Making the project your own
-
-#### Content:
-## ✨ Personalizing Your Code
-
-### Why We Customize
-- 🏠 Makes it yours
-- 🎯 Increases engagement
-- 🧠 Teaches design thinking
-- ⚡ Shows cause and effect
-
-### Your Goal
-Bookmark your finished clock so you can use it every day. This isn't just a school project - it's a tool you'll actually use!
-
-### Design Thinking Questions
-- ❓ What colors make you feel focused?
-- ❓ How do you want others to see your work?
-- ❓ What would make this more useful to you?
-- ❓ How does color affect your mood?
-
-### The Psychology of Ownership
-When you put your name on something and make it your own, you care more about it. That's why we're not just copying code - we're creating something personal that reflects who you are.
+Look at your desktop or any folder. Find 3 different files and notice their extensions. What do you think each one does?
 
 ---
 
