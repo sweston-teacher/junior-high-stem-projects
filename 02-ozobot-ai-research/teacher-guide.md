@@ -150,14 +150,42 @@ Your research document must include information about:
    - Ask SchoolAI and include the answers
 
 ### Step-by-Step Process
-1. **Open SchoolAI** - Log in using your school credentials
-2. **Start with Category 1** - Ask about "What is an Ozobot?"
-3. **Copy key information** - Don't copy everything, just the important parts
-4. **Ask follow-up questions** - If something is unclear, ask for more details
-5. **Move to next category** - Work through all 6 categories
-6. **Create your document** - Open Notepad and organize your research
-7. **Save as text file** - Save to desktop as "YourName_Ozobot_Research.txt"
-8. **Submit to Canvas** - Copy and paste your research into Canvas assignment
+**Today you will do steps 1-4. Tomorrow you'll do steps 5-8.**
+
+**STEP 1: Open SchoolAI**
+- Go to [SchoolAI website]
+- Sign in with your school username and password
+
+**STEP 2: Start researching**
+- Ask SchoolAI: "What is an Ozobot robot? Explain it simply for a 6th grader."
+- Read the answer
+- Copy the 2-3 most important sentences (not the whole answer!)
+
+**STEP 3: Keep asking questions**
+- Ask: "How do Ozobots work and move around?"
+- Ask: "What are Ozobot color codes and how do they work?"
+- Ask: "What are 3 cool things Ozobots can do?"
+- Ask: "How are Ozobots used in schools to help students learn?"
+
+**STEP 4: Ask YOUR own questions**
+- Think of 2 things YOU want to know about Ozobots
+- Ask SchoolAI those questions
+- Copy the answers
+
+**STEP 5: Open Notepad** (Tomorrow)
+- Click Windows button → type "notepad" → press Enter
+
+**STEP 6: Make your document** (Tomorrow)
+- Type your name and today's date at the top
+- Organize all your research using the format below
+
+**STEP 7: Save your file** (Tomorrow)
+- File → Save As → Desktop → "YourName_Ozobot_Research.txt"
+
+**STEP 8: Submit to Canvas** (Tomorrow)
+- Copy everything from your text file
+- Paste into Canvas assignment
+- Click Submit
 
 ### Research Document Format
 ```
