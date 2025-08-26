@@ -135,10 +135,6 @@ body {
 
 /* Force larger text for projector visibility */
 #current-slide * {
-    font-size: inherit !important;
-}
-
-#current-slide * {
     font-size: 2.0em !important;
 }
 
