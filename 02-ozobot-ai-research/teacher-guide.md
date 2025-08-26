@@ -149,43 +149,46 @@ Your research document must include information about:
    - 2-3 things YOU want to know about Ozobots
    - Ask SchoolAI and include the answers
 
-### Step-by-Step Process
-**Today you will do steps 1-4. Tomorrow you'll do steps 5-8.**
+### Today's Process - Follow These Steps in Order
 
-**STEP 1: Open SchoolAI**
-- Go to [SchoolAI website]
-- Sign in with your school username and password
-
-**STEP 2: Start researching**
-- Ask SchoolAI: "What is an Ozobot robot? Explain it simply for a 6th grader."
-- Read the answer
-- Copy the 2-3 most important sentences (not the whole answer!)
-
-**STEP 3: Keep asking questions**
-- Ask: "How do Ozobots work and move around?"
-- Ask: "What are Ozobot color codes and how do they work?"
-- Ask: "What are 3 cool things Ozobots can do?"
-- Ask: "How are Ozobots used in schools to help students learn?"
-
-**STEP 4: Ask YOUR own questions**
-- Think of 2 things YOU want to know about Ozobots
-- Ask SchoolAI those questions
-- Copy the answers
-
-**STEP 5: Open Notepad** (Tomorrow)
+**STEP 1: Set up your document**
 - Click Windows button → type "notepad" → press Enter
+- File → Save As → Desktop → name it "ozobot" → Click Save
 
-**STEP 6: Make your document** (Tomorrow)
-- Type your name and today's date at the top
-- Organize all your research using the format below
+**STEP 2: Research Question 1**
+- In Notepad, type: "What is an Ozobot robot?"
+- Copy that question
+- Go to SchoolAI and paste the question
+- Copy SchoolAI's answer and paste it in Notepad
+- **Now write:** "In my own words, this means..."
 
-**STEP 7: Save your file** (Tomorrow)
-- File → Save As → Desktop → "YourName_Ozobot_Research.txt"
+**STEP 3: Research Question 2**
+- In Notepad, type: "How do Ozobots work and move around?"
+- Copy that question
+- Go to SchoolAI and paste the question
+- Copy SchoolAI's answer and paste it in Notepad
+- **Now write:** "In my own words, this means..."
 
-**STEP 8: Submit to Canvas** (Tomorrow)
-- Copy everything from your text file
-- Paste into Canvas assignment
-- Click Submit
+**STEP 4: Research Question 3**
+- In Notepad, type: "What are Ozobot color codes?"
+- Copy that question
+- Go to SchoolAI and paste the question
+- Copy SchoolAI's answer and paste it in Notepad
+- **Now write:** "In my own words, this means..."
+
+**STEP 5: Research Question 4**
+- In Notepad, type: "What are 3 cool things Ozobots can do?"
+- Copy that question
+- Go to SchoolAI and paste the question
+- Copy SchoolAI's answer and paste it in Notepad
+- **Now write:** "In my own words, this means..."
+
+**STEP 6: Your own question**
+- Think of something YOU want to know about Ozobots
+- Type your question in Notepad
+- Copy and paste it to SchoolAI
+- Copy the answer back to Notepad
+- **Now write:** "In my own words, this means..."
 
 ### Research Document Format
 ```
