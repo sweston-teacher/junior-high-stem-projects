@@ -33,12 +33,6 @@ class SimplePresentation {
             document.getElementById('sidebar').setAttribute('data-mode', 'backup');
             this.sessions = [
             {
-                id: 'first-time-setup',
-                title: 'First Time Setup',
-                description: 'Password check and Canvas tour',
-                content: this.getFirstTimeSetupContent()
-            },
-            {
                 id: 'daily-routine',
                 title: 'Daily Routine',
                 description: 'What to do every day',
@@ -47,12 +41,18 @@ class SimplePresentation {
             {
                 id: 'project-overview',
                 title: 'Project Overview',
-                description: 'What we\'re building this week',
+                description: 'What we\'re learning this week',
                 content: this.getProjectOverviewContent()
             },
             {
+                id: 'intro-ai-research',
+                title: 'Introduction to AI Research',
+                description: 'Why and how to use AI for learning',
+                content: this.getIntroAIResearchContent()
+            },
+            {
                 id: 'assignment',
-                title: 'Assignment Instructions',
+                title: 'Research Assignment Instructions',
                 description: 'Step-by-step what to do',
                 content: this.getAssignmentContent()
             },
@@ -301,9 +301,11 @@ class SimplePresentation {
             <div class="call-to-action">
                 <h4>Do This First Every Day</h4>
                 <ol>
-                    <li>Log into Canvas</li>
-                    <li>Check for any announcements</li>
-                    <li>Work on and complete discussion starter</li>
+                    <li>Sign into your computer</li>
+                    <li>Sign into Chrome</li>
+                    <li>Go to Canvas</li>
+                    <li>Log into School AI (connected via Canvas module)</li>
+                    <li>Find the daily starter in Modules</li>
                 </ol>
             </div>
         `;
@@ -311,81 +313,103 @@ class SimplePresentation {
 
     getProjectOverviewContent() {
         return `
-            <h2>🕐 Project Overview: Personal Desktop Clock</h2>
+            <h2>🤖 Project Overview: Ozobot AI Research</h2>
             
-            <h3>What You're Building This Week</h3>
-            <p>You will create your own personalized desktop clock that shows:</p>
+            <h3>What You're Learning This Week</h3>
+            <p>You will become an AI research expert while exploring the fascinating world of robotics:</p>
             <ul>
-                <li>✅ Current time and date</li>
-                <li>✅ What class period you're in</li>
-                <li>✅ How much time is left in class</li>
-                <li>✅ Your name and custom colors</li>
+                <li>🔍 How to use AI as a powerful learning tool</li>
+                <li>🤖 What Ozobots are and how they work</li>
+                <li>📝 How to organize and document research</li>
+                <li>💾 Creating professional text files</li>
+                <li>🎯 Asking great questions to get better answers</li>
             </ul>
 
             <div class="call-to-action">
                 <h4>The Big Idea</h4>
-                <p>By Friday, you will have built something you'll actually use every day. No more asking "What time is it?" - you'll have your own personal clock!</p>
+                <p>By Friday, you'll know more about Ozobots than most adults! You'll have built real research skills using AI that you'll use in every class for the rest of your education. Plus, you'll be ready for hands-on Ozobot programming next week!</p>
             </div>
 
             <h3>Skills You'll Learn</h3>
             <ul>
-                <li>💾 File management (save, save as, file types)</li>
-                <li>📋 Copy and paste basics</li>
-                <li>🔍 Finding things with Ctrl+F</li>
-                <li>🌐 Basic HTML, CSS, and JavaScript</li>
-                <li>🎨 Customization and design thinking</li>
+                <li>🤖 AI literacy: Using AI responsibly for learning</li>
+                <li>🔍 Research skills: Finding and organizing information</li>
+                <li>💾 File management: Creating and saving text documents</li>
+                <li>📋 Information literacy: Identifying key facts vs. fluff</li>
+                <li>❓ Question formulation: How to ask AI better questions</li>
             </ul>
 
             <div class="definition-box">
                 <h4>Real-World Connection</h4>
-                <p>Every website you've ever visited uses HTML, CSS, and JavaScript. By the end of this week, you'll understand the building blocks of the entire internet!</p>
+                <p>AI research is becoming as essential as Google searching was 10 years ago. Every job, every class, every career now involves working with AI tools. You're learning the fundamental skill of the 21st century!</p>
             </div>
         `;
     }
 
     getAssignmentContent() {
         return `
-            <h2>📋 Assignment Instructions</h2>
+            <h2>📋 Research Assignment: Ozobot Investigation</h2>
             
             <div class="call-to-action">
                 <h4>Your Mission</h4>
-                <p>Create your personal desktop clock that shows the current time, class periods, and time remaining - with your name and custom colors!</p>
+                <p>Create a complete research document about Ozobots using SchoolAI. You'll become the class expert on these amazing little robots!</p>
             </div>
 
-            <h3>Step-by-Step Instructions</h3>
+            <h3>Research Categories (Cover All 6)</h3>
+            <p>Your research document must include information about:</p>
             <ol>
-                <li>📝 Open Notepad</li>
-                <li>📋 Copy the HTML code from Canvas</li>
-                <li>📄 Paste it into Notepad</li>
-                <li>💾 Save as "clock.html" on your desktop (choose "All Files")</li>
-                <li>🌐 Double-click clock.html to open in your browser - you'll see a working clock!</li>
-                <li>📝 Go back to Notepad to edit the code</li>
-                <li>🔍 Use Ctrl+F to find "CHALLENGE 1" in the code</li>
-                <li>✏️ Make the change described in the challenge</li>
-                <li>💾 Save the file in Notepad (Ctrl+S)</li>
-                <li>🔄 Go back to your browser and refresh (F5) - you'll see your change!</li>
-                <li>🔁 Repeat steps 7-10 for all 9 challenges</li>
-                <li>🎨 Use the color picker on your clock to test colors, then copy the hex codes into your challenges</li>
-                <li>🔖 When finished, bookmark your clock</li>
+                <li><strong>What is an Ozobot?</strong> - Basic definition and description</li>
+                <li><strong>How do Ozobots work?</strong> - Basic technology explanation</li>
+                <li><strong>Ozobot Programming</strong> - How you tell an Ozobot what to do</li>
+                <li><strong>Cool Things Ozobots Can Do</strong> - At least 3 specific examples</li>
+                <li><strong>Ozobots in Education</strong> - How they're used in schools</li>
+                <li><strong>Your Questions</strong> - 2-3 things YOU want to know about Ozobots</li>
             </ol>
 
-            <h3>The 9 Challenges</h3>
-            <ul>
-                <li>🏷️ Change browser tab title to include your name</li>
-                <li>🎨 Customize background color</li>
-                <li>🎨 Customize time box color</li>
-                <li>🎨 Customize status box color</li>
-                <li>🎨 Customize controls box color</li>
-                <li>🎨 Customize progress box color</li>
-                <li>🎨 Customize progress bar color</li>
-                <li>📝 Change page title to include your name</li>
-                <li>🙈 Hide color picker when done</li>
-            </ul>
+            <h3>Today's Process - Follow These Steps in Order</h3>
+            <ol>
+                <li>📝 Open Notepad (Windows button → type "notepad" → Enter)</li>
+                <li>💾 Save as "ozobot" on Desktop</li>
+                <li>🤖 Go to SchoolAI and ask: "What is an Ozobot robot?"</li>
+                <li>📋 Copy SchoolAI's answer and paste in Notepad</li>
+                <li>✍️ Write "In my own words, this means..."</li>
+                <li>🔁 Repeat for all 6 categories</li>
+                <li>📤 Submit to Canvas when complete</li>
+            </ol>
 
             <div class="definition-box">
                 <h4>Success Looks Like</h4>
-                <p>A working clock with your name in the title, your chosen colors, and a bookmark that opens your personal clock instantly!</p>
+                <p>A complete research document with all 6 categories, organized information, and evidence of genuine curiosity about Ozobots!</p>
             </div>
+        `;
+    }
+
+    getIntroAIResearchContent() {
+        return `
+            <h2>🧠 Introduction to AI Research</h2>
+            
+            <h3>What is AI Research?</h3>
+            <p>AI research means using artificial intelligence tools to learn about topics faster and deeper than traditional methods. Instead of spending hours searching through websites, you can ask AI direct questions and get organized answers.</p>
+
+            <h3>Why Learn AI Research Skills?</h3>
+            <ul>
+                <li>⚡ <strong>Faster learning:</strong> Get answers to complex questions instantly</li>
+                <li>🎯 <strong>Personalized help:</strong> Ask follow-up questions until you understand</li>
+                <li>🔍 <strong>Deeper exploration:</strong> Go beyond surface-level information</li>
+                <li>🌟 <strong>Future-ready:</strong> Essential skill for all careers and education</li>
+            </ul>
+
+            <div class="definition-box">
+                <h4>Golden Rules of AI Research</h4>
+                <p>1. AI is a starting point, not the final answer<br>
+                2. Always ask follow-up questions<br>
+                3. Use AI to learn, not to avoid thinking<br>
+                4. Be specific in your questions</p>
+            </div>
+
+            <h3>AI vs. Traditional Research</h3>
+            <p><strong>Traditional Research (Google):</strong> Search keywords, click multiple websites, read long articles</p>
+            <p><strong>AI Research (SchoolAI):</strong> Ask specific questions, get organized answers, ask follow-ups immediately</p>
         `;
     }
 
