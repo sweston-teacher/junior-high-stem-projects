@@ -193,6 +193,15 @@ class SimplePresentation {
         document.getElementById('prev-btn').addEventListener('click', () => this.previousSession());
         document.getElementById('next-btn').addEventListener('click', () => this.nextSession());
 
+        // Font size control
+        const fontSelect = document.getElementById('font-size');
+        if (fontSelect) {
+            fontSelect.addEventListener('change', (e) => {
+                document.body.style.fontSize = `${e.target.value}px`;
+                console.log(`Font size changed to ${e.target.value}px`);
+            });
+        }
+
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') {
