@@ -138,16 +138,18 @@ body {
     font-size: inherit !important;
 }
 
+#current-slide * {
+    font-size: 2.0em !important;
+}
+
 #current-slide h1 {
     color: #FF6B6B;
-    font-size: 4.5em !important;
     margin-bottom: 20px;
     text-align: center;
 }
 
 #current-slide h2 {
     color: #FF6B6B;
-    font-size: 3.2em !important;
     margin-bottom: 25px;
     border-bottom: 3px solid #FFD54F;
     padding-bottom: 10px;
@@ -155,13 +157,11 @@ body {
 
 #current-slide h3 {
     color: #4ECDC4;
-    font-size: 2.4em !important;
     margin: 25px 0 15px 0;
 }
 
 #current-slide p {
     margin-bottom: 15px;
-    font-size: 2.2em !important;
     color: #333;
 }
 
@@ -169,14 +169,8 @@ body {
     margin: 15px 0 15px 30px;
 }
 
-#current-slide ul li {
+#current-slide li {
     margin-bottom: 8px;
-    font-size: 1.8em !important;
-}
-
-#current-slide ol li {
-    margin-bottom: 8px;
-    font-size: 1.8em !important;
 }
 
 /* Definition Boxes */
