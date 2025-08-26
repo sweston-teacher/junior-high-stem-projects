@@ -11,6 +11,8 @@ body {
     background: #f0f8ff;
     height: 100vh;
     overflow: hidden;
+    font-size: 20px; /* Base size for projection */
+    line-height: 1.5;
 }
 
 #app {
@@ -134,16 +136,16 @@ body {
     line-height: 1.6;
 }
 
-/* Force larger text for projector visibility */
-#current-slide * {
-    font-size: 2.0em !important;
+/* Projector-friendly font hierarchy scaling from 18px base */
+#current-slide {
+    font-size: 1.2em; /* 21.6px - slightly larger than base for content area */
 }
 
 #current-slide h1 {
     color: #FF6B6B;
     margin-bottom: 20px;
     text-align: center;
-    font-size: 2.0em !important;
+    font-size: 2.5em; /* ~54px */
 }
 
 #current-slide h2 {
@@ -151,38 +153,41 @@ body {
     margin-bottom: 25px;
     border-bottom: 3px solid #FFD54F;
     padding-bottom: 10px;
-    font-size: 2.0em !important;
+    font-size: 2em; /* ~43px */
 }
 
 #current-slide h3 {
     color: #4ECDC4;
     margin: 25px 0 15px 0;
-    font-size: 2.0em !important;
+    font-size: 1.5em; /* ~32px */
 }
 
 #current-slide h4 {
-    font-size: 2.0em !important;
+    font-size: 1.3em; /* ~28px */
 }
 
 #current-slide h5 {
-    font-size: 2.0em !important;
+    font-size: 1.1em; /* ~24px */
 }
 
 #current-slide h6 {
-    font-size: 2.0em !important;
+    font-size: 1em; /* ~22px */
 }
 
 #current-slide p {
     margin-bottom: 15px;
     color: #333;
+    font-size: 1em; /* ~22px - inherits from #current-slide */
 }
 
 #current-slide ul, #current-slide ol {
     margin: 15px 0 15px 30px;
+    font-size: 1em; /* ~22px */
 }
 
 #current-slide li {
     margin-bottom: 8px;
+    font-size: 1em; /* ~22px */
 }
 
 /* Definition Boxes */
