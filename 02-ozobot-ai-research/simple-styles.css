@@ -135,14 +135,14 @@ body {
 
 #current-slide h1 {
     color: #FF6B6B;
-    font-size: 3.5em;
+    font-size: 4.5em;
     margin-bottom: 20px;
     text-align: center;
 }
 
 #current-slide h2 {
     color: #FF6B6B;
-    font-size: 2.4em;
+    font-size: 3.2em;
     margin-bottom: 25px;
     border-bottom: 3px solid #FFD54F;
     padding-bottom: 10px;
@@ -150,13 +150,13 @@ body {
 
 #current-slide h3 {
     color: #4ECDC4;
-    font-size: 1.8em;
+    font-size: 2.4em;
     margin: 25px 0 15px 0;
 }
 
 #current-slide p {
     margin-bottom: 15px;
-    font-size: 1.5em;
+    font-size: 1.9em;
     color: #333;
 }
 
@@ -166,7 +166,7 @@ body {
 
 #current-slide li {
     margin-bottom: 8px;
-    font-size: 1.4em;
+    font-size: 1.8em;
 }
 
 /* Definition Boxes */
@@ -181,7 +181,7 @@ body {
 
 .definition-box h4 {
     color: #FF6B6B;
-    font-size: 2.2em;
+    font-size: 2.8em;
     margin-bottom: 10px;
 }
 
@@ -197,7 +197,7 @@ body {
 
 .call-to-action h4 {
     color: #4ECDC4;
-    font-size: 2.2em;
+    font-size: 2.8em;
     margin-bottom: 10px;
 }
 
