@@ -12,7 +12,8 @@
 1. Sign into your computer
 2. Sign into Chrome
 3. Go to Canvas
-4. Find the daily starter in Modules
+4. Log into School AI (connected via Canvas module)
+5. Find the daily starter in Modules
 
 ---
 
