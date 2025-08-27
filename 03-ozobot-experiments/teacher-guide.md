@@ -96,13 +96,11 @@ Draw a straight line. Put turn-around codes at both ends. Robot bounces back and
 
 ## Cool Move Codes
 
-These make robots do fun tricks:
+**GREEN-RED-GREEN-RED** = SPIN (spins around twice)
 
-- **Spin codes** - robot spins in circles
-- **Zigzag codes** - robot sways side to side
-- **Tornado codes** - robot spins multiple times
+**RED-GREEN-RED-GREEN** = TORNADO (spins around 4 times, getting faster)
 
-*We can look up the exact color combinations if you want to try these.*
+**BLUE-BLACK-GREEN-RED** = ZIGZAG (sways left-right-left-right while moving)
 
 ---
 
