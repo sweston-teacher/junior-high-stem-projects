@@ -1,0 +1,332 @@
+/* Simple Presentation Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: inherit;
+}
+
+body {
+    font-family: 'Comic Sans MS', 'Trebuchet MS', cursive, sans-serif;
+    background: #f0f8ff;
+    height: 100vh;
+    overflow: hidden;
+    font-size: 24px; /* Base size for projection */
+    line-height: 1.5;
+}
+
+#app {
+    display: flex;
+    height: 100vh;
+    position: relative;
+}
+
+/* Font Size Control */
+#font-control {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: 2px solid #FFD54F;
+}
+
+#font-control label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-right: 8px;
+}
+
+#font-control select {
+    font-size: 14px;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+}
+
+/* Sidebar */
+#sidebar {
+    width: 320px;
+    background: #FFF8E1;
+    border-right: 3px solid #FFD54F;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+}
+
+#sidebar h2 {
+    color: #FF6B6B;
+    margin-bottom: 10px;
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+#sidebar h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+/* Session List */
+.session-item {
+    background: white;
+    margin-bottom: 12px;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.session-item:hover {
+    background: #f0f8ff;
+    border-color: #4ECDC4;
+    transform: translateX(5px);
+}
+
+.session-item.selected {
+    background: #4ECDC4;
+    color: white;
+    border-color: #3bb3b3;
+    font-weight: bold;
+}
+
+.session-item .session-title {
+    font-size: 1em;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.session-item .session-description {
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
+.session-item.selected .session-description {
+    opacity: 1;
+}
+
+/* Navigation Help */
+#navigation-help {
+    margin-top: 30px;
+    padding: 15px;
+    background: #E3F2FD;
+    border-radius: 8px;
+    border-left: 4px solid #2196F3;
+}
+
+#navigation-help p {
+    font-size: 0.85em;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+/* Main Content */
+#main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: white;
+}
+
+#slide-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 40px;
+    background: white;
+}
+
+#current-slide {
+    max-width: 900px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+/* Projector-friendly font hierarchy scaling from base */
+#current-slide {
+    font-size: 1.2em; /* slightly larger than base for content area */
+}
+
+#current-slide h1 {
+    color: #FF6B6B;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 2.5em;
+}
+
+#current-slide h2 {
+    color: #FF6B6B;
+    margin-bottom: 25px;
+    border-bottom: 3px solid #FFD54F;
+    padding-bottom: 10px;
+    font-size: 2em;
+}
+
+#current-slide h3 {
+    color: #4ECDC4;
+    margin: 25px 0 15px 0;
+    font-size: 1.5em;
+}
+
+#current-slide h4 {
+    font-size: 1.3em;
+}
+
+#current-slide p {
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 1em;
+}
+
+#current-slide ul, #current-slide ol {
+    margin: 15px 0 15px 30px;
+    font-size: 1em;
+}
+
+#current-slide li {
+    margin-bottom: 8px;
+    font-size: 1em;
+}
+
+/* Color Code Display */
+.color-code {
+    display: inline-flex;
+    align-items: center;
+    background: white;
+    padding: 8px 15px;
+    border-radius: 15px;
+    margin: 5px;
+    border: 2px solid #ddd;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+.color-square {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    margin-right: 5px;
+    border: 1px solid #333;
+}
+
+.color-black { background-color: #000; }
+.color-red { background-color: #EC2027; }
+.color-green { background-color: #49B749; }
+.color-blue { background-color: #1183C6; }
+
+/* Definition Boxes */
+.definition-box {
+    background: #FFF8E1;
+    padding: 20px;
+    border-left: 5px solid #FFD54F;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.definition-box h4 {
+    color: #FF6B6B;
+    margin-bottom: 10px;
+}
+
+/* Call to Action Boxes */
+.call-to-action {
+    background: #E8F5E8;
+    padding: 20px;
+    border-left: 5px solid #4ECDC4;
+    margin: 20px 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.call-to-action h4 {
+    color: #4ECDC4;
+    margin-bottom: 10px;
+}
+
+/* Slide Navigation */
+#slide-navigation {
+    background: #f8f9fa;
+    padding: 15px 40px;
+    border-top: 2px solid #e0e0e0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#slide-navigation button {
+    background: #4ECDC4;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+#slide-navigation button:hover:not(:disabled) {
+    background: #3bb3b3;
+    transform: translateY(-2px);
+}
+
+#slide-navigation button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+#slide-counter {
+    font-weight: 600;
+    color: #333;
+    padding: 10px 20px;
+    background: white;
+    border-radius: 20px;
+    border: 2px solid #e0e0e0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #app {
+        flex-direction: column;
+    }
+    
+    #sidebar {
+        width: 100%;
+        height: 200px;
+        border-right: none;
+        border-bottom: 2px solid #FFD54F;
+    }
+    
+    #slide-container {
+        padding: 20px;
+    }
+    
+    #slide-navigation {
+        padding: 10px 20px;
+    }
+}
+
+/* Animation */
+.slide-enter {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
