@@ -221,6 +221,12 @@ body {
 .color-green { background-color: #49B749; }
 .color-blue { background-color: #1183C6; }
 
+/* Text color classes for color words */
+.text-red { color: #EC2027; font-weight: bold; }
+.text-green { color: #49B749; font-weight: bold; }
+.text-blue { color: #1183C6; font-weight: bold; }
+.text-black { color: #000; font-weight: bold; }
+
 /* Definition Boxes */
 .definition-box {
     background: #FFF8E1;

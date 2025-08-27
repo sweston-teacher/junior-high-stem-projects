@@ -63,13 +63,13 @@ Draw colored squares ON your black line. The robot reads them like commands.
 
 ## Easy Speed Codes to Try
 
-**RED-GREEN-RED** = Goes really fast (TURBO)
+**<span class="text-red">RED</span>-<span class="text-green">GREEN</span>-<span class="text-red">RED</span>** = Goes really fast (TURBO)
 
-**BLUE-BLACK-BLUE** = Goes fast
+**<span class="text-blue">BLUE</span>-<span class="text-black">BLACK</span>-<span class="text-blue">BLUE</span>** = Goes fast
 
-**RED-BLACK-RED** = Goes slow
+**<span class="text-red">RED</span>-<span class="text-black">BLACK</span>-<span class="text-red">RED</span>** = Goes slow
 
-**GREEN-BLACK-GREEN** = Normal speed
+**<span class="text-green">GREEN</span>-<span class="text-black">BLACK</span>-<span class="text-green">GREEN</span>** = Normal speed
 
 ## Rules for Color Codes
 
@@ -86,9 +86,9 @@ Draw colored squares ON your black line. The robot reads them like commands.
 
 ## Turn Around Code
 
-**BLUE-RED-BLUE** = Robot stops, turns around, goes back
+**<span class="text-blue">BLUE</span>-<span class="text-red">RED</span>-<span class="text-blue">BLUE</span>** = Robot stops, turns around, goes back
 
-**BLUE-RED** = Same thing but at the end of a line
+**<span class="text-blue">BLUE</span>-<span class="text-red">RED</span>** = Same thing but at the end of a line
 
 ## Try This: Ping Pong Effect
 
@@ -96,11 +96,11 @@ Draw a straight line. Put turn-around codes at both ends. Robot bounces back and
 
 ## Cool Move Codes
 
-**GREEN-RED-GREEN-RED** = SPIN (spins around twice)
+**<span class="text-green">GREEN</span>-<span class="text-red">RED</span>-<span class="text-green">GREEN</span>-<span class="text-red">RED</span>** = SPIN (spins around twice)
 
-**RED-GREEN-RED-GREEN** = TORNADO (spins around 4 times, getting faster)
+**<span class="text-red">RED</span>-<span class="text-green">GREEN</span>-<span class="text-red">RED</span>-<span class="text-green">GREEN</span>** = TORNADO (spins around 4 times, getting faster)
 
-**BLUE-BLACK-GREEN-RED** = ZIGZAG (sways left-right-left-right while moving)
+**<span class="text-blue">BLUE</span>-<span class="text-black">BLACK</span>-<span class="text-green">GREEN</span>-<span class="text-red">RED</span>** = ZIGZAG (sways left-right-left-right while moving)
 
 ---
 
