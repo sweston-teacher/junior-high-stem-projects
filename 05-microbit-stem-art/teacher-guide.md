@@ -256,18 +256,25 @@
 #### Content:
 **Your Mission:** Create a program that shows different LED patterns
 
-**Requirements:**
-- Use the "show icon" block to display at least 3 different icons
-- Use the "pause" block between each icon
-- Make your pattern repeat forever
-- Try temperature or light sensor blocks for extra challenge
+**Step-by-Step Instructions:**
+1. **Start Your Pattern:** Drag "show icon" from Basic menu into "forever" loop
+2. **Pick Your First Icon:** Click the icon box and choose (heart, happy face, sad face, etc.)
+3. **Add Wait Time:** Drag "pause (ms)" block from Basic menu, put it under your icon
+4. **Set the Time:** Click the number and change it to 1000 (that's 1 second)
+5. **Add More Icons:** Repeat steps 1-4 to add 2 more different icons
+6. **Test It:** Click the play button in the simulator - you should see your icons change every second
 
-**Getting Started:**
-1. Drag "show icon" from Basic menu
-2. Choose your first icon
-3. Add a pause block (try 1000 milliseconds)
-4. Repeat for more icons
-5. Test in simulator, then download to your micro:bit!
+**Challenge Level 1 - Temperature Display:**
+7. **Get Temperature Block:** Go to Input menu, drag "temperature (°C)" block
+8. **Show the Number:** Drag "show number" from Basic menu into "forever" loop
+9. **Connect Them:** Drag the temperature block into the circle of "show number"
+10. **What Happens:** Now your micro:bit shows the room temperature in numbers! Try breathing on it to make the number go up.
+
+**Challenge Level 2 - Light Sensor:**
+11. **Get Light Block:** Go to Input menu, drag "light level" block  
+12. **Show the Light:** Drag another "show number" block into "forever"
+13. **Connect Them:** Put the light level block into "show number"
+14. **What Happens:** Cover the micro:bit with your hand - the number should get smaller! Shine a flashlight on it - the number gets bigger!
 
 ---
 
@@ -276,15 +283,26 @@
 #### Content:
 **Your Mission:** Create a program that responds to your movements
 
-**Requirements:**
-- Make different images appear when you shake or tilt the micro:bit
-- Use the "on shake" block from the Input menu
-- Add sound effects to your interactions
-- Make it fun and surprising!
+**Step-by-Step Instructions:**
+1. **Make It Shake-Responsive:** Go to Input menu, drag "on shake" block to workspace (not inside anything)
+2. **Add Shake Animation:** Drag "show icon" from Basic menu, put it INSIDE the "on shake" block
+3. **Pick a Shake Icon:** Click the icon and choose something fun (lightning bolt, explosion, etc.)
+4. **Test Shake:** In the simulator, click "SHAKE" button - your icon should appear!
 
-**Getting Started:**
-1. Find "on shake" in the Input menu
-2. Drag "show icon" inside the "on shake" block
-3. Try "on button A pressed" for more interaction
-4. Add sound blocks from the Music menu
-5. Test by shaking the simulator, then download to test for real!
+**Add Button Controls:**
+5. **Button A Response:** Go to Input menu, drag "on button A pressed" to workspace
+6. **Button A Action:** Put "show icon" inside the button A block, choose a different icon
+7. **Button B Too:** Drag "on button B pressed", add a third different icon
+8. **Test Buttons:** Click the A and B buttons in simulator - different icons should appear!
+
+**Add Sound Effects:**
+9. **Sound for Shake:** Go to Music menu, drag "play tone" block
+10. **Put Sound in Shake:** Place the "play tone" INSIDE your "on shake" block, under the icon
+11. **Pick Your Tone:** Click "Middle C" and choose a different note, or leave it
+12. **Sound for Buttons:** Add "play tone" blocks to your button blocks too - pick different notes!
+
+**What You Created:** 
+- Shake the micro:bit = shows your shake icon + plays a sound
+- Press button A = shows button A icon + plays different sound  
+- Press button B = shows button B icon + plays third sound
+- You made an interactive musical instrument!
