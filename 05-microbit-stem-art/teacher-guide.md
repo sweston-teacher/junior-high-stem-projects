@@ -1,20 +1,19 @@
-# micro:bit Programming - Combined Teacher Guide
-
 ### Teacher Setup Notes
+**Description:** Materials and timing for micro:bit classes
+#### Content:
 **Materials:** Worksheets (Version A for STEM, Version B for Creative Coding), micro:bits, USB cables
 **Timing:** 5 min worksheet, 15 min modeling, 20+ min independent work
 **Website:** makecode.microbit.org
 
----
-
-### Choose Your Class Focus
-
-**STEM Class:** Use Worksheet A (technical focus) + LED Pattern Activity
-**Creative Coding Class:** Use Worksheet B (background/context) + Interactive Activity
+**Choose Your Class Focus:**
+- **STEM Class:** Use Worksheet A (technical focus) + LED Pattern Activity
+- **Creative Coding Class:** Use Worksheet B (background/context) + Interactive Activity
 
 ---
 
 ### Worksheet A - Step 0 (STEM Version - Blank)
+**Description:** Starting worksheet for STEM class
+#### Content:
 **Name:** _________________ **Date:** _________
 
 ## What is a micro:bit?
@@ -32,6 +31,8 @@
 ---
 
 ### Worksheet A - Step 1 (STEM)
+**Description:** First answer filled in for STEM worksheet
+#### Content:
 **Name:** _________________ **Date:** _________
 
 ## What is a micro:bit?
@@ -49,6 +50,8 @@
 ---
 
 ### Worksheet A - Step 2 (STEM)
+**Description:** Second answer filled in for STEM worksheet
+#### Content:
 **Name:** _________________ **Date:** _________
 
 ## What is a micro:bit?
@@ -66,6 +69,8 @@
 ---
 
 ### Worksheet A - Step 3 (STEM)
+**Description:** Third answer filled in for STEM worksheet
+#### Content:
 **Name:** _________________ **Date:** _________
 
 ## What is a micro:bit?
@@ -83,6 +88,8 @@
 ---
 
 ### Worksheet A - Step 4 (STEM)
+**Description:** Fourth answer filled in for STEM worksheet
+#### Content:
 **Name:** _________________ **Date:** _________
 
 ## What is a micro:bit?
@@ -100,6 +107,8 @@
 ---
 
 ### Worksheet A - Complete (STEM)
+**Description:** All answers filled in for STEM worksheet
+#### Content:
 **Name:** _________________ **Date:** _________
 
 ## What is a micro:bit?
@@ -117,6 +126,8 @@
 ---
 
 ### Worksheet B - Step 0 (Creative Coding Version - Blank)
+**Description:** Starting worksheet for Creative Coding class
+#### Content:
 **Name:** _________________ **Date:** _________
 
 ## Learning About micro:bit
@@ -134,6 +145,8 @@
 ---
 
 ### Worksheet B - Step 1 (Creative Coding)
+**Description:** First answer filled in for Creative Coding worksheet
+#### Content:
 **Name:** _________________ **Date:** _________
 
 ## Learning About micro:bit
@@ -151,6 +164,8 @@
 ---
 
 ### Worksheet B - Step 2 (Creative Coding)
+**Description:** Second answer filled in for Creative Coding worksheet
+#### Content:
 **Name:** _________________ **Date:** _________
 
 ## Learning About micro:bit
@@ -168,6 +183,8 @@
 ---
 
 ### Worksheet B - Step 3 (Creative Coding)
+**Description:** Third answer filled in for Creative Coding worksheet
+#### Content:
 **Name:** _________________ **Date:** _________
 
 ## Learning About micro:bit
@@ -185,6 +202,8 @@
 ---
 
 ### Worksheet B - Step 4 (Creative Coding)
+**Description:** Fourth answer filled in for Creative Coding worksheet
+#### Content:
 **Name:** _________________ **Date:** _________
 
 ## Learning About micro:bit
@@ -202,6 +221,8 @@
 ---
 
 ### Worksheet B - Complete (Creative Coding)
+**Description:** All answers filled in for Creative Coding worksheet
+#### Content:
 **Name:** _________________ **Date:** _________
 
 ## Learning About micro:bit
@@ -219,6 +240,8 @@
 ---
 
 ### Connecting Your micro:bit
+**Description:** Instructions for setting up micro:bit hardware and software
+#### Content:
 **Now switch to your browser: makecode.microbit.org**
 
 1. Plug micro:bit into computer with USB cable
@@ -229,6 +252,8 @@
 ---
 
 ### STEM Activity - LED Pattern Creator
+**Description:** Independent work activity for STEM classes
+#### Content:
 **Your Mission:** Create a program that shows different LED patterns
 
 **Requirements:**
@@ -247,6 +272,8 @@
 ---
 
 ### Creative Coding Activity - Interactive Display
+**Description:** Independent work activity for Creative Coding classes
+#### Content:
 **Your Mission:** Create a program that responds to your movements
 
 **Requirements:**
