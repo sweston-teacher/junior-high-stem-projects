@@ -1,110 +1,263 @@
-# Micro:bit STEM Art Project
+# micro:bit Programming - Combined Teacher Guide
 
-### Introduction to Micro:bit Programming
-**Description:** Students learn block-based programming to create digital art and personalized displays
-#### Content:
-Welcome to micro:bit programming! Today we're creating digital art with code.
-
-**What is a micro:bit?**
-- Mini computer with LED display
-- Programmable with drag-and-drop blocks
-- Connects via USB cable to your computer
+### Teacher Setup Notes
+**Materials:** Worksheets (Version A for STEM, Version B for Creative Coding), micro:bits, USB cables
+**Timing:** 5 min worksheet, 15 min modeling, 20+ min independent work
+**Website:** makecode.microbit.org
 
 ---
 
-### Getting Started - First Program
-**Description:** Connect and program your first micro:bit project
-#### Content:
-**Your Mission:** Make your micro:bit display something!
+### Choose Your Class Focus
 
-**Steps:**
-1. Go to **makecode.microbit.org**
-2. Click "New Project"
-3. Drag "show icon" block into "on start"
-4. Choose your favorite icon
-5. Click "Download" 
-6. Plug in micro:bit with USB cable
-7. Drag the .hex file to the micro:bit drive
-8. Watch it work!
-
-**Success Check:** Your micro:bit shows the icon you chose
+**STEM Class:** Use Worksheet A (technical focus) + LED Pattern Activity
+**Creative Coding Class:** Use Worksheet B (background/context) + Interactive Activity
 
 ---
 
-### Challenge 1: Scrolling Name Display
-**Description:** Program your name to scroll across the LED screen
-#### Content:
-**Your Mission:** Make your name scroll across the micro:bit screen!
+### Worksheet A - Step 0 (STEM Version - Blank)
+**Name:** _________________ **Date:** _________
 
-**Steps:**
-1. Find the "show string" block in "Basic"
-2. Drag it into "on start" (replace the icon block)
-3. Type YOUR NAME in the text box
-4. Download and test on your micro:bit
+## What is a micro:bit?
 
-**Bonus Points:**
-- Add your favorite emoji or symbol
-- Try different scrolling speeds
+1. A micro:bit is a small **__________________** that you can program to do different tasks.
 
-**Success Check:** Your name scrolls clearly across the display
+2. The micro:bit has **________** LED lights arranged in a grid that can display patterns and messages.
+
+3. You can program the micro:bit using **__________________**, which are visual programming pieces you drag and drop.
+
+4. The micro:bit can sense **____________________ and __________________** from the environment around it.
+
+5. When you finish programming, you **__________________** your code to the micro:bit to make it work.
 
 ---
 
-### Challenge 2: Create Pixel Art
-**Description:** Design custom images using the 5x5 LED grid
-#### Content:
-**Your Mission:** Create pixel art on the LED grid!
+### Worksheet A - Step 1 (STEM)
+**Name:** _________________ **Date:** _________
 
-**Steps:**
-1. Find "show leds" block in "Basic"
-2. Click the squares to create your design
-3. Ideas: smiley face, heart, star, animal
-4. Download and test your art
+## What is a micro:bit?
 
-**Art Tips:**
-- Start simple - use bold shapes
-- Remember: only 5x5 pixels to work with
-- Dark squares = LED off, Light squares = LED on
+1. A micro:bit is a small **<span style="color: red;">microcontroller</span>** that you can program to do different tasks.
 
-**Success Check:** Your custom art displays clearly
+2. The micro:bit has **________** LED lights arranged in a grid that can display patterns and messages.
+
+3. You can program the micro:bit using **__________________**, which are visual programming pieces you drag and drop.
+
+4. The micro:bit can sense **____________________ and __________________** from the environment around it.
+
+5. When you finish programming, you **__________________** your code to the micro:bit to make it work.
 
 ---
 
-### Challenge 3: Animated Art
-**Description:** Make your pixel art move and change
-#### Content:
-**Your Mission:** Bring your art to life with animation!
+### Worksheet A - Step 2 (STEM)
+**Name:** _________________ **Date:** _________
 
-**Animation Ideas:**
-- **Blinking eyes:** Alternate between eyes open/closed
-- **Beating heart:** Switch between small heart/big heart  
-- **Weather:** Show sun, then clouds, then rain
-- **Growing flower:** Show seed, sprout, then full flower
+## What is a micro:bit?
 
-**Programming Tip:**
-- Use "forever" loop to repeat
-- Use "pause" blocks between frames
-- Try 1000ms (1 second) pause first
+1. A micro:bit is a small **<span style="color: red;">microcontroller</span>** that you can program to do different tasks.
 
-**Success Check:** Your art smoothly animates in a loop
+2. The micro:bit has **<span style="color: red;">25</span>** LED lights arranged in a grid that can display patterns and messages.
+
+3. You can program the micro:bit using **__________________**, which are visual programming pieces you drag and drop.
+
+4. The micro:bit can sense **____________________ and __________________** from the environment around it.
+
+5. When you finish programming, you **__________________** your code to the micro:bit to make it work.
 
 ---
 
-### Showcase Time
-**Description:** Share your creative programming projects
-#### Content:
-**Time to Show Off!**
+### Worksheet A - Step 3 (STEM)
+**Name:** _________________ **Date:** _________
 
-**Presentation Format:**
-- Hold up your micro:bit
-- Tell us what you created
-- Explain one programming challenge you solved
-- Show your animation in action
+## What is a micro:bit?
 
-**What We're Looking For:**
-- Creative use of the LED grid
-- Smooth animations
-- Clear programming logic
-- Personal creativity!
+1. A micro:bit is a small **<span style="color: red;">microcontroller</span>** that you can program to do different tasks.
 
-Great job learning micro:bit programming today!
+2. The micro:bit has **<span style="color: red;">25</span>** LED lights arranged in a grid that can display patterns and messages.
+
+3. You can program the micro:bit using **<span style="color: red;">blocks</span>**, which are visual programming pieces you drag and drop.
+
+4. The micro:bit can sense **____________________ and __________________** from the environment around it.
+
+5. When you finish programming, you **__________________** your code to the micro:bit to make it work.
+
+---
+
+### Worksheet A - Step 4 (STEM)
+**Name:** _________________ **Date:** _________
+
+## What is a micro:bit?
+
+1. A micro:bit is a small **<span style="color: red;">microcontroller</span>** that you can program to do different tasks.
+
+2. The micro:bit has **<span style="color: red;">25</span>** LED lights arranged in a grid that can display patterns and messages.
+
+3. You can program the micro:bit using **<span style="color: red;">blocks</span>**, which are visual programming pieces you drag and drop.
+
+4. The micro:bit can sense **<span style="color: red;">temperature</span>** and **<span style="color: red;">light</span>** from the environment around it.
+
+5. When you finish programming, you **__________________** your code to the micro:bit to make it work.
+
+---
+
+### Worksheet A - Complete (STEM)
+**Name:** _________________ **Date:** _________
+
+## What is a micro:bit?
+
+1. A micro:bit is a small **<span style="color: red;">microcontroller</span>** that you can program to do different tasks.
+
+2. The micro:bit has **<span style="color: red;">25</span>** LED lights arranged in a grid that can display patterns and messages.
+
+3. You can program the micro:bit using **<span style="color: red;">blocks</span>**, which are visual programming pieces you drag and drop.
+
+4. The micro:bit can sense **<span style="color: red;">temperature</span>** and **<span style="color: red;">light</span>** from the environment around it.
+
+5. When you finish programming, you **<span style="color: red;">download</span>** your code to the micro:bit to make it work.
+
+---
+
+### Worksheet B - Step 0 (Creative Coding Version - Blank)
+**Name:** _________________ **Date:** _________
+
+## Learning About micro:bit
+
+1. The micro:bit was created by the **____________________ Broadcasting Corporation** to help students learn coding.
+
+2. You can make the micro:bit respond to **____________________ and ____________________** using its built-in sensors.
+
+3. The micro:bit runs on **____________________ power, so you can take your projects anywhere.
+
+4. Programming happens in a **____________________ browser** - no special software needed!
+
+5. Besides displaying images, the micro:bit can also play **____________________ and ____________________**.
+
+---
+
+### Worksheet B - Step 1 (Creative Coding)
+**Name:** _________________ **Date:** _________
+
+## Learning About micro:bit
+
+1. The micro:bit was created by the **<span style="color: blue;">British</span>** Broadcasting Corporation to help students learn coding.
+
+2. You can make the micro:bit respond to **____________________ and ____________________** using its built-in sensors.
+
+3. The micro:bit runs on **____________________ power, so you can take your projects anywhere.
+
+4. Programming happens in a **____________________ browser** - no special software needed!
+
+5. Besides displaying images, the micro:bit can also play **____________________ and ____________________**.
+
+---
+
+### Worksheet B - Step 2 (Creative Coding)
+**Name:** _________________ **Date:** _________
+
+## Learning About micro:bit
+
+1. The micro:bit was created by the **<span style="color: blue;">British</span>** Broadcasting Corporation to help students learn coding.
+
+2. You can make the micro:bit respond to **<span style="color: blue;">shaking</span>** and **<span style="color: blue;">tilting</span>** using its built-in sensors.
+
+3. The micro:bit runs on **____________________ power, so you can take your projects anywhere.
+
+4. Programming happens in a **____________________ browser** - no special software needed!
+
+5. Besides displaying images, the micro:bit can also play **____________________ and ____________________**.
+
+---
+
+### Worksheet B - Step 3 (Creative Coding)
+**Name:** _________________ **Date:** _________
+
+## Learning About micro:bit
+
+1. The micro:bit was created by the **<span style="color: blue;">British</span>** Broadcasting Corporation to help students learn coding.
+
+2. You can make the micro:bit respond to **<span style="color: blue;">shaking</span>** and **<span style="color: blue;">tilting</span>** using its built-in sensors.
+
+3. The micro:bit runs on **<span style="color: blue;">battery</span>** power, so you can take your projects anywhere.
+
+4. Programming happens in a **____________________ browser** - no special software needed!
+
+5. Besides displaying images, the micro:bit can also play **____________________ and ____________________**.
+
+---
+
+### Worksheet B - Step 4 (Creative Coding)
+**Name:** _________________ **Date:** _________
+
+## Learning About micro:bit
+
+1. The micro:bit was created by the **<span style="color: blue;">British</span>** Broadcasting Corporation to help students learn coding.
+
+2. You can make the micro:bit respond to **<span style="color: blue;">shaking</span>** and **<span style="color: blue;">tilting</span>** using its built-in sensors.
+
+3. The micro:bit runs on **<span style="color: blue;">battery</span>** power, so you can take your projects anywhere.
+
+4. Programming happens in a **<span style="color: blue;">web</span>** browser - no special software needed!
+
+5. Besides displaying images, the micro:bit can also play **____________________ and ____________________**.
+
+---
+
+### Worksheet B - Complete (Creative Coding)
+**Name:** _________________ **Date:** _________
+
+## Learning About micro:bit
+
+1. The micro:bit was created by the **<span style="color: blue;">British</span>** Broadcasting Corporation to help students learn coding.
+
+2. You can make the micro:bit respond to **<span style="color: blue;">shaking</span>** and **<span style="color: blue;">tilting</span>** using its built-in sensors.
+
+3. The micro:bit runs on **<span style="color: blue;">battery</span>** power, so you can take your projects anywhere.
+
+4. Programming happens in a **<span style="color: blue;">web</span>** browser - no special software needed!
+
+5. Besides displaying images, the micro:bit can also play **<span style="color: blue;">sounds</span>** and **<span style="color: blue;">music</span>**.
+
+---
+
+### Connecting Your micro:bit
+**Now switch to your browser: makecode.microbit.org**
+
+1. Plug micro:bit into computer with USB cable
+2. Go to makecode.microbit.org  
+3. Click "New Project"
+4. We'll build our first program together!
+
+---
+
+### STEM Activity - LED Pattern Creator
+**Your Mission:** Create a program that shows different LED patterns
+
+**Requirements:**
+- Use the "show icon" block to display at least 3 different icons
+- Use the "pause" block between each icon
+- Make your pattern repeat forever
+- Try temperature or light sensor blocks for extra challenge
+
+**Getting Started:**
+1. Drag "show icon" from Basic menu
+2. Choose your first icon
+3. Add a pause block (try 1000 milliseconds)
+4. Repeat for more icons
+5. Test in simulator, then download to your micro:bit!
+
+---
+
+### Creative Coding Activity - Interactive Display
+**Your Mission:** Create a program that responds to your movements
+
+**Requirements:**
+- Make different images appear when you shake or tilt the micro:bit
+- Use the "on shake" block from the Input menu
+- Add sound effects to your interactions
+- Make it fun and surprising!
+
+**Getting Started:**
+1. Find "on shake" in the Input menu
+2. Drag "show icon" inside the "on shake" block
+3. Try "on button A pressed" for more interaction
+4. Add sound blocks from the Music menu
+5. Test by shaking the simulator, then download to test for real!
