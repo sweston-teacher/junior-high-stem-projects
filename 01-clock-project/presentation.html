@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM Clock Project - Teaching Tool</title>
+    <link rel="stylesheet" href="simple-styles.css">
+</head>
+<body>
+    <div id="app">
+        <div id="sidebar">
+            <h2>📚 Clock Project</h2>
+            <h3>Session Material:</h3>
+            <div id="session-list">
+                <!-- Session items will be loaded here -->
+            </div>
+            <div id="navigation-help">
+                <p>🔍 Click items to view</p>
+                <p>⬅️ ➡️ Arrow keys to navigate</p>
+            </div>
+        </div>
+        
+        <div id="main-content">
+            <div id="slide-container">
+                <div id="current-slide">
+                    <h1>🕐 Clock Project</h1>
+                    <h2>Personal Desktop Clock</h2>
+                    <p><em>Select session material from the sidebar to begin teaching</em></p>
+                </div>
+            </div>
+            
+            <div id="slide-navigation">
+                <button id="prev-btn" disabled>⬅️ Previous</button>
+                <span id="slide-counter">Welcome</span>
+                <button id="next-btn" disabled>Next ➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="simple-presentation.js"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+Yes, I can help with this. Based on analyzing the repository structure, the files involved, and how the presentation.html page renders (including the dynamic loading of teacher-guide.md via JavaScript to generate the HTML content), the issue with font size control likely stems from a few factors:
+
+- The generated HTML from the markdown (e.g., headings, paragraphs, lists) inherits browser default styles unless overridden.
+- The simple-styles.css file may not have explicit font-size rules for the key elements or the container where the content is injected (likely a div like #main-content or similar, based on typical setups).
+- JavaScript isn't "messing it up" directly—it's just converting markdown to standard HTML tags (e.g., # to <h1>, ## to <h2>, plain text to <p>), but without targeted CSS, browsers apply defaults (e.g., h1 at ~32px, p at ~16px, varying by browser/user settings).
+
+To give you control over the font sizes after the JavaScript loads and renders the content, we'll focus on updating simple-styles.css to override defaults for the generated elements. This is the simplest and most reliable way, as CSS cascades and can target everything post-render.
+
+### Step 1: Inspect the Rendered Page for Confirmation
+Before editing, open the live page (https://sweston-teacher.github.io/junior-high-stem-projects/02-ozobot-ai-research/presentation.html) in your browser, right-click on text elements (e.g., headings, paragraphs), and select "Inspect" (in Chrome/Firefox dev tools). This shows:
+- The generated HTML structure (e.g., <div id="main-content"> containing <h1>, <p>, etc.).
+- Computed styles, including current font sizes and any overrides.
+- If there's a container like #main-content or .session-content wrapping the generated HTML, note it for targeting.
+
+This confirms no inline styles from JS are interfering (from the repo's JS logic, it seems to just insert clean HTML).
+
+### Step 2: Update simple-styles.css for Font Control
+Add or modify rules in simple-styles.css to set base and specific font sizes. Start with a base on body or the content container, then scale elements relatively (using em/rem for flexibility). Here's a sample update—adjust the values as needed (e.g., make them larger for presentations):
+
+```css
+/* Base styles for overall control */
+body {
+  font-family: Arial, sans-serif; /* Optional: consistent font family */
+  font-size: 16px; /* Base size; everything scales from this. Increase to 18px or 20px for larger text. */
+  line-height: 1.5; /* Improves readability */
+}
+
+/* Target the main content area where JS injects the HTML (adjust ID/class based on inspection) */
+#main-content { /* Or whatever the container ID/class is, e.g., #content or .presentation-body */
+  font-size: 1.1em; /* Slightly larger than base; adjust to control all content at once */
+}
+
+/* Specific overrides for generated markdown elements */
+h1 {
+  font-size: 2.5em; /* Large headings */
+  margin-bottom: 0.5em;
+}
+
+h2 {
+  font-size: 2em;
+}
+
+h3 {
+  font-size: 1.5em;
+}
+
+p {
+  font-size: 1em; /* Paragraphs inherit base but can be tweaked */
+  margin-bottom: 1em;
+}
+
+ul, ol {
+  font-size: 1em;
+  margin-left: 1.5em;
+  margin-bottom: 1em;
+}
+
+li {
+  margin-bottom: 0.5em;
+}
+
+/* Sidebar styles (for session list) */
+#sidebar {
+  font-size: 0.9em; /* Slightly smaller for navigation */
+}
+
+/* If you want responsive sizes (e.g., larger on big screens) */
+@media screen and (min-width: 1024px) {
+  body {
+    font-size: 18px;
+  }
+}
+```
+
+- **Why this works**: After JS runs and inserts the HTML, these CSS rules apply immediately. Relative units (em) let you control everything by changing the base (e.g., body font-size).
+- **Testing**: Save the CSS, refresh the live page, and check. If fonts don't change, ensure presentation.html links to simple-styles.css correctly (e.g., <link rel="stylesheet" href="simple-styles.css"> in <head>).
+- **If defaults still override**: Add !important temporarily (e.g., font-size: 16px !important;) to test, but remove it once you identify conflicts.
+
+### Step 3: If You Need Dynamic Control (e.g., Adjustable Font Size)
+If "control" means users/teachers can change font size on-the-fly (without editing CSS), add a simple UI element via JS/HTML updates:
+
+1. In presentation.html, add a control in <body> (e.g., above the sidebar):
+   ```html
+   <div id="font-control">
+     <label for="font-size">Font Size:</label>
+     <select id="font-size">
+       <option value="14">Small (14px)</option>
+       <option value="16" selected>Medium (16px)</option>
+       <option value="18">Large (18px)</option>
+       <option value="20">Extra Large (20px)</option>
+     </select>
+   </div>
+   ```
+
+2. In simple-presentation.js, add an event listener after init() (e.g., in setupEventListeners()):
+   ```javascript
+   const fontSelect = document.getElementById('font-size');
+   if (fontSelect) {
+     fontSelect.addEventListener('change', (e) => {
+       document.body.style.fontSize = `${e.target.value}px`; // Applies to everything
+       // Or target specific: document.getElementById('main-content').style.fontSize = `${e.target.value}px`;
+     });
+   }
+   ```
+
+3. Style the control in CSS:
+   ```css
+   #font-control {
+     position: fixed;
+     top: 10px;
+     right: 10px;
+     z-index: 100;
+   }
+   ```
+
+This adds runtime control without reloading.
+
+### Additional Tips
+- If the JS markdown parser adds custom classes (e.g., <div class="markdown-body">), target those in CSS for precision.
+- Commit and push changes to GitHub; GitHub Pages updates in ~1-2 minutes.
+- If fonts still seem off, check for browser extensions/user styles interfering, or test in incognito mode.
+- For more advanced rendering, consider integrating a library like marked.js (via <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>) in HTML, then use marked(rawContent) in JS for better MD-to-HTML conversion.
+
+If this doesn't resolve it or you share specific font sizes you want (e.g., "make paragraphs 20px"), provide more details from dev tools, and I can refine the suggestions!
