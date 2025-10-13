@@ -25,7 +25,7 @@ Keep using this version for daily teaching—it’s untouched by the new work be
 Purpose-built so you can hand the tool to APPEL mentors or other teachers. Everything stores locally in each teacher’s browser under `seatdrop_pro_v1`.
 
 ### What’s Ready
-- **Layout Editor** – Toggle `Room Editor` + `Unlock Layout` to drag seats anywhere, choose seat count, and set snap spacing.
+- **Layout Controls** – Drag seats anytime; use `Lock Layout` to freeze positions, choose seat count, and set snap spacing.
 - **Seat Assignments** – Flip `Assign Seats` on to reveal drop-downs, or click a seat’s name to add/edit a student in place.
 - **Classwork Colors** – `G/Y/R` buttons now persist per seat and highlight the tile when Classwork mode is active.
 - **Assignment Mode** – Grade buttons persist per student, update the class average, and feed the printable list view.

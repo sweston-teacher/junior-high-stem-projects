@@ -106,7 +106,6 @@
   <div class="row">
     <strong>Seat-Drop PRO</strong>
     <div class="toggle-group">
-      <button id="roomEditorBtn">Room Editor OFF</button>
       <button id="assignToggleBtn">Assign Seats OFF</button>
     </div>
     <div class="mode-group">
@@ -209,8 +208,7 @@ const STORAGE_KEY = 'seatdrop_pro_v1';
 const state = {
   mode: 'classwork',          // 'classwork' | 'assignment'
   assigning: false,           // seat dropdowns visible
-  editorOn: false,            // drag seats
-  layoutLocked: true,         // lock movement
+  layoutLocked: false,        // lock movement
   view: 'seat',               // 'seat' | 'list'
   data: {                     // persisted
     layout: { gridSize: 10, seats: [] }, // seats: [{id,label,x,y,w,h}]
@@ -337,7 +335,7 @@ function gradeTint(grade){
 function renderSeats(){
   ensureSeatSpacing();
   clearRoom();
-  room.classList.toggle('editor-on', state.editorOn && !state.layoutLocked);
+  room.classList.toggle('editor-on', !state.layoutLocked);
   room.classList.toggle('assigning', state.assigning);
   const { seats } = state.data.layout;
   const { seatMap, assignment } = state.data;
@@ -523,8 +521,8 @@ function renderSeats(){
 
     wrap.appendChild(drop);
 
-    // Dragging (only if editorOn and not locked)
-    if(state.editorOn && !state.layoutLocked){
+    // Dragging (only when layout is unlocked)
+    if(!state.layoutLocked){
       enableDrag(wrap, seat);
     }
 
@@ -544,12 +542,9 @@ function updateModeButtons(){
   });
 }
 
-function updateToggleButtons(){
-  const editorBtn = el('#roomEditorBtn');
+function updateAssignButton(){
   const assignBtn = el('#assignToggleBtn');
-  editorBtn.classList.toggle('active', state.editorOn);
   assignBtn.classList.toggle('active', state.assigning);
-  editorBtn.textContent = state.editorOn ? 'Room Editor ON' : 'Room Editor OFF';
   assignBtn.textContent = state.assigning ? 'Assign Seats ON' : 'Assign Seats OFF';
 }
 
@@ -902,26 +897,19 @@ document.querySelectorAll('.modeBtn').forEach(b=>{
 
 el('#assignToggleBtn').addEventListener('click', ()=>{
   state.assigning = !state.assigning;
-  updateToggleButtons();
+  updateAssignButton();
   renderSeats();
 });
 
-el('#roomEditorBtn').addEventListener('click', ()=>{
-  state.editorOn = !state.editorOn;
-  state.layoutLocked = state.editorOn ? false : true;
-  updateToggleButtons();
-  updateEditorStatus();
-  renderSeats();
-});
 el('#lockLayoutBtn').addEventListener('click', ()=>{
   state.layoutLocked = !state.layoutLocked;
-  updateEditorStatus();
+  updateLayoutStatus();
   renderSeats();
 });
-function updateEditorStatus(){
-  const status = state.editorOn
-    ? (state.layoutLocked ? 'Editor ON – click Unlock Layout to drag seats.' : 'Editor ON – drag seats to reposition seats.')
-    : 'Editor OFF – turn Room Editor ON to reposition seats.';
+function updateLayoutStatus(){
+  const status = state.layoutLocked
+    ? 'Layout Locked – click Unlock Layout to drag seats.'
+    : 'Layout Unlocked – drag seats to reposition seats.';
   el('#editorStatus').textContent = status;
   const lockBtn = el('#lockLayoutBtn');
   lockBtn.textContent = state.layoutLocked ? 'Unlock Layout' : 'Lock Layout';
@@ -1017,8 +1005,8 @@ function syncUiFromState(){
   renderList();
   updateAverage();
   updateModeButtons();
-  updateToggleButtons();
-  updateEditorStatus();
+  updateAssignButton();
+  updateLayoutStatus();
   updateViewButtons();
 }
 
