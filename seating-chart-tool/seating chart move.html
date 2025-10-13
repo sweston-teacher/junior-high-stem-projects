@@ -551,6 +551,7 @@ function updateAssignButton(){
 function updateViewButtons(){
   const listVisible = state.view === 'list';
   el('#listView').style.display = listVisible ? 'block' : 'none';
+  el('#canvasWrap').style.display = listVisible ? 'none' : 'block';
   el('#listViewBtn').classList.toggle('active', listVisible);
   el('#seatViewBtn').classList.toggle('active', !listVisible);
 }
@@ -951,12 +952,13 @@ el('#listViewBtn').addEventListener('click', ()=>{
   state.view = 'list';
   renderList();
   updateViewButtons();
-  const listSection = el('#listView');
-  window.scrollTo({ top: listSection.offsetTop - 12, behavior: 'smooth' });
+  el('#canvasWrap').style.display = 'none';
+  el('#seatViewBtn').focus();
 });
 el('#seatViewBtn').addEventListener('click', ()=>{
   state.view = 'seat';
   updateViewButtons();
+  el('#canvasWrap').style.display = 'block';
 });
 
 /*** Copy List ***/
