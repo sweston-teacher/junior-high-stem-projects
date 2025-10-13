@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Seat-Drop PRO (Room Editor + Inline Seat Assignment)</title>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:Arial,Helvetica,sans-serif;background:#f5f5f5;margin:0;padding:20px;max-width:1400px;margin-inline:auto}
+
+  .panel{background:#fff;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1);padding:16px;margin-bottom:16px}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  label{font-size:14px;color:#374151}
+  input[type="text"],input[type="number"],select,button{border:1px solid #cbd5e1;border-radius:6px;padding:8px 10px;font-size:14px;background:#fff}
+  button{background:#0ea5e9;color:#fff;border:none;cursor:pointer}
+  button.secondary{background:#6366f1}
+  button.secondary.active{background:#0ea5e9}
+  button.gray{background:#6b7280}
+  button.red{background:#ef4444}
+  button.green{background:#10b981}
+  button:hover{filter:brightness(.96)}
+  .toggle-group button{background:#fff;color:#0ea5e9;border:2px solid #0ea5e9}
+  .toggle-group button.active{background:#0ea5e9;color:#fff}
+  .mode-group button{background:#fff;color:#2563eb;border:2px solid #2563eb}
+  .mode-group button.active{background:#2563eb;color:#fff}
+  .right{margin-left:auto}
+
+  /* Canvas / seats */
+  #canvasWrap{position:relative;background:#fff;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1);padding:16px;overflow:auto}
+  #roomCanvas{position:relative;min-height:540px;min-width:900px;background:
+      linear-gradient(#ffffff 0 0) padding-box,
+      repeating-linear-gradient(90deg, #eef2ff 0 1px, transparent 1px 10px),
+      repeating-linear-gradient(180deg, #eef2ff 0 1px, transparent 1px 10px);
+    border:1px dashed #c7d2fe;border-radius:10px}
+
+  .seat{
+    position:absolute;width:140px;min-width:140px;height:90px;border:2px solid #111827;border-radius:10px;background:#fff;
+    display:flex;flex-direction:column;justify-content:center;transition:box-shadow .12s ease;user-select:none
+  }
+  .seat.locked{cursor:default}
+  .seat.dragging{box-shadow:0 10px 20px rgba(0,0,0,.2)}
+  .seat .label{
+    position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:11px;color:#6b7280;background:#fff;padding:0 4px;line-height:1;border-radius:4px;border:1px solid #e5e7eb;cursor:text
+  }
+  .seat .content{display:flex;align-items:center;justify-content:space-between;padding:8px;height:100%;gap:6px}
+  .seat .name{font-size:12px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .seat .stack{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+  .stack .col, .stack .grade{display:flex;flex-direction:column;gap:4px}
+  .btnsm{
+    width:24px;height:18px;border:1px solid #111827;border-radius:6px;background:#fff;font-size:10px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0
+  }
+  .btnsm.green{background:#22c55e;color:#fff}
+  .btnsm.yellow{background:#f59e0b;color:#fff}
+  .btnsm.red{background:#ef4444;color:#fff}
+  .btnsm.g4{background:#22c55e;color:#fff}
+  .btnsm.g3{background:#fb923c;color:#fff}
+  .btnsm.g2{background:#f59e0b;color:#fff}
+  .btnsm.g1{background:#ef4444;color:#fff}
+  .btnsm.active{outline:2px solid #000}
+
+  /* seat tint for assignment mode */
+  .seat.tint-green{background:#d1fae5;border-color:#047857}
+  .seat.tint-orange{background:#ffe8d6;border-color:#c2410c}
+  .seat.tint-yellow{background:#fef9c3;border-color:#a16207}
+  .seat.tint-red{background:#fee2e2;border-color:#b91c1c}
+  .seat.unassigned{background:#eeeeee;border-color:#d1d5db}
+  .seat.class-green{background:#d1fae5;border-color:#047857}
+  .seat.class-yellow{background:#fef9c3;border-color:#a16207}
+  .seat.class-red{background:#fee2e2;border-color:#b91c1c}
+  .seat .name.clickable{cursor:pointer}
+  .seat .name.empty{color:#94a3b8;font-style:italic}
+
+  /* dropdown for Assign Seats */
+  .assignDrop{position:absolute;top:6px;right:6px;max-width:180px;display:none}
+  .assigning .assignDrop{display:block}
+
+  /* editor adornments */
+  .editor-on .seat{cursor:move}
+  .lock-note{font-size:12px;color:#6b7280}
+
+  /* list view */
+  #listView{display:none}
+  table{width:100%;border-collapse:collapse}
+  th,td{border:1px solid #e5e7eb;padding:8px 10px;font-size:14px;text-align:left}
+  th{background:#f3f4f6}
+  #listBody tr.unassigned td:last-child{color:#94a3b8;font-style:italic}
+
+  /* modals */
+  .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:9999}
+  .modal{width:min(800px,95vw);max-height:90vh;background:#fff;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden}
+  .modal header, .modal footer{padding:12px 16px;border-bottom:1px solid #e5e7eb}
+  .modal footer{border-top:1px solid #e5e7eb;border-bottom:none;display:flex;justify-content:flex-end;gap:10px}
+  .modal main{padding:14px;overflow:auto}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .muted{color:#6b7280}
+
+  @media (max-width:1100px){
+    .grid2{grid-template-columns:1fr}
+    #roomCanvas{min-width:760px}
+  }
+</style>
+</head>
+<body>
+
+<div class="panel">
+  <div class="row">
+    <strong>Seat-Drop PRO</strong>
+    <div class="toggle-group">
+      <button id="roomEditorBtn">Room Editor OFF</button>
+      <button id="assignToggleBtn">Assign Seats OFF</button>
+    </div>
+    <div class="mode-group">
+      <button class="modeBtn active" data-mode="classwork">Classwork (RGB)</button>
+      <button class="modeBtn" data-mode="assignment">Assignment (1–4)</button>
+    </div>
+    <button id="listViewBtn" class="secondary">List View</button>
+    <button id="seatViewBtn" class="secondary">Seat View</button>
+    <span class="right"></span>
+    <button id="backupBtn" class="gray">Backup JSON</button>
+    <input id="restoreInput" type="file" accept=".json" style="display:none">
+    <button id="restoreBtn" class="gray">Restore JSON</button>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <label>Assignment:</label>
+    <input id="assignmentName" type="text" placeholder="Enter assignment name" style="min-width:260px">
+    <button id="saveAssignment" class="green">Save</button>
+    <span id="classAverage" class="muted"></span>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="row">
+    <button id="addStudentBtn" class="green">Add Student</button>
+    <input id="csvInput" type="file" accept=".csv" style="display:none">
+    <button id="importCsvBtn">Import Roster (CSV)</button>
+    <span class="muted">Tip: You can use without CSV—just add students manually.</span>
+  </div>
+</div>
+
+<div id="canvasWrap" class="panel">
+  <div id="roomCanvas" tabindex="0" aria-label="Room layout canvas"></div>
+  <div class="row" style="margin-top:10px">
+    <div class="toggle-group">
+      <button id="lockLayoutBtn" class="gray">Lock Layout</button>
+    </div>
+    <label>Seat Count:</label>
+    <input id="seatCount" type="number" min="0" max="80" value="30" style="width:90px">
+    <label>Snap (px):</label>
+    <input id="gridSize" type="number" min="1" max="100" value="10" style="width:90px">
+    <span id="editorStatus" class="muted lock-note"></span>
+  </div>
+</div>
+
+<div id="listView" class="panel">
+  <div class="row" style="margin-bottom:10px">
+    <strong>List View</strong>
+    <span id="listBadge" class="muted"></span>
+    <span class="right"></span>
+    <button id="copyListBtn">Copy</button>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Last Name</th>
+        <th>First Name</th>
+        <th>Grade (1–4)</th>
+        <th>Section</th>
+        <th>Seat #</th>
+      </tr>
+    </thead>
+    <tbody id="listBody"></tbody>
+  </table>
+</div>
+
+<!-- Add/Edit Student Modal -->
+<div id="studentBackdrop" class="backdrop" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="studentTitle">
+    <header><strong id="studentTitle">Add Student</strong></header>
+    <main>
+      <div class="grid2">
+        <div>
+          <label>First Name</label>
+          <input id="stFirst" type="text">
+        </div>
+        <div>
+          <label>Last Name</label>
+          <input id="stLast" type="text">
+        </div>
+        <div>
+          <label>Section (optional)</label>
+          <input id="stSection" type="text">
+        </div>
+      </div>
+      <p class="muted" style="margin-top:8px">IDs optional; the app creates an internal ID so grades follow the student even if reseated.</p>
+    </main>
+    <footer>
+      <button id="cancelStudent" class="gray">Cancel</button>
+      <button id="removeStudent" class="red" style="display:none">Remove</button>
+      <button id="saveStudent" class="green">Save</button>
+    </footer>
+  </div>
+</div>
+
+<script>
+/*** Storage Key (isolated from v38) ***/
+const STORAGE_KEY = 'seatdrop_pro_v1';
+
+/*** App State ***/
+const state = {
+  mode: 'classwork',          // 'classwork' | 'assignment'
+  assigning: false,           // seat dropdowns visible
+  editorOn: false,            // drag seats
+  layoutLocked: true,         // lock movement
+  view: 'seat',               // 'seat' | 'list'
+  data: {                     // persisted
+    layout: { gridSize: 10, seats: [] }, // seats: [{id,label,x,y,w,h}]
+    roster: [],               // [{id,firstName,lastName,section}]
+    seatMap: {},              // seatId -> studentId
+    assignment: { name: 'Assignment', gradesByStudentId: {} },
+    classwork: { colorsBySeatId: {} } // seatId -> 'green' | 'yellow' | 'red'
+  }
+};
+
+/*** Util ***/
+const el = sel => document.querySelector(sel);
+const makeId = () => 's' + Math.random().toString(36).slice(2,9);
+const makeStudentId = () => 'u' + Math.random().toString(36).slice(2,9);
+const clamp = (v,min,max)=>Math.max(min,Math.min(max,v));
+const LAYOUT = {
+  seatWidth: 140,
+  seatHeight: 90,
+  gap: 36,
+  margin: 40,
+  minCols: 4
+};
+const CANVAS_MIN_WIDTH = LAYOUT.margin * 2 + (LAYOUT.seatWidth + LAYOUT.gap) * LAYOUT.minCols - LAYOUT.gap;
+const CANVAS_MIN_HEIGHT = LAYOUT.margin * 2 + (LAYOUT.seatHeight + LAYOUT.gap) * 3 - LAYOUT.gap;
+
+function preferredCols(count){
+  if(!count) return LAYOUT.minCols;
+  const approx = Math.ceil(Math.sqrt(count));
+  return Math.max(LAYOUT.minCols, approx);
+}
+
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data)); }
+function load(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(raw){
+    try{ state.data = JSON.parse(raw) || state.data; }
+    catch(e){ console.warn('Bad storage; using defaults'); }
+  }
+}
+
+function ensureInitialSeats(){
+  const seats = state.data.layout.seats;
+  if(seats.length) return;
+  // default 30 seats auto-laid in a nice grid
+  const count = parseInt(el('#seatCount').value,10) || 30;
+  autoMakeSeats(count);
+  save();
+}
+
+function autoArrangeSeats(){
+  const seats = state.data.layout.seats;
+  const cols = preferredCols(seats.length);
+  const { margin, seatWidth: w, seatHeight: h, gap } = LAYOUT;
+  let x = margin, y = margin;
+  seats.forEach((seat, idx)=>{
+    seat.x = x;
+    seat.y = y;
+    seat.w = w;
+    seat.h = h;
+    if(!seat.label) seat.label = String(idx + 1);
+    const next = idx + 1;
+    if(next % cols === 0){
+      x = margin;
+      y += h + gap;
+    } else {
+      x += w + gap;
+    }
+  });
+}
+
+function autoMakeSeats(n){
+  const seats = [];
+  for(let i=1;i<=n;i++){
+    seats.push({ id: makeId(), label: String(i), x: 0, y: 0, w: LAYOUT.seatWidth, h: LAYOUT.seatHeight });
+  }
+  state.data.layout.seats = seats;
+  autoArrangeSeats();
+}
+
+function normalizeSeatDimensions(){
+  const seats = state.data.layout.seats;
+  seats.forEach(seat=>{
+    if(!Number.isFinite(seat.w) || seat.w < LAYOUT.seatWidth){ seat.w = LAYOUT.seatWidth; }
+    if(!Number.isFinite(seat.h) || seat.h < LAYOUT.seatHeight){ seat.h = LAYOUT.seatHeight; }
+  });
+}
+
+function seatsNeedReflow(){
+  const seats = state.data.layout.seats;
+  for(let i=0;i<seats.length;i++){
+    for(let j=i+1;j<seats.length;j++){
+      if(rectsOverlap(seats[i], seats[j])){
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function ensureSeatSpacing(){
+  if(!state.data.layout.seats.length) return;
+  normalizeSeatDimensions();
+  if(seatsNeedReflow()){
+    autoArrangeSeats();
+    save();
+  }
+}
+
+/*** Rendering Seats ***/
+const room = el('#roomCanvas');
+
+function clearRoom(){ room.innerHTML = ''; }
+
+function gradeTint(grade){
+  switch(grade){
+    case '4': return 'tint-green';
+    case '3': return 'tint-orange';
+    case '2': return 'tint-yellow';
+    case '1': return 'tint-red';
+    default: return '';
+  }
+}
+
+function renderSeats(){
+  ensureSeatSpacing();
+  clearRoom();
+  room.classList.toggle('editor-on', state.editorOn && !state.layoutLocked);
+  room.classList.toggle('assigning', state.assigning);
+  const { seats } = state.data.layout;
+  const { seatMap, assignment } = state.data;
+  const classworkColors = state.data.classwork.colorsBySeatId || (state.data.classwork.colorsBySeatId = {});
+  const byId = {};
+  state.data.roster.forEach(s=> byId[s.id] = s);
+
+  let maxRight = 0;
+  let maxBottom = 0;
+
+  seats.forEach(seat=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'seat';
+    wrap.style.left = seat.x + 'px';
+    wrap.style.top  = seat.y + 'px';
+    wrap.style.width  = seat.w + 'px';
+    wrap.style.height = seat.h + 'px';
+    wrap.dataset.id = seat.id;
+
+    // Determine student + grade
+    const studentId = state.data.seatMap[seat.id];
+    const student = studentId ? byId[studentId] : null;
+    const grade = student ? (assignment.gradesByStudentId[student.id] || '') : '';
+    const classColor = classworkColors[seat.id] || '';
+
+    if(student){
+      if(state.mode === 'assignment'){
+        const tint = gradeTint(grade);
+        if(tint) wrap.classList.add(tint);
+      } else if(classColor){
+        wrap.classList.add(`class-${classColor}`);
+      }
+    } else {
+      wrap.classList.add('unassigned');
+    }
+
+    // label (editable on dblclick)
+    const label = document.createElement('div');
+    label.className = 'label';
+    label.textContent = seat.label || '';
+    label.title = 'Double-click to edit label';
+    label.addEventListener('dblclick', (e)=>{
+      if(state.layoutLocked){ return; }
+      const old = seat.label || '';
+      const input = document.createElement('input');
+      input.type = 'text'; input.value = old; input.style.width = '48px';
+      label.replaceWith(input);
+      input.focus(); input.select();
+      const commit = ()=>{
+        const v = (input.value || '').trim();
+        if(v){ seat.label = v; save(); renderSeats(); }
+        else { renderSeats(); }
+      };
+      input.addEventListener('blur', commit);
+      input.addEventListener('keydown', ev=>{
+        if(ev.key==='Enter') commit();
+        if(ev.key==='Escape') renderSeats();
+      });
+    });
+    wrap.appendChild(label);
+
+    // inner content
+    const content = document.createElement('div');
+    content.className = 'content';
+
+    const nameDiv = document.createElement('div');
+    nameDiv.className = 'name';
+    if(student){
+      nameDiv.textContent = `${student.firstName||''} ${student.lastName||''}`.trim();
+      nameDiv.classList.add('clickable');
+      nameDiv.title = 'Click to edit this student';
+      nameDiv.addEventListener('click', ()=> openStudentModal({ student, seatId: seat.id }));
+    } else {
+      nameDiv.textContent = 'Add Student';
+      nameDiv.classList.add('clickable','empty');
+      nameDiv.title = 'Click to add a student and assign this seat';
+      nameDiv.addEventListener('click', ()=> openStudentModal({ seatId: seat.id }));
+    }
+
+    const stack = document.createElement('div');
+    stack.className = 'stack';
+
+    if(state.mode === 'classwork'){
+      const col = document.createElement('div'); col.className = 'col';
+      ['green','yellow','red'].forEach(c=>{
+        const b = document.createElement('button');
+        b.className = 'btnsm ' + c;
+        if(classColor === c) b.classList.add('active');
+        b.textContent = c==='green'?'G':c==='yellow'?'Y':'R';
+        b.addEventListener('click', ()=>{
+          if(!student) return;
+          if(classworkColors[seat.id] === c){
+            delete classworkColors[seat.id];
+          } else {
+            classworkColors[seat.id] = c;
+          }
+          save();
+          renderSeats();
+        });
+        col.appendChild(b);
+      });
+      stack.appendChild(col);
+    } else {
+      const grades = document.createElement('div'); grades.className = 'grade';
+      [['4','g4'],['3','g3'],['2','g2'],['1','g1']].forEach(([val,clazz])=>{
+        const b = document.createElement('button');
+        b.className = 'btnsm ' + clazz + (grade===val?' active':'');
+        b.textContent = val;
+        b.addEventListener('click', ()=>{
+          if(!student) return;
+          const cur = state.data.assignment.gradesByStudentId;
+          if(cur[student.id] === val) delete cur[student.id];
+          else cur[student.id] = val;
+          save();
+          renderSeats();
+          renderList();
+          updateAverage();
+        });
+        grades.appendChild(b);
+      });
+      stack.appendChild(grades);
+    }
+
+    content.appendChild(nameDiv);
+    content.appendChild(stack);
+    wrap.appendChild(content);
+
+    // Assign dropdown (shown only when assigning ON)
+    const drop = document.createElement('select');
+    drop.className = 'assignDrop';
+    drop.title = 'Assign student to this seat';
+    const roster = state.data.roster.slice();
+
+    // Build option groups: Unassigned first
+    const assignedIds = new Set(Object.values(state.data.seatMap || {}));
+    const unassigned = roster.filter(s=> !assignedIds.has(s.id));
+    const assigned = roster.filter(s=> assignedIds.has(s.id));
+
+    const optEmpty = document.createElement('option'); optEmpty.value = ''; optEmpty.textContent = student ? '(clear seat)' : '(assign...)';
+    drop.appendChild(optEmpty);
+
+    // current student option (if any) at top
+    if(student){
+      const curOpt = document.createElement('option'); curOpt.value = student.id; curOpt.textContent = `${student.lastName||''}, ${student.firstName||''}`.trim();
+      drop.appendChild(curOpt);
+    }
+
+    if(unassigned.length){
+      const grp1 = document.createElement('optgroup'); grp1.label = 'Unassigned';
+      unassigned.sort(sortByLastFirst).forEach(s=>{
+        const o=document.createElement('option'); o.value=s.id; o.textContent = `${s.lastName||''}, ${s.firstName||''}`.trim();
+        grp1.appendChild(o);
+      });
+      drop.appendChild(grp1);
+    }
+    if(assigned.length){
+      const grp2 = document.createElement('optgroup'); grp2.label = 'Assigned';
+      assigned.sort(sortByLastFirst).forEach(s=>{
+        const o=document.createElement('option'); o.value=s.id; o.textContent = `${s.lastName||''}, ${s.firstName||''}`.trim();
+        grp2.appendChild(o);
+      });
+      drop.appendChild(grp2);
+    }
+
+    drop.value = student ? student.id : '';
+
+    drop.addEventListener('change', ()=>{
+      const val = drop.value;
+      const colors = classworkColors;
+      if(val === ''){
+        delete state.data.seatMap[seat.id];
+        delete colors[seat.id];
+        save(); renderSeats(); renderList(); return;
+      }
+      // Move student here (remove from any other seat)
+      for(const sid of Object.keys(state.data.seatMap)){
+        if(state.data.seatMap[sid] === val) delete state.data.seatMap[sid];
+      }
+      delete colors[seat.id];
+      state.data.seatMap[seat.id] = val;
+      save(); renderSeats(); renderList();
+    });
+
+    wrap.appendChild(drop);
+
+    // Dragging (only if editorOn and not locked)
+    if(state.editorOn && !state.layoutLocked){
+      enableDrag(wrap, seat);
+    }
+
+    room.appendChild(wrap);
+    maxRight = Math.max(maxRight, seat.x + seat.w + LAYOUT.margin);
+    maxBottom = Math.max(maxBottom, seat.y + seat.h + LAYOUT.margin);
+  });
+
+  room.classList.toggle('assigning', state.assigning);
+  room.style.minWidth = Math.max(CANVAS_MIN_WIDTH, maxRight) + 'px';
+  room.style.minHeight = Math.max(CANVAS_MIN_HEIGHT, maxBottom) + 'px';
+}
+
+function updateModeButtons(){
+  document.querySelectorAll('.modeBtn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.mode === state.mode);
+  });
+}
+
+function updateToggleButtons(){
+  const editorBtn = el('#roomEditorBtn');
+  const assignBtn = el('#assignToggleBtn');
+  editorBtn.classList.toggle('active', state.editorOn);
+  assignBtn.classList.toggle('active', state.assigning);
+  editorBtn.textContent = state.editorOn ? 'Room Editor ON' : 'Room Editor OFF';
+  assignBtn.textContent = state.assigning ? 'Assign Seats ON' : 'Assign Seats OFF';
+}
+
+function updateViewButtons(){
+  const listVisible = state.view === 'list';
+  el('#listView').style.display = listVisible ? 'block' : 'none';
+  el('#listViewBtn').classList.toggle('active', listVisible);
+  el('#seatViewBtn').classList.toggle('active', !listVisible);
+}
+
+function sortByLastFirst(a,b){
+  const la=(a.lastName||'').toLowerCase(), lb=(b.lastName||'').toLowerCase();
+  if(la<lb) return -1; if(la>lb) return 1;
+  const fa=(a.firstName||'').toLowerCase(), fb=(b.firstName||'').toLowerCase();
+  if(fa<fb) return -1; if(fa>fb) return 1;
+  return 0;
+}
+
+/*** Drag behavior with snap + collision protect ***/
+function enableDrag(elSeat, seat){
+  let startX=0,startY=0,origX=0,origY=0,dragging=false;
+
+  const onDown = (e)=>{
+    if(e.button!==0) return;
+    dragging = true;
+    elSeat.classList.add('dragging');
+    startX = (e.touches? e.touches[0].clientX : e.clientX);
+    startY = (e.touches? e.touches[0].clientY : e.clientY);
+    const r = elSeat.getBoundingClientRect();
+    const pr = room.getBoundingClientRect();
+    origX = seat.x;
+    origY = seat.y;
+    e.preventDefault();
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('touchmove', onMove, {passive:false});
+    window.addEventListener('mouseup', onUp);
+    window.addEventListener('touchend', onUp);
+  };
+
+  const onMove = (e)=>{
+    if(!dragging) return;
+    const cx = (e.touches? e.touches[0].clientX : e.clientX);
+    const cy = (e.touches? e.touches[0].clientY : e.clientY);
+    const dx = cx - startX;
+    const dy = cy - startY;
+    const grid = Number(el('#gridSize').value)||10;
+    const nx = Math.round((origX + dx)/grid)*grid;
+    const ny = Math.round((origY + dy)/grid)*grid;
+    seat.x = clamp(nx, 0, Math.max(0, room.clientWidth - seat.w));
+    seat.y = clamp(ny, 0, Math.max(0, room.clientHeight - seat.h));
+    elSeat.style.left = seat.x + 'px';
+    elSeat.style.top  = seat.y + 'px';
+    e.preventDefault();
+  };
+
+  const onUp = ()=>{
+    if(!dragging) return;
+    dragging = false;
+    elSeat.classList.remove('dragging');
+    // collision check — if overlapping another seat, revert
+    if(isCollidingAny(seat)){
+      seat.x = origX; seat.y = origY;
+      elSeat.style.left = seat.x + 'px';
+      elSeat.style.top  = seat.y + 'px';
+    }
+    save();
+    window.removeEventListener('mousemove', onMove);
+    window.removeEventListener('touchmove', onMove);
+    window.removeEventListener('mouseup', onUp);
+    window.removeEventListener('touchend', onUp);
+  };
+
+  elSeat.addEventListener('mousedown', onDown);
+  elSeat.addEventListener('touchstart', onDown, {passive:false});
+}
+
+function isCollidingAny(seat){
+  const { seats } = state.data.layout;
+  const r1 = {x:seat.x,y:seat.y,w:seat.w,h:seat.h};
+  for(const s of seats){
+    if(s.id === seat.id) continue;
+    const r2 = {x:s.x,y:s.y,w:s.w,h:s.h};
+    if(rectsOverlap(r1,r2)) return true;
+  }
+  return false;
+}
+function rectsOverlap(a,b){
+  return !(a.x+a.w <= b.x || b.x+b.w <= a.x || a.y+a.h <= b.y || b.y+b.h <= a.y);
+}
+
+/*** List View ***/
+function renderList(){
+  const tbody = el('#listBody');
+  tbody.innerHTML = '';
+  const { roster, seatMap, layout, assignment } = state.data;
+
+  const bySeatIdToLabel = {};
+  layout.seats.forEach(s => bySeatIdToLabel[s.id] = s.label || '');
+
+  const byId = {};
+  roster.forEach(s=> byId[s.id] = s);
+
+  // Only students with seats
+  const rows = [];
+  for(const seatId of Object.keys(seatMap)){
+    const stuId = seatMap[seatId];
+    const s = byId[stuId];
+    if(!s) continue;
+    rows.push({
+      seatId,
+      studentId: s.id,
+      lastName: s.lastName||'',
+      firstName: s.firstName||'',
+      section: s.section||'',
+      seatLabel: bySeatIdToLabel[seatId] || '',
+      grade: assignment.gradesByStudentId[s.id] || ''
+    });
+  }
+
+  const assignedStudentIds = new Set(rows.map(r => r.studentId));
+  roster.forEach(s=>{
+    if(assignedStudentIds.has(s.id)) return;
+    rows.push({
+      seatId: null,
+      studentId: s.id,
+      lastName: s.lastName||'',
+      firstName: s.firstName||'',
+      section: s.section||'',
+      seatLabel: 'Unassigned',
+      grade: assignment.gradesByStudentId[s.id] || ''
+    });
+  });
+
+  rows.sort((a,b)=>{
+    const la=a.lastName.toLowerCase(), lb=b.lastName.toLowerCase();
+    if(la<lb) return -1; if(la>lb) return 1;
+    const fa=a.firstName.toLowerCase(), fb=b.firstName.toLowerCase();
+    if(fa<fb) return -1; if(fa>fb) return 1;
+    return 0;
+  });
+
+  rows.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.dataset.studentId = r.studentId;
+    tr.dataset.seatId = r.seatId || '';
+    if(!r.seatId) tr.classList.add('unassigned');
+    tr.innerHTML = `
+      <td>${escapeHtml(r.lastName)}</td>
+      <td>${escapeHtml(r.firstName)}</td>
+      <td>${escapeHtml(r.grade)}</td>
+      <td>${escapeHtml(r.section)}</td>
+      <td>${escapeHtml(r.seatLabel)}</td>
+    `;
+    tr.addEventListener('click', ()=>{
+      const student = state.data.roster.find(st => st.id === r.studentId);
+      if(student){
+        openStudentModal({ student, seatId: r.seatId || null });
+      }
+    });
+    tbody.appendChild(tr);
+  });
+
+  el('#listBadge').textContent = `Assignment: ${state.data.assignment.name || 'Assignment'}`;
+}
+
+function copyList(){
+  const trs = Array.from(el('#listBody').querySelectorAll('tr'));
+  const lines = [];
+  // header
+  lines.push(['Last Name','First Name','Grade (1–4)','Section','Seat #'].map(csvCell).join(','));
+  // rows
+  trs.forEach(tr=>{
+    const tds = Array.from(tr.children).map(td => csvCell(td.textContent));
+    lines.push(tds.join(','));
+  });
+  navigator.clipboard.writeText(lines.join('\n')).catch(()=>{});
+}
+
+/*** CSV Import ***/
+function parseCSV(text){
+  const rows=[]; let cur='', inQ=false, row=[];
+  const push=()=>{ row.push(cur); cur=''; };
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(c==='"'){ if(inQ && text[i+1]==='"'){ cur+='"'; i++; } else { inQ=!inQ; } }
+    else if(c===',' && !inQ){ push(); }
+    else if((c==='\n'||c==='\r') && !inQ){ if(cur.length||row.length) push(); if(row.length) rows.push(row); row=[]; if(c==='\r'&&text[i+1]==='\n') i++; }
+    else cur+=c;
+  }
+  if(cur.length||row.length){ push(); rows.push(row); }
+  return rows;
+}
+function normalize(h){ return (h||'').trim().toLowerCase(); }
+function inferCols(headers){
+  const H=headers.map(normalize);
+  const find=(...c)=>{ for(const x of c){ const i=H.findIndex(h=>h===x||h.includes(x)); if(i!==-1) return i; } return -1; };
+  return {
+    student: find('student'),
+    first:   find('first name','first'),
+    last:    find('last name','last','surname'),
+    section: find('section','course section')
+  };
+}
+function splitStudentField(v){
+  const s=(v||'').trim();
+  const i=s.indexOf(',');
+  if(i===-1){ const first=(s.split(/\s+/)[0]||''); return {firstName:first,lastName:s}; }
+  return { lastName:s.slice(0,i).trim(), firstName:s.slice(i+1).trim().split(/\s+/)[0]||'' };
+}
+function importCSV(text){
+  const rows = parseCSV(text);
+  if(!rows.length) return;
+  const headers = rows[0];
+  const cols = inferCols(headers);
+  const roster=[];
+  for(let r=1;r<rows.length;r++){
+    const row = rows[r]; if(!row || !row.length) continue;
+    let first='', last='';
+    if(cols.student!==-1){ const p=splitStudentField(row[cols.student]); first=p.firstName; last=p.lastName; }
+    else { if(cols.first!==-1) first=(row[cols.first]||'').trim(); if(cols.last!==-1) last=(row[cols.last]||'').trim(); }
+    const section = cols.section!==-1 ? (row[cols.section]||'').trim() : '';
+    if(!first && !last) continue;
+    roster.push({ id: makeStudentId(), firstName:first, lastName:last, section });
+  }
+  // merge by name (simple heuristic)
+  const existing = state.data.roster;
+  roster.forEach(s=>{
+    const i = existing.findIndex(t => (t.firstName||'').toLowerCase()===s.firstName.toLowerCase() && (t.lastName||'').toLowerCase()===s.lastName.toLowerCase());
+    if(i===-1) existing.push(s);
+  });
+  save(); renderSeats(); renderList();
+}
+
+/*** Add/Edit Student Modal ***/
+const sb = el('#studentBackdrop');
+let editingStudentId = null;
+let editingSeatId = null;
+
+function openStudentModal({ student=null, seatId=null } = {}){
+  editingStudentId = student ? student.id : null;
+  editingSeatId = seatId || null;
+  el('#stFirst').value = student?.firstName || '';
+  el('#stLast').value = student?.lastName || '';
+  el('#stSection').value = student?.section || '';
+  el('#studentTitle').textContent = editingStudentId ? 'Edit Student' : 'Add Student';
+  el('#removeStudent').style.display = editingStudentId ? 'inline-flex' : 'none';
+  sb.style.display='flex';
+  sb.setAttribute('aria-hidden','false');
+  setTimeout(()=> el('#stFirst').focus(), 0);
+}
+function closeStudentModal(){
+  sb.style.display='none';
+  sb.setAttribute('aria-hidden','true');
+  editingStudentId = null;
+  editingSeatId = null;
+}
+
+el('#addStudentBtn').addEventListener('click', ()=> openStudentModal());
+el('#cancelStudent').addEventListener('click', closeStudentModal);
+el('#saveStudent').addEventListener('click', ()=>{
+  const first = el('#stFirst').value.trim();
+  const last  = el('#stLast').value.trim();
+  const section = el('#stSection').value.trim();
+  if(!first && !last){ closeStudentModal(); return; }
+
+  let studentId = editingStudentId;
+  if(studentId){
+    const existing = state.data.roster.find(s=>s.id===studentId);
+    if(existing){
+      existing.firstName = first;
+      existing.lastName = last;
+      existing.section = section;
+    } else {
+      studentId = null;
+    }
+  }
+  if(!studentId){
+    studentId = makeStudentId();
+    state.data.roster.push({ id: studentId, firstName:first, lastName:last, section });
+  }
+
+  if(editingSeatId){
+    for(const sid of Object.keys(state.data.seatMap)){
+      if(state.data.seatMap[sid] === studentId) delete state.data.seatMap[sid];
+    }
+    if(first || last){
+      state.data.seatMap[editingSeatId] = studentId;
+    } else {
+      delete state.data.seatMap[editingSeatId];
+    }
+    if(state.data.classwork && state.data.classwork.colorsBySeatId){
+      delete state.data.classwork.colorsBySeatId[editingSeatId];
+    }
+  }
+
+  save();
+  closeStudentModal();
+  renderSeats();
+  renderList();
+});
+
+el('#removeStudent').addEventListener('click', ()=>{
+  if(!editingStudentId){ closeStudentModal(); return; }
+  if(!window.confirm('Remove this student from the roster?')) return;
+
+  state.data.roster = state.data.roster.filter(s=>s.id !== editingStudentId);
+  for(const sid of Object.keys(state.data.seatMap)){
+    if(state.data.seatMap[sid] === editingStudentId){
+      delete state.data.seatMap[sid];
+      if(state.data.classwork && state.data.classwork.colorsBySeatId){
+        delete state.data.classwork.colorsBySeatId[sid];
+      }
+    }
+  }
+  delete state.data.assignment.gradesByStudentId[editingStudentId];
+
+  save();
+  closeStudentModal();
+  renderSeats();
+  renderList();
+});
+
+sb.addEventListener('click', e=>{
+  if(e.target === sb){ closeStudentModal(); }
+});
+window.addEventListener('keydown', e=>{
+  if(e.key === 'Escape' && sb.getAttribute('aria-hidden') === 'false'){
+    closeStudentModal();
+  }
+});
+['#stFirst','#stLast','#stSection'].forEach(selector=>{
+  el(selector).addEventListener('keydown', e=>{
+    if(e.key === 'Enter'){
+      e.preventDefault();
+      el('#saveStudent').click();
+    }
+  });
+});
+
+/*** Modes & Toggles ***/
+document.querySelectorAll('.modeBtn').forEach(b=>{
+  b.addEventListener('click', e=>{
+    state.mode = e.currentTarget.dataset.mode;
+    updateModeButtons();
+    renderSeats();
+    renderList();
+    updateAverage();
+  });
+});
+
+el('#assignToggleBtn').addEventListener('click', ()=>{
+  state.assigning = !state.assigning;
+  updateToggleButtons();
+  renderSeats();
+});
+
+el('#roomEditorBtn').addEventListener('click', ()=>{
+  state.editorOn = !state.editorOn;
+  state.layoutLocked = state.editorOn ? false : true;
+  updateToggleButtons();
+  updateEditorStatus();
+  renderSeats();
+});
+el('#lockLayoutBtn').addEventListener('click', ()=>{
+  state.layoutLocked = !state.layoutLocked;
+  updateEditorStatus();
+  renderSeats();
+});
+function updateEditorStatus(){
+  const status = state.editorOn
+    ? (state.layoutLocked ? 'Editor ON – click Unlock Layout to drag seats.' : 'Editor ON – drag seats to reposition seats.')
+    : 'Editor OFF – turn Room Editor ON to reposition seats.';
+  el('#editorStatus').textContent = status;
+  const lockBtn = el('#lockLayoutBtn');
+  lockBtn.textContent = state.layoutLocked ? 'Unlock Layout' : 'Lock Layout';
+}
+
+/*** Seat Count & Grid Snap ***/
+el('#seatCount').addEventListener('change', ()=>{
+  let n = parseInt(el('#seatCount').value,10);
+  if(!Number.isFinite(n) || n<0) n=0;
+  autoMakeSeats(n);
+  state.data.seatMap = {};
+  state.data.classwork.colorsBySeatId = {};
+  save();
+  renderSeats();
+  renderList();
+});
+el('#gridSize').addEventListener('change', ()=>{
+  const v = parseInt(el('#gridSize').value,10);
+  state.data.layout.gridSize = Number.isFinite(v)? v : 10;
+  save();
+});
+
+/*** Assignment name & average ***/
+el('#saveAssignment').addEventListener('click', ()=>{
+  const n = (el('#assignmentName').value || 'Assignment').trim();
+  state.data.assignment.name = n || 'Assignment';
+  save(); updateAverage(); renderList();
+});
+function updateAverage(){
+  if(state.mode !== 'assignment'){ el('#classAverage').textContent=''; return; }
+  const vals = Object.values(state.data.assignment.gradesByStudentId).map(Number).filter(v=>!Number.isNaN(v));
+  if(!vals.length){ el('#classAverage').textContent=''; return; }
+  const avg = (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(2);
+  el('#classAverage').textContent = `Class Average: ${avg} (${vals.length} graded)`;
+}
+
+/*** List / Seat View toggles ***/
+el('#listViewBtn').addEventListener('click', ()=>{
+  state.view = 'list';
+  renderList();
+  updateViewButtons();
+  const listSection = el('#listView');
+  window.scrollTo({ top: listSection.offsetTop - 12, behavior: 'smooth' });
+});
+el('#seatViewBtn').addEventListener('click', ()=>{
+  state.view = 'seat';
+  updateViewButtons();
+});
+
+/*** Copy List ***/
+el('#copyListBtn').addEventListener('click', copyList);
+
+/*** Backup/Restore ***/
+el('#backupBtn').addEventListener('click', ()=>{
+  const payload = { version:'pro-v1', exportedAt:new Date().toISOString(), data: state.data };
+  const blob = new Blob([JSON.stringify(payload,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = `seatdrop_pro_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
+});
+el('#restoreBtn').addEventListener('click', ()=>{ el('#restoreInput').value=''; el('#restoreInput').click(); });
+el('#restoreInput').addEventListener('change', (e)=>{
+  const f=e.target.files && e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = ev=>{
+    try{
+      const json = JSON.parse(String(ev.target.result||'{}'));
+      if(json && json.data){ state.data = json.data; save(); syncUiFromState(); }
+      else alert('Invalid backup');
+    }catch(err){ alert('Could not parse file'); }
+  };
+  r.readAsText(f);
+});
+
+/*** CSV Import ***/
+el('#importCsvBtn').addEventListener('click', ()=> el('#csvInput').click());
+el('#csvInput').addEventListener('change', (e)=>{
+  const f=e.target.files && e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload = ev=> importCSV(String(ev.target.result||''));
+  r.readAsText(f);
+});
+
+/*** Helpers (HTML/CSV escape) ***/
+function escapeHtml(s){ return String(s??'').replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])); }
+function csvCell(s){ const v=String(s??'').replace(/"/g,'""'); return `"${v}"`; }
+
+/*** Boot ***/
+function syncUiFromState(){
+  el('#assignmentName').value = state.data.assignment.name || 'Assignment';
+  el('#gridSize').value = state.data.layout.gridSize || 10;
+  el('#seatCount').value = state.data.layout.seats.length || 0;
+  renderSeats();
+  renderList();
+  updateAverage();
+  updateModeButtons();
+  updateToggleButtons();
+  updateEditorStatus();
+  updateViewButtons();
+}
+
+load();
+if(!state.data.layout || !Array.isArray(state.data.layout.seats)){ state.data.layout = { gridSize: 10, seats: [] }; }
+if(!Array.isArray(state.data.roster)){ state.data.roster = []; }
+if(!state.data.seatMap || typeof state.data.seatMap !== 'object'){ state.data.seatMap = {}; }
+if(!state.data.assignment || typeof state.data.assignment !== 'object'){
+  state.data.assignment = { name: 'Assignment', gradesByStudentId: {} };
+} else if(!state.data.assignment.gradesByStudentId){
+  state.data.assignment.gradesByStudentId = {};
+}
+if(!state.data.classwork || !state.data.classwork.colorsBySeatId){
+  state.data.classwork = { colorsBySeatId: {} };
+}
+ensureInitialSeats();
+normalizeSeatDimensions();
+syncUiFromState();
+</script>
+</body>
+</html>

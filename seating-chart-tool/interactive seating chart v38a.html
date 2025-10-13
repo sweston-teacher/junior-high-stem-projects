@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>v38 - Classroom Seating (Simple Seat/List Views)</title>
+<style>
+/* ---- Reset & Base ---- */
+*{ margin:0; padding:0; box-sizing:border-box; }
+body{ font-family:Arial, sans-serif; padding:20px; background:#f5f5f5; max-width:1400px; margin:0 auto; }
+
+/* ---- Controls ---- */
+.controls{ background:#fff; padding:20px; margin-bottom:20px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+.controls h2{ margin-bottom:15px; }
+.control-group{ display:flex; gap:15px; align-items:center; margin-bottom:15px; flex-wrap:wrap; }
+select, input, button{ padding:8px 12px; font-size:14px; border:1px solid #ccc; border-radius:4px; }
+button{ background:#007bff; color:#fff; border:none; cursor:pointer; }
+button:hover{ background:#0056b3; }
+.cancel-btn{ background:#6c757d; } .cancel-btn:hover{ background:#545b62; }
+
+/* View toggle */
+.view-toggle{ display:flex; gap:10px; }
+.view-btn{ padding:8px 14px; border:2px solid #0ea5e9; background:#fff; color:#0ea5e9; }
+.view-btn.active{ background:#0ea5e9; color:#fff; }
+
+/* Mode toggle */
+.mode-toggle{ display:flex; gap:10px; }
+.mode-btn{ padding:10px 20px; border:2px solid #007bff; background:#fff; color:#007bff; }
+.mode-btn.active{ background:#007bff; color:#fff; }
+#nameEditMode.active{ background:#28a745; } #nameEditMode.active:hover{ background:#218838; }
+
+/* ---- Seat View ---- */
+#seatView{ display:block; }
+.classroom{ background:#fff; padding:30px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); display:inline-block; }
+.row{ display:flex; gap:15px; margin-bottom:15px; }
+.side{ display:flex; gap:15px; }
+.walkway{ width:40px; display:flex; align-items:center; justify-content:center; color:#999; font-size:12px; }
+
+.computer{ width:110px; height:90px; border:2px solid #333; border-radius:8px; background:#fff; transition:all 0.2s; display:flex; flex-direction:column; justify-content:center; position:relative; }
+.computer-number{ position:absolute; top:-10px; left:50%; transform:translateX(-50%); font-size:10px; color:#999; background:#fff; padding:0 3px; line-height:1; }
+.computer-content{ flex:1; display:flex; align-items:center; justify-content:space-between; padding:8px; }
+.student-name{ font-size:12px; overflow:hidden; text-overflow:ellipsis; max-width:60px; min-height:18px; flex:1; }
+.student-name input{ width:100%; text-align:center; border:1px solid #007bff; padding:2px; font-size:12px; }
+
+.inline-editor{ position:absolute; top:100%; right:0; transform:translateY(8px); width:230px; background:#fff; border:1px solid #cbd5f5; border-radius:8px; box-shadow:0 10px 30px rgba(15,23,42,0.15); padding:10px; display:none; z-index:50; }
+.inline-editor.open{ display:block; }
+.inline-editor-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; font-size:12px; font-weight:bold; color:#0f172a; }
+.inline-editor-close{ background:none; border:none; color:#475569; cursor:pointer; font-size:14px; padding:0; line-height:1; }
+.inline-editor label{ display:block; font-size:11px; color:#555; margin-bottom:2px; }
+.inline-editor input{ width:100%; padding:4px 6px; font-size:12px; border:1px solid #cbd5f5; border-radius:4px; margin-bottom:6px; }
+.inline-editor-actions{ display:flex; justify-content:flex-end; gap:6px; }
+.inline-editor-actions button{ padding:6px 10px; font-size:11px; }
+.inline-editor-cancel{ background:#e2e8f0; color:#1e293b; border:1px solid #cbd5f5; }
+.inline-editor-cancel:hover{ background:#cbd5f5; }
+.inline-editor-remove{ background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; }
+.inline-editor-remove:hover{ background:#fecaca; }
+.student-name.clickable{ cursor:pointer; }
+.student-name.empty{ color:#9ca3af; font-style:italic; }
+
+.action-buttons{ height:100%; display:flex; align-items:center; }
+.color-buttons, .grade-buttons{ display:grid; height:100%; gap:4px; justify-items:center; }
+.color-buttons{ grid-template-rows:repeat(3,1fr); } .grade-buttons{ grid-template-rows:repeat(4,1fr); }
+.color-btn, .grade-btn{ width:26px; height:100%; border:1px solid #333; border-radius:4px; cursor:pointer; font-size:10px; display:flex; align-items:center; justify-content:center; font-weight:bold; }
+
+/* Classwork colors */
+.color-btn.green { background:#4CAF50; color:#fff; }
+.color-btn.yellow{ background:#FFC107; color:#fff; }
+.color-btn.red   { background:#F44336; color:#fff; }
+
+/* Grade tint colors (tile states) */
+.grade-btn.g4{ background:#4CAF50; color:#fff; }
+.grade-btn.g3{ background:#FF9800; color:#fff; }
+.grade-btn.g2{ background:#FFC107; color:#fff; }
+.grade-btn.g1{ background:#F44336; color:#fff; }
+.grade-btn.active{ border:3px solid #000; }
+
+.computer.red{ background:#ffcccc; border-color:#cc0000; }
+.computer.yellow{ background:#fff9cc; border-color:#ccaa00; }
+.computer.green{ background:#ccffcc; border-color:#00cc00; }
+.computer.orange{ background:#ffe5cc; border-color:#cc6a00; }
+.computer.unassigned{ background:#eeeeee; border-color:#cfcfcf; }
+
+/* ---- List View ---- */
+#listView{ display:none; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 4px rgba(0,0,0,0.1); }
+.tools{ display:flex; gap:10px; margin-bottom:12px; align-items:center; }
+.table{ width:100%; border-collapse:collapse; }
+.table th, .table td{ border:1px solid #e5e7eb; padding:8px 10px; font-size:14px; }
+.table th{ background:#f3f4f6; text-align:left; }
+.badge{ display:inline-block; padding:2px 6px; border-radius:6px; font-size:11px; background:#eef2ff; color:#334155; border:1px solid #c7d2fe; }
+.muted{ color:#888; }
+.table.identifiers-hidden th.identifier-col,
+.table.identifiers-hidden td.identifier-col{ display:none; }
+
+/* ---- Modals (Seating & Ungraded & Student) ---- */
+.modal-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,0.45); display:none; align-items:center; justify-content:center; z-index:9999; }
+.modal{ width:min(1100px,95vw); max-height:90vh; background:#fff; border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,0.3); display:flex; flex-direction:column; overflow:hidden; }
+.modal-header{ padding:14px 18px; border-bottom:1px solid #eee; display:flex; align-items:center; justify-content:space-between; }
+.modal-title{ font-weight:bold; }
+.modal-body{ padding:16px; overflow:auto; }
+.modal-footer{ display:flex; gap:10px; padding:12px 16px; border-top:1px solid #eee; justify-content:flex-end; }
+
+.modal-body.grid2{ display:grid; grid-template-columns:1fr 2fr; gap:16px; }
+.roster-list{ border:1px solid #ddd; border-radius:8px; padding:8px; overflow:auto; }
+.roster-item{ padding:6px 8px; border:1px solid #e8e8e8; border-radius:6px; margin-bottom:6px; display:flex; justify-content:space-between; align-items:center; }
+.roster-item small{ color:#666; }
+.wizard-grid{ display:grid; grid-template-columns: repeat(5, 1fr); gap:10px; }
+.wizard-seat{ border:2px dashed #bbb; border-radius:8px; min-height:72px; padding:8px; display:flex; align-items:center; justify-content:space-between; background:#fafafa; }
+.wizard-seat-num{ font-size:12px; color:#888; margin-right:6px; }
+.wizard-seat-name{ flex:1; font-weight:bold; overflow:hidden; text-overflow:ellipsis; margin-right:8px; }
+.wizard-seat select{ max-width:180px; }
+
+/* Ungraded list modal */
+.ungraded-list .row{ display:flex; gap:10px; align-items:center; padding:6px 0; border-bottom:1px solid #f1f1f1; }
+
+/* Student editor */
+.form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+label.small{ font-size:12px; color:#555; display:block; margin-bottom:4px; }
+input[type="text"].w-100{ width:100%; }
+
+/* ---- Responsive ---- */
+@media (max-width:1200px){
+  .computer{ width:90px; height:90px; }
+  .color-btn, .grade-btn{ width:22px; font-size:9px; }
+  .modal-body.grid2{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+  <div class="controls">
+    <h2>Classroom Seating</h2>
+
+    <div class="control-group">
+      <label>Period:</label>
+      <select id="periodSelect">
+        <option value="1">1st Period - STEM</option>
+        <option value="3">3rd Period - Creative Coding</option>
+        <option value="4">4th Period - STEM</option>
+        <option value="5">5th Period - Creative Coding</option>
+        <option value="6">6th Period - STEM</option>
+        <option value="7">7th Period - Creative Coding</option>
+      </select>
+      <div class="view-toggle">
+        <button id="seatViewBtn" class="view-btn active" data-view="seat">Seat View</button>
+        <button id="listViewBtn" class="view-btn" data-view="list">List View</button>
+      </div>
+      <button id="assignSeatsBtn">Assign Seats</button>
+      <button id="showUngradedBtn" style="background:#0ea5e9">View Ungraded</button>
+    </div>
+
+    <div class="control-group">
+      <label>Mode:</label>
+      <div class="mode-toggle">
+        <button class="mode-btn active" data-mode="classwork">Classwork (Colors)</button>
+        <button class="mode-btn" data-mode="assignment">Assignment (Grades)</button>
+      </div>
+      <button id="nameEditMode">Edit Names Mode</button>
+      <button id="addStudentBtn" style="background:#10b981">Add Student</button>
+    </div>
+
+    <div class="control-group" id="assignmentControls" style="display:none;">
+      <label>Assignment Name:</label>
+      <input type="text" id="assignmentName" placeholder="Enter assignment name">
+      <button id="saveAssignment">Save Assignment</button>
+      <div id="classAverage" style="margin-left:20px; font-weight:bold;"></div>
+    </div>
+
+    <div class="control-group">
+      <input id="rosterFile" type="file" accept=".csv" style="display:none">
+      <button id="importRosterBtn">Import Roster (CSV)</button>
+      <button id="clearAllBtn" class="cancel-btn">Clear All</button>
+    </div>
+  </div>
+
+  <!-- Seat View -->
+  <div id="seatView" class="classroom">
+    <div id="grid"></div>
+  </div>
+
+  <!-- List View -->
+  <div id="listView">
+    <div class="tools">
+      <span class="badge" id="listAssignmentBadge">Assignment</span>
+      <button id="copyListBtn" style="background:#0ea5e9">Copy List</button>
+      <button id="toggleIdentifiersBtn" class="cancel-btn" style="background:#e0e7ff; color:#1e3a8a; border:1px solid #93c5fd;">Show Identifiers</button>
+      <span class="muted">Sorted by Last Name</span>
+    </div>
+    <table class="table" id="listTable">
+      <thead>
+  <tr>
+    <th>Last Name</th>
+    <th>First Name</th>
+    <th>Grade (1–4)</th>
+    <th>9 Number</th>
+    <th class="identifier-col">SIS User ID</th>
+    <th class="identifier-col">SIS Login ID</th>
+    <th class="identifier-col">Login ID</th>
+    <th class="identifier-col">Canvas ID</th>
+    <th>Section</th>
+    <th>Seat #</th>
+  </tr>
+</thead>
+      <tbody id="listBody"></tbody>
+    </table>
+  </div>
+
+  <!-- Seating Wizard Modal -->
+  <div id="wizardBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="wizardTitle">
+      <div class="modal-header">
+        <div class="modal-title" id="wizardTitle">Assign Seats</div>
+        <div><span class="badge" id="wizardStatus">Unassigned: 0</span></div>
+      </div>
+      <div class="modal-body grid2">
+        <div>
+          <div style="margin-bottom:8px; font-weight:bold;">Unassigned Roster</div>
+          <div id="wizardRosterList" class="roster-list"></div>
+        </div>
+        <div>
+          <div style="margin-bottom:8px; display:flex; gap:8px; align-items:center;">
+            <strong>Classroom Grid</strong>
+            <button id="autoFillBtn" style="background:#6366f1">Auto-Fill</button>
+            <button id="clearAllSeatsBtn" class="cancel-btn">Clear All Seats</button>
+          </div>
+          <div id="wizardGrid" class="wizard-grid"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelWizardBtn" class="cancel-btn">Cancel</button>
+        <button id="saveWizardBtn" style="background:#10b981">Save Seating</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ungraded Modal -->
+  <div id="ungradedBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="ungradedTitle">
+      <div class="modal-header">
+        <div class="modal-title" id="ungradedTitle">Students Without a Grade (Current Assignment)</div>
+        <div><span class="badge" id="ungradedCount">0</span></div>
+      </div>
+      <div class="modal-body ungraded-list" id="ungradedList"></div>
+      <div class="modal-footer">
+        <button id="closeUngradedBtn" class="cancel-btn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Student Modal -->
+  <div id="studentBackdrop" class="modal-backdrop" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="studentTitle">
+      <div class="modal-header">
+        <div class="modal-title" id="studentTitle">Add / Edit Student</div>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div>
+            <label class="small">First Name</label>
+            <input id="stFirst" type="text" class="w-100">
+          </div>
+          <div>
+            <label class="small">Last Name</label>
+            <input id="stLast" type="text" class="w-100">
+          </div>
+          <div>
+            <label class="small">SIS User ID</label>
+            <input id="stSIS" type="text" class="w-100">
+          </div>
+          <div>
+            <label class="small">SIS Login ID</label>
+            <input id="stSISLogin" type="text" class="w-100">
+          </div>
+          <div>
+            <label class="small">9 Number</label>
+            <input id="stNineNumber" type="text" class="w-100" placeholder="e.g., 912345678">
+          </div>
+          <div>
+            <label class="small">Login ID</label>
+            <input id="stLogin" type="text" class="w-100">
+          </div>
+          <div>
+            <label class="small">Canvas ID</label>
+            <input id="stCanvas" type="text" class="w-100">
+          </div>
+          <div>
+            <label class="small">Section</label>
+            <input id="stSection" type="text" class="w-100">
+          </div>
+          <div>
+            <label class="small">Assign Seat (1–40, optional)</label>
+            <input id="stSeat" type="text" class="w-100" placeholder="e.g., 12">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="cancelStudentBtn" class="cancel-btn">Cancel</button>
+        <button id="saveStudentBtn" style="background:#10b981">Save</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ===== State & Storage ===== */
+const STORAGE_KEY = 'classroomData_v36'; // keep same for continuity
+const state = { currentPeriod:'1', mode:'classwork', nameEditMode:false, showIdentifiers:false, data:{} };
+
+function loadData(){
+  try{
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) state.data = JSON.parse(saved);
+    else state.data = {};
+    // migrate seat-based grades -> student-based (from older builds)
+    for (const period of Object.keys(state.data||{})) {
+      const pd = state.data[period];
+      if (!pd) continue;
+      const assignmentName = pd.assignmentName || 'Assignment';
+      if (!pd.assignments) pd.assignments = {};
+      if (!pd.currentAssignment) pd.currentAssignment = assignmentName;
+      if (!pd.assignments[pd.currentAssignment]) {
+        pd.assignments[pd.currentAssignment] = { gradesById:{}, createdAt:new Date().toISOString() };
+      }
+      if (pd.grades && Object.keys(pd.grades).length) {
+        const cur = pd.assignments[pd.currentAssignment];
+        const seats = pd.seats || {};
+        const bySeatKey = {};
+        for (const s of Object.keys(seats)) bySeatKey[parseInt(s,10)] = seats[s];
+        for (const s of Object.keys(pd.grades)) {
+          const seat = parseInt(s,10);
+          const g = pd.grades[s];
+          const k = bySeatKey[seat];
+          if (k && (g==='1'||g==='2'||g==='3'||g==='4')) cur.gradesById[k] = g;
+        }
+        pd.grades = {};
+      }
+      purgeTestStudent(pd);
+    }
+  }catch(e){ console.warn('loadData:', e); state.data = {}; }
+}
+function saveData(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data)); }catch(e){} }
+function ensurePeriod(){
+  if(!state.data[state.currentPeriod]){
+    state.data[state.currentPeriod] = {
+      students:{}, colors:{}, assignmentName:'', currentAssignment:'',
+      assignments:{}, roster:[], seats:{}, columnMapping:{}
+    };
+  }
+  return state.data[state.currentPeriod];
+}
+function getPeriodData(){ return ensurePeriod(); }
+
+/* ===== Helpers ===== */
+function normalizeText(value){ return (value||'').trim().toLowerCase(); }
+function isTestStudentRecord(student){
+  if(!student) return false;
+  const first=normalizeText(student.firstName);
+  const last=normalizeText(student.lastName);
+  const display=normalizeText(student.displayName);
+  const combined = [first,last].filter(Boolean).join(' ');
+  if(combined==='test student') return true;
+  if(display==='test student') return true;
+  if(first==='test' && (!last || last==='student')) return true;
+  return false;
+}
+function isTestStudentName(name){ return normalizeText(name)==='test student'; }
+function studentKey(s){
+  return s?.sisUserId || s?.sisLoginId || s?.loginId || s?.canvasUserId || s?.nineNumber || s?.tempId || '';
+}
+function ensureAssignments(pd){
+  if (!pd.assignments) pd.assignments = {};
+  if (!pd.currentAssignment) pd.currentAssignment = pd.assignmentName || 'Assignment';
+  if (!pd.assignments[pd.currentAssignment]) {
+    pd.assignments[pd.currentAssignment] = { gradesById:{}, createdAt:new Date().toISOString() };
+  }
+  return pd.assignments[pd.currentAssignment];
+}
+function createTempId(){
+  return 'temp_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8);
+}
+function migrateStudentKey(pd, oldKey, newKey){
+  if(!oldKey || !newKey || oldKey===newKey) return;
+  if(pd.seats){
+    for(const seatNum of Object.keys(pd.seats)){
+      if(pd.seats[seatNum]===oldKey) pd.seats[seatNum]=newKey;
+    }
+  }
+  if(pd.assignments){
+    for(const name of Object.keys(pd.assignments)){
+      const record=pd.assignments[name];
+      if(record && record.gradesById && Object.prototype.hasOwnProperty.call(record.gradesById, oldKey)){
+        if(!record.gradesById[newKey]) record.gradesById[newKey]=record.gradesById[oldKey];
+        delete record.gradesById[oldKey];
+      }
+    }
+  }
+  if(pd.roster){
+    pd.roster=pd.roster.filter((student, idx, arr)=>{
+      const key=studentKey(student);
+      if(key===oldKey && key!==newKey){
+        // drop stale stub entries lacking identifiers
+        return !!student.nineNumber || !!student.sisUserId || !!student.sisLoginId || !!student.loginId || !!student.canvasUserId;
+      }
+      return true;
+    });
+  }
+}
+function ensureSeatKey(pd, seat, name){
+  if(!name) return '';
+  if(isTestStudentName(name)) return '';
+  if(!pd.seats) pd.seats={};
+  if(!pd.students) pd.students={};
+  if(!pd.roster) pd.roster=[];
+  const existing=pd.seats[seat];
+  if(existing){
+    const idx=pd.roster.findIndex(st=>studentKey(st)===existing);
+    if(idx!==-1){
+      const entry=pd.roster[idx];
+      if(!entry.firstName && !entry.lastName) entry.firstName=name;
+      if(!entry.displayName) entry.displayName=name;
+    }
+    return existing;
+  }
+  const lower=name.toLowerCase();
+  const match=pd.roster.find(st=>{
+    const key=studentKey(st);
+    if(!key) return false;
+    const disp=(st.displayName||st.firstName||'').toLowerCase();
+    return key.startsWith('temp_') && disp === lower;
+  });
+  if(match){
+    pd.seats[seat]=studentKey(match);
+    return pd.seats[seat];
+  }
+  const tempId=createTempId();
+  pd.roster.push({ firstName:name, displayName:name, tempId });
+  pd.seats[seat]=tempId;
+  return tempId;
+}
+function cleanupTempKey(pd, key){
+  if(!key || !String(key).startsWith('temp_')) return;
+  if(pd.seats){
+    for(const seatVal of Object.values(pd.seats)){
+      if(seatVal===key) return;
+    }
+  }
+  if(pd.assignments){
+    for(const name of Object.keys(pd.assignments)){
+      const record=pd.assignments[name];
+      if(record && record.gradesById) delete record.gradesById[key];
+    }
+  }
+  if(pd.roster){
+    pd.roster=pd.roster.filter(student=>studentKey(student)!==key);
+  }
+}
+function purgeTestStudent(pd){
+  if(!pd) return;
+  if(pd.roster) pd.roster=pd.roster.filter(s=>!isTestStudentRecord(s));
+  const validKeys=new Set((pd.roster||[]).map(studentKey));
+  if(pd.students){
+    for(const seat of Object.keys(pd.students)){
+      if(isTestStudentName(pd.students[seat])){
+        const key=pd.seats ? pd.seats[seat] : '';
+        if(pd.seats) delete pd.seats[seat];
+        if(pd.colors) delete pd.colors[seat];
+        delete pd.students[seat];
+        if(key) cleanupTempKey(pd, key);
+      }
+    }
+  }
+  if(pd.assignments){
+    for(const name of Object.keys(pd.assignments)){
+      const record=pd.assignments[name];
+      if(record && record.gradesById){
+        for(const key of Object.keys(record.gradesById)){
+          if(!validKeys.has(key)) delete record.gradesById[key];
+        }
+      }
+    }
+  }
+}
+function keyForSeat(pd, seat){ return (pd.seats || {})[seat] || ''; }
+function gradeToColorClass(g){ return g==='4'?'green':g==='3'?'orange':g==='2'?'yellow':g==='1'?'red':''; }
+function escapeHtml(str){
+  return String(str ?? '').replace(/[&<>"']/g, ch=>{
+    switch(ch){
+      case '&': return '&amp;';
+      case '<': return '&lt;';
+      case '>': return '&gt;';
+      case '"': return '&quot;';
+      case '\'': return '&#39;';
+      default: return ch;
+    }
+  });
+}
+function upsertStudent(pd, studentData, seat){
+  if(!pd) return '';
+  if(!pd.roster) pd.roster=[];
+  if(!pd.seats) pd.seats={};
+  if(!pd.students) pd.students={};
+  const roster=pd.roster;
+  const normalized={...studentData};
+  if(!normalized.displayName){
+    normalized.displayName = normalized.firstName || normalized.lastName || '';
+  }
+  const hasSeat=Number.isFinite(seat)&&seat>=1&&seat<=40;
+  const oldKey=hasSeat ? pd.seats[seat] : '';
+  if(isTestStudentRecord(normalized)){
+    if(hasSeat){
+      if(oldKey) cleanupTempKey(pd, oldKey);
+      delete pd.seats[seat];
+      delete pd.students[seat];
+      if(pd.colors) delete pd.colors[seat];
+    }
+    return '';
+  }
+  let key=studentKey(normalized);
+  let existingIndex = key ? roster.findIndex(st=>studentKey(st)===key) : -1;
+  let previousKey='';
+  if(!key){
+    if(oldKey){
+      key=oldKey;
+      existingIndex=roster.findIndex(st=>studentKey(st)===oldKey);
+      if(existingIndex!==-1 && roster[existingIndex].tempId){
+        normalized.tempId=roster[existingIndex].tempId;
+      }
+    }
+    if(!key){
+      normalized.tempId=normalized.tempId || createTempId();
+      key=normalized.tempId;
+    }
+  }else if(existingIndex===-1 && oldKey && oldKey!==key){
+    const oldIdx=roster.findIndex(st=>studentKey(st)===oldKey);
+    if(oldIdx!==-1){
+      existingIndex=oldIdx;
+      previousKey=oldKey;
+    }
+  }
+  if(existingIndex===-1){
+    roster.push({...normalized, ...(key.startsWith('temp_')&&!normalized.tempId?{tempId:key}:{})});
+    existingIndex=roster.length-1;
+  }else{
+    const merged={...roster[existingIndex], ...normalized};
+    if(merged.tempId && merged.tempId!==key && !key.startsWith('temp_')) delete merged.tempId;
+    if(!merged.displayName) merged.displayName = merged.firstName || merged.lastName || '';
+    roster[existingIndex]=merged;
+  }
+  if(previousKey && previousKey!==key) migrateStudentKey(pd, previousKey, key);
+
+  if(hasSeat){
+    for(const seatKey of Object.keys(pd.seats)){
+      if(pd.seats[seatKey]===key) delete pd.seats[seatKey];
+    }
+    const prior=pd.seats[seat];
+    if(prior && prior!==key && !previousKey) previousKey=prior;
+    pd.seats[seat]=key;
+    const entry=roster[existingIndex];
+    pd.students[seat]=entry.displayName || entry.firstName || entry.lastName || '';
+    if(previousKey && previousKey!==key) migrateStudentKey(pd, previousKey, key);
+  }
+  return key;
+}
+let activeInlineEditor=null;
+function closeInlineEditor(){
+  if(activeInlineEditor){
+    activeInlineEditor.classList.remove('open');
+    activeInlineEditor.innerHTML='';
+    activeInlineEditor=null;
+  }
+}
+function openInlineEditor(seatNum){
+  if(state.nameEditMode) return;
+  const comp=document.querySelector(`.computer[data-num="${seatNum}"]`);
+  if(!comp) return;
+  closeInlineEditor();
+  const pd=getPeriodData();
+  const seat=parseInt(seatNum,10);
+  const rawName=pd.students[seat] || '';
+  const currentName=isTestStudentName(rawName)? '' : rawName;
+  let key=keyForSeat(pd, seat);
+  let createdKey=false;
+  if(!key && currentName){
+    key=ensureSeatKey(pd, seat, currentName);
+    if(key) createdKey=true;
+  }
+  const roster=(pd.roster||[]).filter(s=>!isTestStudentRecord(s));
+  const student = key ? roster.find(s=>studentKey(s)===key) || {} : {};
+  const formValues={
+    firstName:student.firstName || currentName || '',
+    lastName:student.lastName || '',
+    nineNumber:student.nineNumber || '',
+    sisUserId:student.sisUserId || '',
+    sisLoginId:student.sisLoginId || '',
+    loginId:student.loginId || '',
+    canvasUserId:student.canvasUserId || '',
+    section:student.section || ''
+  };
+  const editor = comp.querySelector('.inline-editor') || (()=>{
+    const el=document.createElement('div');
+    el.className='inline-editor';
+    comp.appendChild(el);
+    return el;
+  })();
+  editor.innerHTML=`
+    <div class="inline-editor-header">
+      <span>Seat ${seat}</span>
+      <button type="button" class="inline-editor-close" aria-label="Close editor">&times;</button>
+    </div>
+    <div>
+      <label>First Name</label>
+      <input type="text" data-field="firstName" value="${escapeHtml(formValues.firstName)}">
+      <label>Last Name</label>
+      <input type="text" data-field="lastName" value="${escapeHtml(formValues.lastName)}">
+      <label>9 Number</label>
+      <input type="text" data-field="nineNumber" value="${escapeHtml(formValues.nineNumber)}">
+      <label>SIS User ID</label>
+      <input type="text" data-field="sisUserId" value="${escapeHtml(formValues.sisUserId)}">
+      <label>SIS Login ID</label>
+      <input type="text" data-field="sisLoginId" value="${escapeHtml(formValues.sisLoginId)}">
+      <label>Login ID</label>
+      <input type="text" data-field="loginId" value="${escapeHtml(formValues.loginId)}">
+      <label>Canvas ID</label>
+      <input type="text" data-field="canvasUserId" value="${escapeHtml(formValues.canvasUserId)}">
+      <label>Section</label>
+      <input type="text" data-field="section" value="${escapeHtml(formValues.section)}">
+    </div>
+    <div class="inline-editor-actions">
+      ${key ? '<button type="button" class="inline-editor-remove">Remove</button>' : ''}
+      <button type="button" class="inline-editor-cancel">Cancel</button>
+      <button type="button" class="inline-editor-save">Save</button>
+    </div>
+  `;
+  editor.classList.add('open');
+  activeInlineEditor=editor;
+
+  const saveBtn = editor.querySelector('.inline-editor-save');
+  if(saveBtn){
+    saveBtn.addEventListener('click', ()=>{
+      const data={};
+      editor.querySelectorAll('input[data-field]').forEach(input=>{
+        data[input.dataset.field]=input.value.trim();
+      });
+      if(!data.firstName && !data.lastName && !data.nineNumber && !data.sisUserId && !data.sisLoginId && !data.loginId && !data.canvasUserId){
+        alert('Please provide at least a name or identifier.');
+        return;
+      }
+      upsertStudent(pd, data, seat);
+      saveData();
+      closeInlineEditor();
+      refreshGrid();
+      renderListView();
+    });
+  }
+  const cancelBtn = editor.querySelector('.inline-editor-cancel');
+  if(cancelBtn){
+    cancelBtn.addEventListener('click', ()=>{
+      closeInlineEditor();
+    });
+  }
+  const closeBtn = editor.querySelector('.inline-editor-close');
+  if(closeBtn){
+    closeBtn.addEventListener('click', ()=>{
+      closeInlineEditor();
+    });
+  }
+  const removeBtn = editor.querySelector('.inline-editor-remove');
+  if(removeBtn){
+    removeBtn.addEventListener('click', ()=>{
+      if(!confirm('Remove this student from the seat?')) return;
+      const currentKey=keyForSeat(pd, seat);
+      if(pd.seats) delete pd.seats[seat];
+      if(pd.students) delete pd.students[seat];
+      if(pd.colors) delete pd.colors[seat];
+      if(currentKey) cleanupTempKey(pd, currentKey);
+      saveData();
+      closeInlineEditor();
+      refreshGrid();
+      renderListView();
+    });
+  }
+  if(createdKey) saveData();
+}
+document.addEventListener('click', (e)=>{
+  if(activeInlineEditor && !activeInlineEditor.contains(e.target)){
+    closeInlineEditor();
+  }
+});
+
+/* ===== Seat View (grid) ===== */
+function createGrid(){
+  const grid = document.getElementById('grid'); grid.innerHTML = '';
+  for(let row=0; row<4; row++){
+    const rowDiv = document.createElement('div'); rowDiv.className='row';
+    const left = document.createElement('div'); left.className='side';
+    for(let col=0; col<5; col++){ left.appendChild(createComputer(row*10 + col + 1)); }
+    const walk = document.createElement('div'); walk.className='walkway'; walk.textContent='↕';
+    const right = document.createElement('div'); right.className='side';
+    for(let col=5; col<10; col++){ right.appendChild(createComputer(row*10 + col + 1)); }
+    rowDiv.append(left, walk, right); grid.appendChild(rowDiv);
+  }
+}
+function createComputer(num){
+  const comp = document.createElement('div'); comp.className='computer'; comp.dataset.num=num;
+  const numDiv = document.createElement('div'); numDiv.className='computer-number'; numDiv.textContent=num;
+  const content = document.createElement('div'); content.className='computer-content';
+  const nameDiv = document.createElement('div'); nameDiv.className='student-name';
+  const buttonsDiv = document.createElement('div'); buttonsDiv.className='action-buttons';
+  content.append(nameDiv, buttonsDiv); comp.append(numDiv, content);
+  updateComputer(comp, num); return comp;
+}
+function updateComputer(comp, num){
+  const pd = getPeriodData();
+  const storedName = pd.students[num] || '';
+  const studentName = isTestStudentName(storedName) ? '' : storedName;
+  let removedTestSeat=false;
+  if(storedName && !studentName){
+    delete pd.students[num];
+    if(pd.seats && pd.seats[num]){
+      const removedKey=pd.seats[num];
+      delete pd.seats[num];
+      cleanupTempKey(pd, removedKey);
+    }
+    if(pd.colors) delete pd.colors[num];
+    removedTestSeat=true;
+  }
+  const classworkColor = pd.colors[num] || '';
+  const cur = ensureAssignments(pd);
+  let key = keyForSeat(pd, num);
+  let needsSave = false;
+  if(!key && studentName){
+    key = ensureSeatKey(pd, num, studentName);
+    if(key) needsSave = true;
+  }
+  const studentGrade = key ? cur.gradesById[key] : '';
+  let visualClass = state.mode === 'assignment' ? gradeToColorClass(studentGrade) : classworkColor;
+  const isUnassigned = !key && !studentName;
+  comp.className = 'computer' + (visualClass ? ' '+visualClass : '') + (isUnassigned ? ' unassigned' : '');
+
+  const nameDiv = comp.querySelector('.student-name');
+  const buttonsDiv = comp.querySelector('.action-buttons');
+
+  if (state.nameEditMode) {
+    nameDiv.innerHTML = `<input type="text" value="${studentName}" data-num="${num}" class="name-input">`;
+    nameDiv.classList.remove('clickable','empty');
+    nameDiv.removeAttribute('title');
+    nameDiv.removeAttribute('tabindex');
+    nameDiv.onclick=null;
+    nameDiv.onkeydown=null;
+    buttonsDiv.innerHTML = '';
+  } else {
+    const hasName=!!studentName;
+    nameDiv.textContent = hasName ? studentName : 'Add Student';
+    nameDiv.classList.add('clickable');
+    nameDiv.classList.toggle('empty', !hasName);
+    nameDiv.setAttribute('title', hasName ? 'Edit student details' : 'Add student details');
+    nameDiv.setAttribute('tabindex','0');
+    nameDiv.onclick=(e)=>{
+      e.stopPropagation();
+      openInlineEditor(num);
+    };
+    nameDiv.onkeydown=(e)=>{
+      if(e.key==='Enter' || e.key===' '){
+        e.preventDefault();
+        openInlineEditor(num);
+      }
+    };
+    if (state.mode === 'classwork') {
+      buttonsDiv.innerHTML = `
+        <div class="color-buttons">
+          <div class="color-btn green"  onclick="handleColorClick(${num}, 'green')">G</div>
+          <div class="color-btn yellow" onclick="handleColorClick(${num}, 'yellow')">Y</div>
+          <div class="color-btn red"    onclick="handleColorClick(${num}, 'red')">R</div>
+        </div>`;
+    } else {
+      const grades = [{val:'4',class:'g4'},{val:'3',class:'g3'},{val:'2',class:'g2'},{val:'1',class:'g1'}];
+      buttonsDiv.innerHTML = `
+        <div class="grade-buttons">
+          ${grades.map(g=>`<div class="grade-btn ${g.class} ${studentGrade===g.val?'active':''}" onclick="handleGradeClick(${num}, '${g.val}')">${g.val}</div>`).join('')}
+        </div>`;
+    }
+  }
+  if(needsSave) saveData();
+  else if(removedTestSeat) saveData();
+}
+function refreshGrid(){
+  document.querySelectorAll('.computer').forEach(comp=>{
+    const num = parseInt(comp.dataset.num,10); updateComputer(comp,num);
+  });
+  updateClassAverage();
+}
+
+/* ===== List View ===== */
+function renderListView(){
+  const pd = getPeriodData();
+  const cur = ensureAssignments(pd);
+  const roster = (pd.roster || []).filter(s=>!isTestStudentRecord(s)).slice();
+  const table = document.getElementById('listTable');
+  const toggleBtn = document.getElementById('toggleIdentifiersBtn');
+  if(toggleBtn) toggleBtn.textContent = state.showIdentifiers ? 'Hide Identifiers' : 'Show Identifiers';
+  if(table){
+    table.classList.toggle('identifiers-hidden', !state.showIdentifiers);
+  }
+  // Sort by last name, then first
+  roster.sort((a,b)=>{
+    const la=(a.lastName||'').toLowerCase(), lb=(b.lastName||'').toLowerCase();
+    if(la<lb) return -1; if(la>lb) return 1;
+    const fa=(a.firstName||'').toLowerCase(), fb=(b.firstName||'').toLowerCase();
+    if(fa<fb) return -1; if(fa>fb) return 1; return 0;
+  });
+
+  // Build reverse seat lookup (key -> seat)
+  const keyToSeat = {};
+  Object.keys(pd.seats||{}).forEach(seat=>{
+    keyToSeat[pd.seats[seat]] = parseInt(seat,10);
+  });
+
+  const tbody = document.getElementById('listBody');
+  tbody.innerHTML = '';
+  for(const s of roster){
+    const key = studentKey(s);
+    const seat = keyToSeat[key] || '';
+    const grade = cur.gradesById[key] || '';
+    const nine = s.nineNumber || '';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+  <td>${(s.lastName||'')}</td>
+  <td>${(s.firstName||'')}</td>
+  <td>${grade}</td>
+  <td>${nine}</td>
+  <td class="identifier-col">${s.sisUserId||''}</td>
+  <td class="identifier-col">${s.sisLoginId||''}</td>
+  <td class="identifier-col">${s.loginId||''}</td>
+  <td class="identifier-col">${s.canvasUserId||''}</td>
+  <td>${(s.section||'')}</td>
+  <td>${seat}</td>
+`;
+    tbody.appendChild(tr);
+  }
+
+  // Update badge
+  const badge = document.getElementById('listAssignmentBadge');
+  const name = pd.assignmentName || pd.currentAssignment || 'Assignment';
+  badge.textContent = name;
+}
+function copyListToClipboard(){
+  const table = document.getElementById('listTable');
+  const rows = Array.from(table.querySelectorAll('tr'));
+  const identifiersVisible = !table.classList.contains('identifiers-hidden');
+  const lines = rows.map(r => {
+    const cells = Array.from(r.children).filter(td => identifiersVisible || !td.classList.contains('identifier-col'));
+    return cells.map(td => `"${td.textContent.replace(/"/g,'""')}"`).join(',');
+  }).join('\n');
+  navigator.clipboard.writeText(lines).then(()=>{},()=>{});
+}
+
+/* ===== Averages & Handlers ===== */
+function updateClassAverage(){
+  if (state.mode !== 'assignment') return;
+  const pd = getPeriodData(); const cur = ensureAssignments(pd);
+  const vals = Object.values(cur.gradesById||{}).map(x=>+x).filter(x=>!isNaN(x));
+  const el = document.getElementById('classAverage');
+  if (!vals.length){ el.textContent=''; return; }
+  const sum=vals.reduce((a,b)=>a+b,0);
+  el.textContent = `Class Average: ${(sum/vals.length).toFixed(2)} (${vals.length} students graded)`;
+}
+function handleColorClick(num,color){
+  const pd = getPeriodData();
+  pd.colors[num] = (pd.colors[num]===color)? '' : color;
+  saveData(); refreshGrid();
+}
+function handleGradeClick(seatNum,grade){
+  const pd = getPeriodData(), cur = ensureAssignments(pd);
+  const key = keyForSeat(pd, seatNum);
+  if(!key) return;
+  if (cur.gradesById[key]===grade) delete cur.gradesById[key]; else cur.gradesById[key]=grade;
+  saveData(); refreshGrid(); if (document.getElementById('listView').style.display==='block') renderListView();
+}
+
+/* ===== Name edit mode ===== */
+function toggleNameEditMode(){
+  closeInlineEditor();
+  state.nameEditMode = !state.nameEditMode;
+  const btn = document.getElementById('nameEditMode');
+  if(state.nameEditMode){
+    btn.textContent='Save Names'; btn.classList.add('active'); refreshGrid();
+    setTimeout(()=>{ const first=document.querySelector('.name-input'); if(first) first.focus(); },50);
+  }else{
+    document.querySelectorAll('.name-input').forEach(input=>{
+      const num=parseInt(input.dataset.num,10);
+      const name=input.value.trim();
+      const pd=getPeriodData();
+      const previousKey=keyForSeat(pd, num);
+      if(name){
+        if(isTestStudentName(name)){
+          delete pd.students[num];
+          if(pd.seats && pd.seats[num]){
+            const removedKey=pd.seats[num];
+            delete pd.seats[num];
+            cleanupTempKey(pd, removedKey);
+          }
+          if(pd.colors) delete pd.colors[num];
+          return;
+        }
+        pd.students[num]=name;
+        const newKey=ensureSeatKey(pd, num, name);
+        if(previousKey && previousKey!==newKey) migrateStudentKey(pd, previousKey, newKey);
+      }else{
+        delete pd.students[num];
+        if(pd.seats && pd.seats[num]){
+          const removedKey=pd.seats[num];
+          delete pd.seats[num];
+          cleanupTempKey(pd, removedKey);
+        }
+      }
+    });
+    saveData(); btn.textContent='Edit Names Mode'; btn.classList.remove('active'); refreshGrid();
+  }
+}
+document.addEventListener('keydown',(e)=>{
+  if(!state.nameEditMode) return;
+  const t=e.target; if(!t.classList||!t.classList.contains('name-input')) return;
+  if(e.key==='Tab'){ e.preventDefault();
+    const inputs=Array.from(document.querySelectorAll('.name-input'));
+    const i=inputs.indexOf(t); const j=e.shiftKey? i-1 : i+1;
+    if(j>=0&&j<inputs.length){ inputs[j].focus(); inputs[j].select(); }
+  }else if(e.key==='Enter'){ e.preventDefault();
+    const inputs=Array.from(document.querySelectorAll('.name-input'));
+    const i=inputs.indexOf(t); if(i<inputs.length-1){ inputs[i+1].focus(); inputs[i+1].select(); }
+  }
+});
+
+/* ===== Roster Import & Seating Wizard ===== */
+function parseCSV(text){
+  const rows=[]; let cur='', inQuotes=false, row=[];
+  const push=()=>{ row.push(cur); cur=''; };
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(c==='"'){ if(inQuotes&&text[i+1]==='"'){ cur+='"'; i++; } else { inQuotes=!inQuotes; } }
+    else if(c===','&&!inQuotes){ push(); }
+    else if((c==='\n'||c==='\r')&&!inQuotes){ if(cur.length||row.length) push(); if(row.length) rows.push(row); row=[]; if(c==='\r'&&text[i+1]==='\n') i++; }
+    else cur+=c;
+  }
+  if(cur.length||row.length){ push(); rows.push(row); }
+  return rows;
+}
+function parseCSVWithPointsRow(text){
+  const rows=parseCSV(text);
+  if(rows.length>1 && (rows[1][0]||'').toLowerCase().includes('points possible')) rows.splice(1,1);
+  return rows;
+}
+function normalizeHeader(h){ return (h||'').trim().toLowerCase(); }
+function inferMapping(headers){
+  const map={}; const H=headers.map(h=>normalizeHeader(h));
+  const find=(...c)=>{ for(const x of c){ const i=H.findIndex(h=>h===x||h.includes(x)); if(i!==-1) return headers[i]; } return null; };
+  map.student=find('student'); map.firstName=find('first name','first'); map.lastName=find('last name','last','surname');
+  map.sisUserId=find('sis user id','sis id'); map.sisLoginId=find('sis login id'); map.loginId=find('login id','username','email');
+  map.canvasUserId=find('id','canvas user id'); map.section=find('section','course section');
+  map.nineNumber=find('9 number','nine number','focus id','student number','student id');
+  map.computerNumber=find('computer number','seat','station','seat number');
+  return map;
+}
+function splitStudentField(student){
+  const s=(student||'').trim(); const i=s.indexOf(',');
+  if(i===-1){ const first=(s.split(/\s+/)[0]||''); return {firstName:first,lastName:s}; }
+  const last=s.slice(0,i).trim(); const rest=s.slice(i+1).trim(); const first=(rest.split(/\s+/)[0]||''); return {firstName:first,lastName:last};
+}
+function buildRosterFromCSV(csvText){
+  const rows=parseCSVWithPointsRow(csvText); if(!rows.length) return {roster:[], columnMapping:{}};
+  const headers=rows[0]; const mapping=inferMapping(headers); const idx=(k)=> mapping[k]? headers.indexOf(mapping[k]) : -1;
+  const roster=[];
+  for(let r=1;r<rows.length;r++){
+    const row=rows[r]; if(!row||!row.length) continue;
+    let firstName='',lastName='';
+    const sIdx=idx('student');
+    if(sIdx!==-1 && row[sIdx]){ const p=splitStudentField(row[sIdx]); firstName=p.firstName; lastName=p.lastName; }
+    else { const f=idx('firstName'), l=idx('lastName'); firstName=f!==-1?(row[f]||'').trim():''; lastName=l!==-1?(row[l]||'').trim():''; }
+    const sisUserId=idx('sisUserId')!==-1?(row[idx('sisUserId')]||'').trim():''; const sisLoginId=idx('sisLoginId')!==-1?(row[idx('sisLoginId')]||'').trim():'';
+    const loginId=idx('loginId')!==-1?(row[idx('loginId')]||'').trim():''; const canvasUserId=idx('canvasUserId')!==-1?(row[idx('canvasUserId')]||'').trim():'';
+    const nineNumber=idx('nineNumber')!==-1?(row[idx('nineNumber')]||'').trim():'';
+    const section=idx('section')!==-1?(row[idx('section')]||'').trim():''; let computerNumber=idx('computerNumber')!==-1?(row[idx('computerNumber')]||'').trim():'';
+    computerNumber = computerNumber ? parseInt(computerNumber,10) : undefined;
+    if(!firstName && !lastName && !sisUserId && !sisLoginId && !loginId && !canvasUserId && !nineNumber) continue;
+    const student = {
+      computerNumber:Number.isFinite(computerNumber)?computerNumber:undefined,
+      firstName,
+      lastName,
+      displayName:firstName||lastName||'',
+      sisUserId,
+      sisLoginId,
+      loginId:loginId||sisLoginId,
+      canvasUserId,
+      nineNumber,
+      section
+    };
+    if(isTestStudentRecord(student)) continue;
+    roster.push(student);
+  }
+  return { roster, columnMapping:mapping };
+}
+function setPeriodRoster(period, roster, columnMapping){
+  ensurePeriod();
+  const pd = state.data[period];
+  const oldSeats = pd.seats || {};
+  roster = (roster || []).filter(s=>!isTestStudentRecord(s));
+  pd.roster = roster; pd.columnMapping = columnMapping; if(!pd.seats) pd.seats = {};
+
+  // honor explicit seat numbers
+  let explicit=false;
+  for(const s of roster){
+    if(Number.isFinite(s.computerNumber)){
+      const key=studentKey(s); if(key){ pd.seats[s.computerNumber]=key; pd.students[s.computerNumber]=s.displayName||s.firstName||''; explicit=true; }
+    }
+  }
+  if(!explicit){
+    const validKeys=new Set(roster.map(studentKey)); const newSeats={};
+    for(const seatStr of Object.keys(oldSeats)){ const seat=parseInt(seatStr,10); const key=oldSeats[seatStr]; if(validKeys.has(key)) newSeats[seat]=key; }
+    pd.seats=newSeats;
+    const byKey={}; for(const s of roster){ byKey[studentKey(s)]=s; }
+    pd.students={};
+    for(const seatStr of Object.keys(pd.seats)){ const seat=parseInt(seatStr,10); const st=byKey[pd.seats[seat]]; pd.students[seat]=st ? (st.displayName||st.firstName||'') : ''; }
+  }
+  saveData(); refreshGrid();
+  if(Object.keys(pd.seats).length===0) openSeatingWizard();
+}
+
+/* ===== Seating Wizard ===== */
+const wizardBackdrop=document.getElementById('wizardBackdrop');
+const wizardRosterList=document.getElementById('wizardRosterList');
+const wizardGrid=document.getElementById('wizardGrid');
+const wizardStatus=document.getElementById('wizardStatus');
+function openSeatingWizard(){ closeInlineEditor(); renderWizard(); wizardBackdrop.style.display='flex'; wizardBackdrop.setAttribute('aria-hidden','false'); }
+function closeSeatingWizard(){ wizardBackdrop.style.display='none'; wizardBackdrop.setAttribute('aria-hidden','true'); }
+function renderWizard(){
+  const pd=getPeriodData(); const roster=(pd.roster||[]).filter(s=>!isTestStudentRecord(s)); const byKey={}; roster.forEach(s=>byKey[studentKey(s)]=s);
+  const assigned=new Set(Object.values(pd.seats||{})); const unassigned=roster.filter(s=>!assigned.has(studentKey(s)));
+  wizardRosterList.innerHTML=''; unassigned.sort((a,b)=>(a.firstName||'').localeCompare(b.firstName||'')).forEach(s=>{
+    const div=document.createElement('div'); div.className='roster-item';
+    div.innerHTML=`<span>${s.firstName||s.displayName||''} <small>${s.lastName||''}</small></span><span class="badge">${s.section||' '}</span>`;
+    wizardRosterList.appendChild(div);
+  });
+  wizardGrid.innerHTML=''; for(let seat=1; seat<=40; seat++){
+    const wrap=document.createElement('div'); wrap.className='wizard-seat';
+    const num=document.createElement('div'); num.className='wizard-seat-num'; num.textContent=`#${seat}`;
+    const name=document.createElement('div'); name.className='wizard-seat-name';
+    const currentKey=pd.seats[seat]; const current=currentKey?byKey[currentKey]:null;
+    name.textContent=current?(current.displayName||current.firstName||''):'(empty)';
+    const sel=document.createElement('select'); const optEmpty=document.createElement('option'); optEmpty.value=''; optEmpty.textContent='-- Assign --'; sel.appendChild(optEmpty);
+    roster.sort((a,b)=>(a.firstName||'').localeCompare(b.firstName||'')).forEach(s=>{
+      const opt=document.createElement('option'); opt.value=studentKey(s);
+      opt.textContent=`${s.firstName||s.displayName||''} ${s.lastName||''}`.trim();
+      if(currentKey && studentKey(s)===currentKey) opt.selected=true; sel.appendChild(opt);
+    });
+    sel.addEventListener('change', ()=>{
+      const key=sel.value;
+      if(key){ for(const seatStr of Object.keys(pd.seats)){ if(pd.seats[seatStr]===key) delete pd.seats[seatStr]; }
+        pd.seats[seat]=key; const st=byKey[key]; name.textContent=st?(st.displayName||st.firstName||''):'(empty)';
+      }else{ delete pd.seats[seat]; name.textContent='(empty)'; }
+      updateWizardStatus();
+    });
+    wrap.append(num,name,sel); wizardGrid.appendChild(wrap);
+  }
+  updateWizardStatus();
+}
+function updateWizardStatus(){
+  const pd=getPeriodData(); const roster=(pd.roster||[]).filter(s=>!isTestStudentRecord(s)); const assigned=Object.values(pd.seats||{}).length; const total=roster.length;
+  wizardStatus.textContent=`Unassigned: ${Math.max(total-assigned,0)}`;
+}
+document.getElementById('autoFillBtn').addEventListener('click', ()=>{
+  const pd=getPeriodData(); const roster=(pd.roster||[]).filter(s=>!isTestStudentRecord(s)); const curKeys=new Set(Object.values(pd.seats||{}));
+  const remaining=roster.filter(s=>!curKeys.has(studentKey(s))); let idx=0;
+  for(let seat=1; seat<=40 && idx<remaining.length; seat++){ if(!pd.seats[seat]){ const key=studentKey(remaining[idx++]); if(key) pd.seats[seat]=key; } }
+  renderWizard();
+});
+document.getElementById('clearAllSeatsBtn').addEventListener('click', ()=>{ const pd=getPeriodData(); pd.seats={}; renderWizard(); });
+document.getElementById('cancelWizardBtn').addEventListener('click', closeSeatingWizard);
+document.getElementById('saveWizardBtn').addEventListener('click', ()=>{
+  const pd=getPeriodData(); const byKey={}; (pd.roster||[]).forEach(s=>byKey[studentKey(s)]=s);
+  pd.students={}; for(const seatStr of Object.keys(pd.seats)){ const seat=parseInt(seatStr,10); const st=byKey[pd.seats[seat]]; pd.students[seat]=st?(st.displayName||st.firstName||''):''; }
+  saveData(); closeSeatingWizard(); refreshGrid();
+});
+
+/* ===== Ungraded Modal ===== */
+const ungradedBackdrop=document.getElementById('ungradedBackdrop');
+function openUngraded(){
+  closeInlineEditor();
+  const pd=getPeriodData(); const cur=ensureAssignments(pd); const roster=(pd.roster||[]).filter(s=>!isTestStudentRecord(s)); const list=document.getElementById('ungradedList');
+  list.innerHTML=''; const ungraded=roster.filter(s=>{ const k=studentKey(s); return k && !cur.gradesById[k]; });
+  ungraded.sort((a,b)=> (a.firstName||'').localeCompare(b.firstName||'')); for(const s of ungraded){
+    const row=document.createElement('div'); row.className='row';
+    row.innerHTML=`<strong style="min-width:120px">${(s.firstName||'')} ${(s.lastName||'')}</strong>
+                   <span class="badge">${s.section||''}</span>
+                   <span class="muted" style="margin-left:auto">${studentKey(s)?'ID present':'No ID'}</span>`;
+    list.appendChild(row);
+  }
+  document.getElementById('ungradedCount').textContent=ungraded.length;
+  ungradedBackdrop.style.display='flex'; ungradedBackdrop.setAttribute('aria-hidden','false');
+}
+function closeUngraded(){ ungradedBackdrop.style.display='none'; ungradedBackdrop.setAttribute('aria-hidden','true'); }
+
+/* ===== Student Editor ===== */
+const studentBackdrop=document.getElementById('studentBackdrop');
+function openStudentEditor(preset={}){
+  closeInlineEditor();
+  document.getElementById('stFirst').value=preset.firstName||'';
+  document.getElementById('stLast').value=preset.lastName||'';
+  document.getElementById('stSIS').value=preset.sisUserId||'';
+  document.getElementById('stSISLogin').value=preset.sisLoginId||'';
+  document.getElementById('stNineNumber').value=preset.nineNumber||'';
+  document.getElementById('stLogin').value=preset.loginId||'';
+  document.getElementById('stCanvas').value=preset.canvasUserId||'';
+  document.getElementById('stSection').value=preset.section||'';
+  document.getElementById('stSeat').value=preset.seat?String(preset.seat):'';
+  studentBackdrop.style.display='flex'; studentBackdrop.setAttribute('aria-hidden','false');
+}
+function closeStudentEditor(){ studentBackdrop.style.display='none'; studentBackdrop.setAttribute('aria-hidden','true'); }
+
+/* ===== UI Wiring ===== */
+document.getElementById('periodSelect').addEventListener('change', (e)=>{
+  state.currentPeriod=e.target.value; refreshGrid(); renderListView();
+  const pd=getPeriodData(); document.getElementById('assignmentName').value=pd.assignmentName||pd.currentAssignment||'';
+});
+document.querySelectorAll('.mode-btn').forEach(btn=>{
+  btn.addEventListener('click', (e)=>{
+    document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active'); state.mode=e.target.dataset.mode;
+    document.getElementById('assignmentControls').style.display = state.mode==='assignment' ? 'flex' : 'none';
+    refreshGrid();
+  });
+});
+document.getElementById('nameEditMode').addEventListener('click', toggleNameEditMode);
+document.getElementById('clearAllBtn').addEventListener('click', ()=>{
+  if(!confirm('Remove all students, seats, colors, and grades for this period?')) return;
+  const pd=getPeriodData(); pd.students={}; pd.colors={}; pd.seats={}; pd.assignments={}; pd.currentAssignment=pd.assignmentName||'Assignment';
+  ensureAssignments(pd); saveData(); refreshGrid(); renderListView();
+});
+document.getElementById('importRosterBtn').addEventListener('click', ()=>{
+  document.getElementById('rosterFile').value=''; document.getElementById('rosterFile').click();
+});
+document.getElementById('rosterFile').addEventListener('change',(e)=>{
+  const file=e.target.files && e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=(ev)=>{ const text=String(ev.target.result||''); const {roster, columnMapping}=buildRosterFromCSV(text); setPeriodRoster(state.currentPeriod, roster, columnMapping); renderListView(); };
+  reader.readAsText(file);
+});
+document.getElementById('assignSeatsBtn').addEventListener('click', openSeatingWizard);
+document.addEventListener('keydown', (e)=>{ if(e.shiftKey && e.key.toLowerCase()==='s') openSeatingWizard(); });
+document.getElementById('showUngradedBtn').addEventListener('click', openUngraded);
+document.getElementById('closeUngradedBtn').addEventListener('click', closeUngraded);
+document.getElementById('addStudentBtn').addEventListener('click', ()=> openStudentEditor());
+document.getElementById('cancelStudentBtn').addEventListener('click', closeStudentEditor);
+document.getElementById('saveStudentBtn').addEventListener('click', ()=>{
+  const pd=getPeriodData();
+  const s={
+    firstName:document.getElementById('stFirst').value.trim(),
+    lastName:document.getElementById('stLast').value.trim(),
+    sisUserId:document.getElementById('stSIS').value.trim(),
+    sisLoginId:document.getElementById('stSISLogin').value.trim(),
+    nineNumber:document.getElementById('stNineNumber').value.trim(),
+    loginId:document.getElementById('stLogin').value.trim(),
+    canvasUserId:document.getElementById('stCanvas').value.trim(),
+    section:document.getElementById('stSection').value.trim()
+  };
+  if(!s.displayName){ s.displayName = s.firstName || s.lastName || ''; }
+  if(!s.firstName && !s.lastName && !s.nineNumber && !s.sisUserId && !s.sisLoginId && !s.loginId && !s.canvasUserId){
+    alert('Please provide at least a name or identifier.');
+    return;
+  }
+  const seatStr=document.getElementById('stSeat').value.trim();
+  const seat=parseInt(seatStr,10);
+  const seatNumber=Number.isFinite(seat)&&seat>=1&&seat<=40 ? seat : undefined;
+  upsertStudent(pd, s, seatNumber);
+  saveData(); closeStudentEditor(); refreshGrid(); renderListView();
+});
+document.getElementById('saveAssignment').addEventListener('click', ()=>{
+  const pd=getPeriodData(); const name=(document.getElementById('assignmentName').value||'Assignment').trim();
+  pd.assignmentName=name; pd.currentAssignment=name; ensureAssignments(pd); saveData();
+  renderListView();
+});
+
+/* View toggles */
+function setView(view){
+  closeInlineEditor();
+  const seat=document.getElementById('seatView'); const list=document.getElementById('listView');
+  if(view==='seat'){ seat.style.display='block'; list.style.display='none'; document.getElementById('seatViewBtn').classList.add('active'); document.getElementById('listViewBtn').classList.remove('active'); }
+  else { seat.style.display='none'; list.style.display='block'; document.getElementById('listViewBtn').classList.add('active'); document.getElementById('seatViewBtn').classList.remove('active'); renderListView(); }
+}
+document.getElementById('seatViewBtn').addEventListener('click', ()=> setView('seat'));
+document.getElementById('listViewBtn').addEventListener('click', ()=> setView('list'));
+document.getElementById('copyListBtn').addEventListener('click', copyListToClipboard);
+document.getElementById('toggleIdentifiersBtn').addEventListener('click', ()=>{
+  state.showIdentifiers = !state.showIdentifiers;
+  renderListView();
+});
+
+/* ===== Boot ===== */
+loadData();
+createGrid();
+const pd0=getPeriodData(); document.getElementById('assignmentName').value=pd0.assignmentName||pd0.currentAssignment||'';
+refreshGrid();
+</script>
+</body>
+</html>
