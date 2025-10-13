@@ -1,0 +1,279 @@
+/* Copied from latest (micro:bit) with font control */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-size: inherit;
+}
+
+body {
+    font-family: 'Comic Sans MS', 'Trebuchet MS', cursive, sans-serif;
+    background: #f0f8ff;
+    height: 100vh;
+    overflow: hidden;
+    font-size: 24px; /* Base size for projection */
+    line-height: 1.5;
+}
+
+#app {
+    display: flex;
+    height: 100vh;
+    position: relative;
+}
+
+/* Font Size Control */
+#font-control {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 100;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: 2px solid #FFD54F;
+}
+
+#font-control label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-right: 8px;
+}
+
+#font-control select {
+    font-size: 14px;
+    padding: 4px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: white;
+}
+
+/* Sidebar */
+#sidebar {
+    width: 320px;
+    background: #FFF8E1;
+    border-right: 3px solid #FFD54F;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 3px 0 10px rgba(0,0,0,0.1);
+}
+
+#sidebar h2 {
+    color: #FF6B6B;
+    margin-bottom: 10px;
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+/* Visual indicator for data source */
+#sidebar[data-mode="live"] h2::after {
+    content: " 📱";
+    font-size: 0.8em;
+}
+
+#sidebar[data-mode="backup"] h2::after {
+    content: " 💾";
+    font-size: 0.8em;
+}
+
+#sidebar h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+/* Session List */
+.session-item {
+    background: white;
+    margin-bottom: 12px;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #e0e0e0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.session-item:hover {
+    background: #f0f8ff;
+    border-color: #4ECDC4;
+    transform: translateX(5px);
+}
+
+.session-item.selected {
+    background: #4ECDC4;
+    color: white;
+    border-color: #3bb3b3;
+    font-weight: bold;
+}
+
+.session-item.completed {
+    background: #E8F5E8;
+    border-color: #4CAF50;
+}
+
+.session-item .session-title {
+    font-size: 1em;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.session-item .session-description {
+    font-size: 0.85em;
+    opacity: 0.8;
+}
+
+.session-item.selected .session-description {
+    opacity: 1;
+}
+
+/* Navigation Help */
+#navigation-help {
+    margin-top: 30px;
+    padding: 15px;
+    background: #E3F2FD;
+    border-radius: 8px;
+    border-left: 4px solid #2196F3;
+}
+
+#navigation-help p {
+    font-size: 0.85em;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+/* Main Content */
+#main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: white;
+}
+
+#slide-container {
+    flex: 1;
+    padding: 24px 28px;
+    overflow-y: auto;
+}
+
+#current-slide h1 {
+    color: #FF6B6B;
+    text-align: left;
+    margin-bottom: 12px;
+    font-size: 1.6em;
+}
+
+#current-slide h2 {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+    font-size: 1.25em;
+}
+
+#current-slide ul {
+    margin-left: 1.2em;
+}
+
+.definition {
+    background: #FFF8E1;
+    padding: 15px;
+    border-left: 4px solid #FFD54F;
+    margin: 15px 0;
+    border-radius: 5px;
+}
+
+.call-to-action {
+    background: #E8F5E8;
+    padding: 15px;
+    border-left: 4px solid #4ECDC4;
+    margin: 15px 0;
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+#slide-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-top: 1px solid #eee;
+}
+
+#slide-counter {
+    font-weight: bold;
+}
+
+button {
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fafafa;
+    cursor: pointer;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Tag chips for STEM/STEAM examples */
+.tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: #fff;
+    font-weight: 700;
+    margin-right: 6px;
+}
+.stem-sci { background: #1e88e5; }
+.stem-tech { background: #8e24aa; }
+.stem-eng { background: #43a047; }
+.stem-math { background: #fb8c00; }
+.stem-art { background: #e91e63; }
+
+/* Section title callout within slide content */
+.section-title {
+    font-size: 1.3em;
+    font-weight: 800;
+    color: #007bff;
+    border-bottom: 3px solid #007bff;
+    padding-bottom: 6px;
+    margin: 14px 0 10px;
+}
+
+/* Improve list spacing for readability */
+#current-slide li {
+    margin: 6px 0;
+}
+
+/* Chip styles for EDP steps */
+.chip {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 800;
+    margin-right: 6px;
+}
+.chip-ask { background: #1e88e5; }
+.chip-imagine { background: #8e24aa; }
+.chip-plan { background: #43a047; }
+.chip-create { background: #fb8c00; }
+.chip-test { background: #3949ab; }
+.chip-improve { background: #e91e63; }
+
+/* Day chips for timeline */
+.chip-day1 { background: #1e88e5; color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 800; }
+.chip-day2 { background: #43a047; color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 800; }
+.chip-day3 { background: #fb8c00; color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 800; }
+.chip-day4 { background: #8e24aa; color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 800; }
+.chip-day5 { background: #e91e63; color: #fff; padding: 2px 8px; border-radius: 10px; font-weight: 800; }
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    #app { flex-direction: column; }
+    #sidebar { width: 100%; height: 200px; border-right: none; border-bottom: 1px solid #dee2e6; }
+}

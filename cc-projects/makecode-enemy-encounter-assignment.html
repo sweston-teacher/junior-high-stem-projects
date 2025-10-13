@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MakeCode Arcade Enemy Encounter Challenge</title>
+    <style>
+        body { font-family: "Segoe UI", Helvetica, Arial, sans-serif; background-color: #f7f9fc; color: #1a1a1a; line-height: 1.6; margin: 0; padding: 0; }
+        .wrapper { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+        header h1 { margin-bottom: 0.25rem; }
+        header p { margin-top: 0; color: #4a4a4a; }
+        section { background: #fff; margin-top: 1.5rem; border-radius: 12px; padding: 1.75rem; box-shadow: 0 12px 24px rgba(15, 35, 95, 0.08); }
+        h2 { margin-top: 0; color: #163d7a; }
+        h3 { margin-bottom: 0.25rem; color: #204681; }
+        ul { padding-left: 1.25rem; }
+        li { margin-bottom: 0.35rem; }
+        .badge-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .badge { background: #edf4ff; border: 1px solid #c9dbff; border-radius: 10px; padding: 1rem; }
+        .checklist li { list-style: "☐ "; }
+        .checklist li.done { list-style: "☑ "; }
+        .callout { background: #fbfbfb; border: 1px solid #e0e6f5; border-radius: 10px; padding: 1rem; margin-top: 1rem; }
+        .inline-note { display: inline-block; background: #fff4d6; border: 1px solid #ffd178; border-radius: 6px; padding: 0.25rem 0.5rem; font-size: 0.9rem; margin-top: 0.35rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { border: 1px solid #d6dff5; padding: 0.65rem 0.85rem; text-align: left; }
+        th { background: #e5edff; }
+        @media (max-width: 640px) {
+            .wrapper { padding: 1.5rem 1rem 3rem; }
+            section { padding: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <h1>MakeCode Arcade Enemy Encounter Challenge</h1>
+            <p>Creative Coding</p>
+        </header>
+
+        <section>
+            <h2>Assignment Overview</h2>
+            <p>Time to make a game! You will make a playable MakeCode Arcade game that explores design, control, and enemy (or friend) encounters. Use the mechanics we have practiced. You don't need to make a specific type of game. There are a few ground rules, but beyond that, your goal is to explore the process of video game making, and make a game that has a beginning and an end. </p>
+            <div class="callout">
+                <h3>What You Need To Show</h3>
+                <ul>
+                    <li>A fully working game loop the player can start, play, and win (or lose).</li>
+                    <li>Enemy (or friend) encounters that react to the hero.  This can mean projectiles, or conversation.</li>
+                    <li>Named characters and a story that explains why the encounter matters.</li>
+                    <li>A project title and cover art</li>                    
+                </ul>
+            </div>
+        </section>
+
+        <section>
+            <h2>Must-Have Mechanics</h2>
+            <p>All projects—solo or team—must demonstrate these before class ends.</p>
+            <ul class="checklist">
+                <li>Splash screen (add last so it does not interrupt testing).</li>
+                <li>Hero spawns on the map and moves with the controller.</li>
+                <li>Solid walls.</li>
+                <li>At least one enemy (or friend) that spawns where intended.</li>
+                <li>Enemy interaction is meaningful (dialog, teleport, tile change, lose a life, etc.) and tied to your chosen mechanic.</li>
+                <li>Some kind of goal that must be achieved to win. Possibly ways to lose as well</li>
+            </ul>
+            <p class="inline-note">You can work solo, or in teams of two. Teams of two must make a two-player game.</p>
+        </section>
+
+        <section>
+            <h2>Game Style Options</h2>
+            <p>In addition to the required mechanics, choose a style to give your game direction and personality:</p>
+            <div class="badge-list">
+                <div class="badge">
+                    <h3>Treasure Unlock</h3>
+                    <p>Dialog reveals a door, treasure chest, or new path.</p>
+                </div>
+                <div class="badge">
+                    <h3>Challenge Path</h3>
+                    <p>Maze or timed movement where accuracy matters.</p>
+                </div>
+                <div class="badge">
+                    <h3>Score or Power</h3>
+                    <p>Touching enemies or items changes a score, hearts, or energy meter.</p>
+                </div>
+                <div class="badge">
+                    <h3>Food Delivery</h3>
+                    <p>Enemy requests food; hero finds and returns it for a reward.</p>
+                </div>
+                <div class="badge">
+                    <h3>Your Own Idea</h3>
+                    <p>If you have an idea for a game you'd like to create, talk to me and we'll figure it out.</p>
+                </div>
+            </div>
+            
+            <div class="callout">
+                <h3>Finished Early?</h3>
+                <p>Keep building. Add another enemy encounter, design a new level, layer in a second game style, or polish the story. Use every minute to refine your work or enhance your skills.</p>
+            </div>
+            <div class="callout">
+                <h3>Sound and Headphones</h3>
+                <p>Sound design is optional but encouraged. If you test music or sound effects, wear headphones so the room stays focused.</p>
+            </div>
+        </section>
+
+        <section>
+            <h2>Success Scale (Proficiency 0–4)</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Score</th>
+                        <th>What it looks like</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>4</td>
+                        <td>Every must-have works, the chosen game style works, the game includes a clear goal or win/lose state, and the project is saved/shared correctly.</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Most must-haves work but one glitch remains <em>or</em> the game style is missing/broken <em>or</em> the goal is confusing.</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Core systems incomplete—enemy missing, interaction fails, or walls do not block.</td>
+                    </tr>
+                    <tr>
+                        <td>1</td>
+                        <td>Sprites exist but no functional interaction yet.</td>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>Nothing submitted.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section>
+            <h2>Submission Checklist</h2>
+            <ul>
+                <li>Project meets every must-have mechanic.</li>
+                <li>At least one game style option is working.</li>
+                <li>Game has a goal (win, lose, finish) that can be demonstrated.</li>
+                <li>Project includes named characters, game title, and custom art.</li>
+                <li>Project file or share link is uploaded to Canvas.</li>
+            </ul>
+        </section>
+    </div>
+</body>
+</html>
