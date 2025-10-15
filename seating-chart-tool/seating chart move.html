@@ -110,14 +110,12 @@
     <strong>Seat-Drop PRO</strong>
     <div class="toggle-panels">
       <fieldset class="toggle-box">
-        <legend>View</legend>
         <label class="radio-row"><input type="radio" name="viewMode" id="viewSeatRadio" value="seat" checked> Seat View</label>
         <label class="radio-row"><input type="radio" name="viewMode" id="viewListRadio" value="list"> List View</label>
       </fieldset>
       <fieldset class="toggle-box">
-        <legend>Mode</legend>
-        <label class="radio-row"><input type="radio" name="modeSelect" id="modeClassworkRadio" value="classwork" checked> Classwork (RGB)</label>
-        <label class="radio-row"><input type="radio" name="modeSelect" id="modeAssignmentRadio" value="assignment"> Assignment (1–4)</label>
+        <label class="radio-row"><input type="radio" name="modeSelect" id="modeAssignmentRadio" value="assignment" checked> Assignment (1–4)</label>
+        <label class="radio-row"><input type="radio" name="modeSelect" id="modeClassworkRadio" value="classwork"> Classwork (RGB)</label>
       </fieldset>
     </div>
     <button id="assignToggleBtn">Assign Seats OFF</button>
@@ -213,7 +211,7 @@ const STORAGE_KEY = 'seatdrop_pro_v1';
 
 /*** App State ***/
 const state = {
-  mode: 'classwork',          // 'classwork' | 'assignment'
+  mode: 'assignment',         // 'classwork' | 'assignment'
   assigning: false,           // seat dropdowns visible
   layoutLocked: false,        // lock movement
   view: 'seat',               // 'seat' | 'list'
