@@ -21,8 +21,11 @@
   button:hover{filter:brightness(.96)}
   .toggle-group button{background:#fff;color:#0ea5e9;border:2px solid #0ea5e9}
   .toggle-group button.active{background:#0ea5e9;color:#fff}
-  .mode-group button{background:#fff;color:#2563eb;border:2px solid #2563eb}
-  .mode-group button.active{background:#2563eb;color:#fff}
+  .toggle-panels{display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;margin:0 16px}
+  .toggle-box{border:1px solid #d1d5db;border-radius:10px;padding:10px 14px;background:#f8fafc;display:flex;flex-direction:column;gap:8px;min-width:170px}
+  .toggle-box legend{font-size:12px;font-weight:600;color:#1f2937;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:4px}
+  .radio-row{display:flex;align-items:center;gap:8px;font-size:13px;color:#1f2937}
+  .radio-row input[type="radio"]{accent-color:#0ea5e9}
   .right{margin-left:auto}
 
   /* Canvas / seats */
@@ -105,15 +108,19 @@
 <div class="panel">
   <div class="row">
     <strong>Seat-Drop PRO</strong>
-    <div class="toggle-group">
-      <button id="assignToggleBtn">Assign Seats OFF</button>
+    <div class="toggle-panels">
+      <fieldset class="toggle-box">
+        <legend>View</legend>
+        <label class="radio-row"><input type="radio" name="viewMode" id="viewSeatRadio" value="seat" checked> Seat View</label>
+        <label class="radio-row"><input type="radio" name="viewMode" id="viewListRadio" value="list"> List View</label>
+      </fieldset>
+      <fieldset class="toggle-box">
+        <legend>Mode</legend>
+        <label class="radio-row"><input type="radio" name="modeSelect" id="modeClassworkRadio" value="classwork" checked> Classwork (RGB)</label>
+        <label class="radio-row"><input type="radio" name="modeSelect" id="modeAssignmentRadio" value="assignment"> Assignment (1–4)</label>
+      </fieldset>
     </div>
-    <div class="mode-group">
-      <button class="modeBtn active" data-mode="classwork">Classwork (RGB)</button>
-      <button class="modeBtn" data-mode="assignment">Assignment (1–4)</button>
-    </div>
-    <button id="listViewBtn" class="secondary">List View</button>
-    <button id="seatViewBtn" class="secondary">Seat View</button>
+    <button id="assignToggleBtn">Assign Seats OFF</button>
     <span class="right"></span>
     <button id="backupBtn" class="gray">Backup JSON</button>
     <input id="restoreInput" type="file" accept=".json" style="display:none">
@@ -319,6 +326,10 @@ function ensureSeatSpacing(){
 
 /*** Rendering Seats ***/
 const room = el('#roomCanvas');
+const viewSeatRadio = el('#viewSeatRadio');
+const viewListRadio = el('#viewListRadio');
+const modeClassworkRadio = el('#modeClassworkRadio');
+const modeAssignmentRadio = el('#modeAssignmentRadio');
 
 function clearRoom(){ room.innerHTML = ''; }
 
@@ -536,24 +547,23 @@ function renderSeats(){
   room.style.minHeight = Math.max(CANVAS_MIN_HEIGHT, maxBottom) + 'px';
 }
 
-function updateModeButtons(){
-  document.querySelectorAll('.modeBtn').forEach(btn=>{
-    btn.classList.toggle('active', btn.dataset.mode === state.mode);
-  });
+function syncModeControls(){
+  if(modeClassworkRadio) modeClassworkRadio.checked = (state.mode === 'classwork');
+  if(modeAssignmentRadio) modeAssignmentRadio.checked = (state.mode === 'assignment');
 }
 
-function updateAssignButton(){
+function syncAssignButton(){
   const assignBtn = el('#assignToggleBtn');
   assignBtn.classList.toggle('active', state.assigning);
   assignBtn.textContent = state.assigning ? 'Assign Seats ON' : 'Assign Seats OFF';
 }
 
-function updateViewButtons(){
+function syncViewControls(){
   const listVisible = state.view === 'list';
+  if(viewSeatRadio) viewSeatRadio.checked = !listVisible;
+  if(viewListRadio) viewListRadio.checked = listVisible;
   el('#listView').style.display = listVisible ? 'block' : 'none';
   el('#canvasWrap').style.display = listVisible ? 'none' : 'block';
-  el('#listViewBtn').classList.toggle('active', listVisible);
-  el('#seatViewBtn').classList.toggle('active', !listVisible);
 }
 
 function sortByLastFirst(a,b){
@@ -886,19 +896,46 @@ window.addEventListener('keydown', e=>{
 });
 
 /*** Modes & Toggles ***/
-document.querySelectorAll('.modeBtn').forEach(b=>{
-  b.addEventListener('click', e=>{
-    state.mode = e.currentTarget.dataset.mode;
-    updateModeButtons();
+if(modeClassworkRadio){
+  modeClassworkRadio.addEventListener('change', ()=>{
+    if(!modeClassworkRadio.checked) return;
+    state.mode = 'classwork';
+    syncModeControls();
     renderSeats();
     renderList();
     updateAverage();
   });
-});
+}
+if(modeAssignmentRadio){
+  modeAssignmentRadio.addEventListener('change', ()=>{
+    if(!modeAssignmentRadio.checked) return;
+    state.mode = 'assignment';
+    syncModeControls();
+    renderSeats();
+    renderList();
+    updateAverage();
+  });
+}
+if(viewSeatRadio){
+  viewSeatRadio.addEventListener('change', ()=>{
+    if(!viewSeatRadio.checked) return;
+    state.view = 'seat';
+    renderSeats();
+    syncViewControls();
+  });
+}
+if(viewListRadio){
+  viewListRadio.addEventListener('change', ()=>{
+    if(!viewListRadio.checked) return;
+    state.view = 'list';
+    renderList();
+    syncViewControls();
+  });
+}
 
 el('#assignToggleBtn').addEventListener('click', ()=>{
   state.assigning = !state.assigning;
-  updateAssignButton();
+  syncAssignButton();
   renderSeats();
 });
 
@@ -948,18 +985,6 @@ function updateAverage(){
 }
 
 /*** List / Seat View toggles ***/
-el('#listViewBtn').addEventListener('click', ()=>{
-  state.view = 'list';
-  renderList();
-  updateViewButtons();
-  el('#canvasWrap').style.display = 'none';
-  el('#seatViewBtn').focus();
-});
-el('#seatViewBtn').addEventListener('click', ()=>{
-  state.view = 'seat';
-  updateViewButtons();
-  el('#canvasWrap').style.display = 'block';
-});
 
 /*** Copy List ***/
 el('#copyListBtn').addEventListener('click', copyList);
@@ -1006,10 +1031,10 @@ function syncUiFromState(){
   renderSeats();
   renderList();
   updateAverage();
-  updateModeButtons();
-  updateAssignButton();
+  syncModeControls();
+  syncAssignButton();
   updateLayoutStatus();
-  updateViewButtons();
+  syncViewControls();
 }
 
 load();
