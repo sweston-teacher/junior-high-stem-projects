@@ -9,6 +9,7 @@
   body{font-family:Arial,Helvetica,sans-serif;background:#f5f5f5;margin:0;padding:20px;max-width:1400px;margin-inline:auto}
 
   .panel{background:#fff;border-radius:10px;box-shadow:0 2px 6px rgba(0,0,0,.1);padding:16px;margin-bottom:16px}
+  #canvasWrap{position:relative}
   .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
   label{font-size:14px;color:#374151}
   input[type="text"],input[type="number"],select,button{border:1px solid #cbd5e1;border-radius:6px;padding:8px 10px;font-size:14px;background:#fff}
@@ -72,6 +73,7 @@
   .seat.class-red{background:#fee2e2;border-color:#b91c1c}
   .seat .name.clickable{cursor:pointer}
   .seat .name.empty{color:#94a3b8;font-style:italic}
+  .seat.selected{outline:3px solid #0ea5e9; outline-offset:2px}
 
   /* dropdown for Assign Seats */
   .assignDrop{position:absolute;top:6px;right:6px;max-width:180px;display:none}
@@ -87,6 +89,7 @@
   th,td{border:1px solid #e5e7eb;padding:8px 10px;font-size:14px;text-align:left}
   th{background:#f3f4f6}
   #listBody tr.unassigned td:last-child{color:#94a3b8;font-style:italic}
+  .selection-box{position:absolute;border:2px dashed #0ea5e9;background:rgba(14,165,233,0.1);pointer-events:none;display:none;z-index:1000}
 
   /* modals */
   .backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:9999}
@@ -143,6 +146,7 @@
 
 <div id="canvasWrap" class="panel">
   <div id="roomCanvas" tabindex="0" aria-label="Room layout canvas"></div>
+  <div id="selectionBox" class="selection-box"></div>
   <div class="row" style="margin-top:10px">
     <div class="toggle-group">
       <button id="lockLayoutBtn" class="gray">Lock Layout</button>
@@ -324,10 +328,18 @@ function ensureSeatSpacing(){
 
 /*** Rendering Seats ***/
 const room = el('#roomCanvas');
+const selectionBox = el('#selectionBox');
 const viewSeatRadio = el('#viewSeatRadio');
 const viewListRadio = el('#viewListRadio');
 const modeClassworkRadio = el('#modeClassworkRadio');
 const modeAssignmentRadio = el('#modeAssignmentRadio');
+const selectedSeatIds = new Set();
+let marqueeOrigin = null;
+let marqueeBaseSelection = new Set();
+let marqueeCurrentSelection = new Set();
+let marqueeActive = false;
+let marqueeAppend = false;
+let marqueeDragged = false;
 
 function clearRoom(){ room.innerHTML = ''; }
 
@@ -543,6 +555,7 @@ function renderSeats(){
   room.classList.toggle('assigning', state.assigning);
   room.style.minWidth = Math.max(CANVAS_MIN_WIDTH, maxRight) + 'px';
   room.style.minHeight = Math.max(CANVAS_MIN_HEIGHT, maxBottom) + 'px';
+  syncSeatSelectionClasses();
 }
 
 function syncModeControls(){
@@ -564,6 +577,115 @@ function syncViewControls(){
   el('#canvasWrap').style.display = listVisible ? 'none' : 'block';
 }
 
+function syncSeatSelectionClasses(){
+  const nodes = room.querySelectorAll('.seat');
+  nodes.forEach(node=>{
+    const id = node.dataset.id;
+    node.classList.toggle('selected', selectedSeatIds.has(id));
+  });
+}
+
+function clearSelection(){
+  selectedSeatIds.clear();
+  syncSeatSelectionClasses();
+}
+
+function getPointerPositionInRoom(evt){
+  const rect = room.getBoundingClientRect();
+  const point = evt.touches ? evt.touches[0] : evt;
+  const x = clamp(point.clientX - rect.left, 0, room.scrollWidth);
+  const y = clamp(point.clientY - rect.top, 0, room.scrollHeight);
+  return { x, y };
+}
+
+function rectFromPoints(a,b){
+  const left = Math.min(a.x, b.x);
+  const right = Math.max(a.x, b.x);
+  const top = Math.min(a.y, b.y);
+  const bottom = Math.max(a.y, b.y);
+  return { left, top, right, bottom, width: right - left, height: bottom - top };
+}
+
+function updateSelectionBoxDisplay(rect){
+  if(rect.width === 0 && rect.height === 0){
+    selectionBox.style.display = 'none';
+    return;
+  }
+  selectionBox.style.display = 'block';
+  selectionBox.style.left = rect.left + 'px';
+  selectionBox.style.top = rect.top + 'px';
+  selectionBox.style.width = rect.width + 'px';
+  selectionBox.style.height = rect.height + 'px';
+}
+
+function seatIntersectsRect(seat, rect){
+  const left = seat.x;
+  const right = seat.x + seat.w;
+  const top = seat.y;
+  const bottom = seat.y + seat.h;
+  return !(right < rect.left || left > rect.right || bottom < rect.top || top > rect.bottom);
+}
+
+function handleCanvasMouseDown(e){
+  if(e.button !== 0 || e.target.closest('.seat')) return;
+  marqueeActive = true;
+  marqueeAppend = e.shiftKey;
+  marqueeDragged = false;
+  marqueeOrigin = getPointerPositionInRoom(e);
+  marqueeBaseSelection = new Set(marqueeAppend ? selectedSeatIds : []);
+  marqueeCurrentSelection = new Set(marqueeBaseSelection);
+  if(!marqueeAppend){
+    selectedSeatIds.clear();
+    syncSeatSelectionClasses();
+  }
+  updateSelectionBoxDisplay({ left: marqueeOrigin.x, top: marqueeOrigin.y, right: marqueeOrigin.x, bottom: marqueeOrigin.y, width: 0, height: 0 });
+  window.addEventListener('mousemove', onMarqueeMove);
+  window.addEventListener('mouseup', onMarqueeUp);
+  e.preventDefault();
+}
+
+function onMarqueeMove(e){
+  if(!marqueeActive) return;
+  marqueeDragged = true;
+  const point = getPointerPositionInRoom(e);
+  const rect = rectFromPoints(marqueeOrigin, point);
+  updateSelectionBoxDisplay(rect);
+  marqueeCurrentSelection = new Set(marqueeBaseSelection);
+  state.data.layout.seats.forEach(seat=>{
+    if(seatIntersectsRect(seat, rect)){
+      marqueeCurrentSelection.add(seat.id);
+    }
+  });
+  selectedSeatIds.clear();
+  marqueeCurrentSelection.forEach(id => selectedSeatIds.add(id));
+  syncSeatSelectionClasses();
+}
+
+function onMarqueeUp(){
+  window.removeEventListener('mousemove', onMarqueeMove);
+  window.removeEventListener('mouseup', onMarqueeUp);
+  selectionBox.style.display = 'none';
+  if(marqueeActive){
+    if(marqueeDragged){
+      selectedSeatIds.clear();
+      marqueeCurrentSelection.forEach(id => selectedSeatIds.add(id));
+      syncSeatSelectionClasses();
+    } else {
+      if(!marqueeAppend){
+        clearSelection();
+      } else {
+        selectedSeatIds.clear();
+        marqueeBaseSelection.forEach(id => selectedSeatIds.add(id));
+        syncSeatSelectionClasses();
+      }
+    }
+  }
+  marqueeActive = false;
+  marqueeOrigin = null;
+  marqueeBaseSelection = new Set();
+  marqueeCurrentSelection = new Set();
+}
+
 function sortByLastFirst(a,b){
   const la=(a.lastName||'').toLowerCase(), lb=(b.lastName||'').toLowerCase();
   if(la<lb) return -1; if(la>lb) return 1;
@@ -575,17 +697,42 @@ function sortByLastFirst(a,b){
 /*** Drag behavior with snap + collision protect ***/
 function enableDrag(elSeat, seat){
   let startX=0,startY=0,origX=0,origY=0,dragging=false;
+  let groupDrag=null;
 
   const onDown = (e)=>{
-    if(e.button!==0) return;
+    if(e.button!==0 || state.layoutLocked) return;
+    const seatId = seat.id;
+    if(!selectedSeatIds.has(seatId)){
+      if(!e.shiftKey) selectedSeatIds.clear();
+      selectedSeatIds.add(seatId);
+      syncSeatSelectionClasses();
+    } else if(!e.shiftKey && selectedSeatIds.size>1){
+      selectedSeatIds.clear();
+      selectedSeatIds.add(seatId);
+      syncSeatSelectionClasses();
+    }
+
     dragging = true;
-    elSeat.classList.add('dragging');
     startX = (e.touches? e.touches[0].clientX : e.clientX);
     startY = (e.touches? e.touches[0].clientY : e.clientY);
-    const r = elSeat.getBoundingClientRect();
-    const pr = room.getBoundingClientRect();
     origX = seat.x;
     origY = seat.y;
+
+    if(selectedSeatIds.size>1 && selectedSeatIds.has(seatId)){
+      groupDrag = Array.from(selectedSeatIds).map(id=>{
+        const seatObj = state.data.layout.seats.find(s=>s.id===id);
+        return {
+          seat: seatObj,
+          element: room.querySelector(`.seat[data-id=\"${id}\"]`),
+          origX: seatObj.x,
+          origY: seatObj.y
+        };
+      });
+    } else {
+      groupDrag = null;
+    }
+
+    elSeat.classList.add('dragging');
     e.preventDefault();
     window.addEventListener('mousemove', onMove);
     window.addEventListener('touchmove', onMove, {passive:false});
@@ -600,12 +747,32 @@ function enableDrag(elSeat, seat){
     const dx = cx - startX;
     const dy = cy - startY;
     const grid = Number(el('#gridSize').value)||10;
-    const nx = Math.round((origX + dx)/grid)*grid;
-    const ny = Math.round((origY + dy)/grid)*grid;
-    seat.x = clamp(nx, 0, Math.max(0, room.clientWidth - seat.w));
-    seat.y = clamp(ny, 0, Math.max(0, room.clientHeight - seat.h));
-    elSeat.style.left = seat.x + 'px';
-    elSeat.style.top  = seat.y + 'px';
+    const snapX = Math.round((origX + dx)/grid)*grid;
+    const snapY = Math.round((origY + dy)/grid)*grid;
+    const nx = clamp(snapX, 0, Math.max(0, room.clientWidth - seat.w));
+    const ny = clamp(snapY, 0, Math.max(0, room.clientHeight - seat.h));
+    const deltaX = nx - origX;
+    const deltaY = ny - origY;
+
+    seat.x = nx;
+    seat.y = ny;
+    elSeat.style.left = nx + 'px';
+    elSeat.style.top  = ny + 'px';
+
+    if(groupDrag){
+      groupDrag.forEach(item=>{
+        if(item.seat.id === seat.id) return;
+        let gx = clamp(item.origX + deltaX, 0, Math.max(0, room.clientWidth - item.seat.w));
+        let gy = clamp(item.origY + deltaY, 0, Math.max(0, room.clientHeight - item.seat.h));
+        item.seat.x = gx;
+        item.seat.y = gy;
+        if(item.element){
+          item.element.style.left = gx + 'px';
+          item.element.style.top = gy + 'px';
+        }
+      });
+    }
+
     e.preventDefault();
   };
 
@@ -613,11 +780,20 @@ function enableDrag(elSeat, seat){
     if(!dragging) return;
     dragging = false;
     elSeat.classList.remove('dragging');
-    // collision check — if overlapping another seat, revert
     if(isCollidingAny(seat)){
       seat.x = origX; seat.y = origY;
       elSeat.style.left = seat.x + 'px';
       elSeat.style.top  = seat.y + 'px';
+      if(groupDrag){
+        groupDrag.forEach(item=>{
+          item.seat.x = item.origX;
+          item.seat.y = item.origY;
+          if(item.element){
+            item.element.style.left = item.origX + 'px';
+            item.element.style.top = item.origY + 'px';
+          }
+        });
+      }
     }
     save();
     window.removeEventListener('mousemove', onMove);
@@ -930,6 +1106,16 @@ if(viewListRadio){
     syncViewControls();
   });
 }
+
+room.addEventListener('mousedown', handleCanvasMouseDown);
+room.addEventListener('click', e=>{
+  if(e.target === room && !marqueeActive){
+    clearSelection();
+  }
+});
+window.addEventListener('keydown', e=>{
+  if(e.key === 'Escape'){ clearSelection(); }
+});
 
 el('#assignToggleBtn').addEventListener('click', ()=>{
   state.assigning = !state.assigning;

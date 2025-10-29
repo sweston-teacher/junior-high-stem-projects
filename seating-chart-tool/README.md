@@ -33,10 +33,11 @@ Purpose-built so you can hand the tool to APPEL mentors or other teachers. Every
 - **Backup/Restore** – Export a JSON backup before sharing or switching devices; restore drops everything back in instantly.
 - **Copyable List** – Generates a CSV-formatted clipboard dump of the roster/seat list for quick email or gradebook updates.
 - **Responsive Canvas** – Canvas automatically resizes to fit however many seats you add; no more chairs falling off the edge.
+- **Box Select Groups** – Click-drag a marquee to select several desks and move them as a block.
 
 ### Quick Start for New Teachers
 1. Open the HTML file in any modern browser (Chrome/Edge/Safari).  
-2. Set seat count and drag the layout into position (`Room Editor ON` → `Unlock Layout`).  
+2. Set seat count and drag the layout into position (unlock the layout, arrange desks, then lock again when finished).  
 3. Import a roster CSV or add students manually.  
 4. Turn on `Assign Seats` to place students, or click empty seats to add new entries on the fly.  
 5. Toggle between `Classwork` colors and `Assignment` scoring during class.  
