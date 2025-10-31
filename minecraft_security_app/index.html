@@ -309,6 +309,7 @@
     }
     .plots-head { position: sticky; top: 0; z-index: 1; background: #0b142c; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--muted); }
     .plots-head > div { display: flex; align-items: center; padding: 8px 8px; white-space: nowrap; min-width: 0; border-right: 1px solid var(--border); }
+    .plots-head > div:nth-child(12) { min-width: var(--col-owner-tag-width); }
     .plots-head > div:last-child { border-right: none; }
     .plot-row > div { border-right: 1px solid var(--border); }
     .plot-row > div:last-child { border-right: none; }
@@ -335,7 +336,8 @@
       -moz-appearance: textfield;
     }
     .plot-row > div:nth-child(11) { padding: 8px 8px; align-items: center; }
-    .plot-row > div:nth-child(12) { padding: 8px 8px; align-items: center; }
+    .plot-row > div:nth-child(12) { padding: 8px 8px; align-items: center; min-width: var(--col-owner-tag-width); }
+    .plot-row > div:nth-child(12) input[type="text"] { min-width: 240px; }
     .plot-actions { display: flex; gap: 6px; justify-content: flex-end; width: 100%; }
     .preview { font-size: 11px; color: var(--muted); background: var(--chip); border-radius: 6px; padding: 0; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .owners-editor { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 4px; min-height: 32px; border: 1px solid var(--border); border-radius: 6px; background: var(--input); }
@@ -768,7 +770,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
 
   <script>
     // Version number - UPDATE THIS WHEN MAKING CHANGES
-    const APP_VERSION = 'v2025.10.31.4';
+    const APP_VERSION = 'v2025.10.31.5';
     
     // Storage key helpers
     const getStorageKey = (className) => `meePlotSecurityV1_${className}`;
