@@ -770,7 +770,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
 
   <script>
     // Version number - UPDATE THIS WHEN MAKING CHANGES
-    const APP_VERSION = 'v2025.10.31.5';
+    const APP_VERSION = 'v2025.10.31.6';
     
     // Storage key helpers
     const getStorageKey = (className) => `meePlotSecurityV1_${className}`;
@@ -1520,7 +1520,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
         ['dx', 'dX', '--col-dx-width', 40],
         ['dy', 'dY', '--col-dy-width', 40],
         ['dz', 'dZ', '--col-dz-width', 40],
-        ['ownerTag', 'Owner Tag', '--col-owner-tag-width', 120],
+        ['ownerTag', 'Owner Tag', '--col-owner-tag-width', 260],
       ];
       
       // Get sample input for styling
@@ -1575,6 +1575,14 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
               const width = measurer.offsetWidth;
               if (width > maxWidth) {
                 maxWidth = width;
+              }
+            }
+            // For ownerTag, also measure placeholder text (the auto-generated tag)
+            if (dataField === 'ownerTag' && input.placeholder) {
+              measurer.textContent = input.placeholder;
+              const placeholderWidth = measurer.offsetWidth;
+              if (placeholderWidth > maxWidth) {
+                maxWidth = placeholderWidth;
               }
             }
           });
