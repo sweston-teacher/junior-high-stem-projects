@@ -1257,13 +1257,18 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
           }
           
           // Validate username length
+          let hasValidationError = false;
           plot.owners.forEach(owner => {
             if (owner.length > 16) {
               errors.push(`Line ${lineNum + 1}: owner "${owner}" exceeds 16 characters`);
+              hasValidationError = true;
             }
           });
           
-          plots.push(plot);
+          // Only add plot if there are no validation errors
+          if (!hasValidationError) {
+            plots.push(plot);
+          }
         } catch (e) {
           errors.push(`Line ${lineNum + 1}: Parse error - ${e.message}`);
         }
@@ -2644,64 +2649,69 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
     }
 
     function processBulkAdd() {
-      const text = bulkAddTextarea.value.trim();
-      if (!text) {
-        bulkAddErrors.textContent = 'Please paste plot data';
-        return;
-      }
-
-      const { plots: newPlots, errors } = parseBulkData(text);
-      
-      if (errors.length > 0) {
-        bulkAddErrors.textContent = errors.slice(0, 5).join('\n') + (errors.length > 5 ? `\n... and ${errors.length - 5} more errors` : '');
-        return;
-      }
-
-      if (newPlots.length === 0) {
-        bulkAddErrors.textContent = 'No valid plots found. Check format and try again.';
-        return;
-      }
-
-      // Check for duplicate IDs in existing plots
-      const currentPlots = getPlotsFromUI();
-      const existingIds = new Set(currentPlots.map(p => p.id));
-      const duplicateIds = newPlots.filter(p => existingIds.has(p.id)).map(p => p.id);
-      
-      if (duplicateIds.length > 0) {
-        bulkAddErrors.textContent = `Duplicate IDs found: ${duplicateIds.join(', ')}. Please use unique IDs.`;
-        return;
-      }
-
-      // Check for duplicate IDs within new plots
-      const newIds = new Set();
-      const duplicatesInNew = [];
-      newPlots.forEach(p => {
-        if (newIds.has(p.id)) {
-          duplicatesInNew.push(p.id);
-        } else {
-          newIds.add(p.id);
+      try {
+        const text = bulkAddTextarea.value.trim();
+        if (!text) {
+          bulkAddErrors.textContent = 'Please paste plot data';
+          return;
         }
-      });
-      
-      if (duplicatesInNew.length > 0) {
-        bulkAddErrors.textContent = `Duplicate IDs in pasted data: ${[...new Set(duplicatesInNew)].join(', ')}`;
-        return;
-      }
 
-      // All validation passed - add plots
-      const options = getOptionsFromUI();
-      const allPlots = [...currentPlots, ...newPlots];
-      
-      // Fill defaults for y/dy if needed
-      allPlots.forEach(p => {
-        if (!Number.isFinite(p.y)) p.y = options.yDefaultMin;
-        if (!Number.isFinite(p.dy)) p.dy = options.dyDefault;
-      });
-      
-      renderAll(allPlots, options);
-      saveToHistory();
-      closeBulkAddModal();
-      showToast(`Added ${newPlots.length} plot(s)`);
+        const { plots: newPlots, errors } = parseBulkData(text);
+        
+        if (errors.length > 0) {
+          bulkAddErrors.textContent = errors.slice(0, 5).join('\n') + (errors.length > 5 ? `\n... and ${errors.length - 5} more errors` : '');
+          return;
+        }
+
+        if (newPlots.length === 0) {
+          bulkAddErrors.textContent = 'No valid plots found. Check format and try again.';
+          return;
+        }
+
+        // Check for duplicate IDs in existing plots
+        const currentPlots = getPlotsFromUI();
+        const existingIds = new Set(currentPlots.map(p => p.id));
+        const duplicateIds = newPlots.filter(p => existingIds.has(p.id)).map(p => p.id);
+        
+        if (duplicateIds.length > 0) {
+          bulkAddErrors.textContent = `Duplicate IDs found: ${duplicateIds.join(', ')}. Please use unique IDs.`;
+          return;
+        }
+
+        // Check for duplicate IDs within new plots
+        const newIds = new Set();
+        const duplicatesInNew = [];
+        newPlots.forEach(p => {
+          if (newIds.has(p.id)) {
+            duplicatesInNew.push(p.id);
+          } else {
+            newIds.add(p.id);
+          }
+        });
+        
+        if (duplicatesInNew.length > 0) {
+          bulkAddErrors.textContent = `Duplicate IDs in pasted data: ${[...new Set(duplicatesInNew)].join(', ')}`;
+          return;
+        }
+
+        // All validation passed - add plots
+        const options = getOptionsFromUI();
+        const allPlots = [...currentPlots, ...newPlots];
+        
+        // Fill defaults for y/dy if needed
+        allPlots.forEach(p => {
+          if (!Number.isFinite(p.y)) p.y = options.yDefaultMin;
+          if (!Number.isFinite(p.dy)) p.dy = options.dyDefault;
+        });
+        
+        renderAll(allPlots, options);
+        saveToHistory();
+        closeBulkAddModal();
+        showToast(`Added ${newPlots.length} plot(s)`);
+      } catch (error) {
+        console.error('Error in processBulkAdd:', error);
+        bulkAddErrors.textContent = `Error: ${error.message}. Please check the console for details.`;
+      }
     }
 
     // Event wiring
