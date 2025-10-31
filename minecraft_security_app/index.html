@@ -348,6 +348,26 @@
     .error { border-color: var(--danger) !important; }
     .error-text { color: var(--danger); font-size: 12px; }
 
+    .version-badge {
+      position: fixed;
+      bottom: 8px;
+      right: 8px;
+      background: var(--muted);
+      color: var(--bg);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      z-index: 1000;
+      opacity: 0.7;
+      pointer-events: none;
+      user-select: none;
+    }
+    [data-theme="light"] .version-badge {
+      background: var(--muted);
+      color: var(--bg);
+    }
+
     .code-top {
       display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; color: var(--muted);
     }
@@ -747,6 +767,9 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
   </div>
 
   <script>
+    // Version number - UPDATE THIS WHEN MAKING CHANGES
+    const APP_VERSION = 'v2';
+    
     // Storage key helpers
     const getStorageKey = (className) => `meePlotSecurityV1_${className}`;
     const getOptionsKey = (className) => `meePlotSecurityOptionsV1_${className}`;
@@ -955,6 +978,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
     const restrictedTagInput = document.getElementById('restrictedTag');
     const ownerTagPrefixInput = document.getElementById('ownerTagPrefix');
     const tickingAreaPrefixInput = document.getElementById('tickingAreaPrefix');
+    const ownerAnywhereInput = document.getElementById('ownerAnywhere');
 
     // Code textareas
     const ownerSetupTA = document.getElementById('ownerSetup');
@@ -2986,7 +3010,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
 
     // Options update triggers regeneration
     const allOptionInputs = [
-      ...modeRadios, chkTickingAreas, yMinInput, dyDefaultInput, restrictedTagInput, ownerTagPrefixInput, tickingAreaPrefixInput,
+      ...modeRadios, chkTickingAreas, yMinInput, dyDefaultInput, restrictedTagInput, ownerTagPrefixInput, tickingAreaPrefixInput, ownerAnywhereInput,
       chkStreets, streetPlotSizeInput, streetWidthInput, streetColsInput, streetRowsInput, streetX0Input, streetZ0Input, streetOwnerTagInput, streetTeamOwnedInput, genPerimeterRoadInput
     ].filter(Boolean);
     allOptionInputs.forEach(el => {
@@ -3015,6 +3039,12 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       loadCurrentClass();
       const { plots, options } = loadFromLocalStorage();
       renderAll(plots, options);
+      
+      // Display version number
+      const versionBadge = document.createElement('div');
+      versionBadge.className = 'version-badge';
+      versionBadge.textContent = APP_VERSION;
+      document.body.appendChild(versionBadge);
     })();
   </script>
 </body>
