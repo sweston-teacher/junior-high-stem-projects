@@ -1,0 +1,3013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minecraft Education - Plot Security Builder</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --muted: #94a3b8;
+      --text: #e5e7eb;
+      --accent: #22c55e;
+      --accent-2: #60a5fa;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --border: #1f2937;
+      --input: #0b1220;
+      --chip: #1e293b;
+      --focus: #7dd3fc;
+      --code: #0b1020;
+      --shadow: 0 4px 24px rgba(0,0,0,0.35);
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --panel: #ffffff;
+      --muted: #64748b;
+      --text: #1e293b;
+      --accent: #22c55e;
+      --accent-2: #3b82f6;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --border: #e2e8f0;
+      --input: #f1f5f9;
+      --chip: #e2e8f0;
+      --focus: #3b82f6;
+      --code: #f8fafc;
+      --shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+
+    [data-theme="light"] body {
+      background: linear-gradient(180deg, #f1f5f9, #e2e8f0 30%, #f1f5f9 100%);
+    }
+
+    [data-theme="light"] .panel {
+      background: radial-gradient(120% 120% at 10% 10%, #ffffff, #f8fafc 40%, #ffffff 100%);
+    }
+
+    [data-theme="light"] .plots-table {
+      background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+    }
+
+    [data-theme="light"] .plots-head {
+      background: #f1f5f9;
+    }
+
+    [data-theme="light"] .help code,
+    [data-theme="light"] .help pre {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+
+    [data-theme="light"] details.code-block {
+      background: #f8fafc;
+    }
+
+    [data-theme="light"] .roster-head {
+      background: #f1f5f9;
+    }
+
+    [data-theme="light"] .modal-content {
+      background: var(--panel);
+    }
+
+    [data-theme="light"] .modal-header {
+      background: var(--panel);
+    }
+
+    :root {
+      --col-first-name-width: 100px;
+      --col-last-name-width: 100px;
+      --col-id-width: 80px;
+      --col-label-width: 100px;
+      --col-owners-width: 105px;
+      --col-x-width: 55px;
+      --col-y-width: 55px;
+      --col-z-width: 55px;
+      --col-dx-width: 55px;
+      --col-dy-width: 55px;
+      --col-dz-width: 55px;
+      --col-owner-tag-width: 180px;
+      --col-preview-width: 240px;
+      --col-actions-width: 180px;
+      --plot-grid-template: var(--col-first-name-width) var(--col-last-name-width) var(--col-id-width) var(--col-label-width) var(--col-owners-width) var(--col-x-width) var(--col-y-width) var(--col-z-width) var(--col-dx-width) var(--col-dy-width) var(--col-dz-width) var(--col-owner-tag-width) var(--col-preview-width) var(--col-actions-width);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #0b1020, #0a0f1e 30%, #0b1020 100%);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      line-height: 1.35;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 8px 4px;
+      width: 100%;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .toolbar-left {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .toolbar-right {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .btn-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 6px;
+      background: var(--chip);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .btn-group .class-selector {
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    [data-theme="light"] .btn-group {
+      background: var(--chip);
+      border-color: var(--border);
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: linear-gradient(180deg, #1f2937, #111827);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: transform 0.05s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), var(--shadow);
+      font-size: 13px;
+      line-height: 1.2;
+    }
+    .btn:hover { border-color: #334155; }
+    .btn:active { transform: translateY(1px); }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn.primary { background: linear-gradient(180deg, #10b981, #059669); border-color: #047857; }
+    .btn.warn { background: linear-gradient(180deg, #f59e0b, #d97706); border-color: #b45309; color: #0b1020; }
+    .btn.danger { background: linear-gradient(180deg, #ef4444, #dc2626); border-color: #b91c1c; }
+
+    [data-theme="light"] .btn {
+      background: linear-gradient(180deg, #ffffff, #f1f5f9);
+      color: var(--text);
+      border-color: var(--border);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.8), var(--shadow);
+    }
+    [data-theme="light"] .btn:hover {
+      border-color: #94a3b8;
+      background: linear-gradient(180deg, #f8fafc, #e2e8f0);
+    }
+    [data-theme="light"] .btn.primary {
+      background: linear-gradient(180deg, #10b981, #059669);
+      border-color: #047857;
+      color: white;
+    }
+    [data-theme="light"] .btn.primary:hover {
+      background: linear-gradient(180deg, #059669, #047857);
+      border-color: #065f46;
+    }
+    [data-theme="light"] .btn.danger {
+      background: linear-gradient(180deg, #ef4444, #dc2626);
+      border-color: #b91c1c;
+      color: white;
+    }
+    [data-theme="light"] .btn.danger:hover {
+      background: linear-gradient(180deg, #dc2626, #b91c1c);
+      border-color: #991b1b;
+    }
+    [data-theme="light"] .btn.warn {
+      background: linear-gradient(180deg, #f59e0b, #d97706);
+      border-color: #b45309;
+      color: #0b1020;
+    }
+    [data-theme="light"] .btn.warn:hover {
+      background: linear-gradient(180deg, #d97706, #b45309);
+      border-color: #92400e;
+    }
+
+    .toggle, .checkbox {
+      display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--muted);
+    }
+    .toggle input, .checkbox input { accent-color: var(--accent); }
+    .class-selector {
+      display: flex; align-items: center; gap: 4px; font-size: 13px; color: var(--text);
+    }
+    .class-selector select {
+      padding: 5px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--input);
+      color: var(--text);
+      font-size: 13px;
+      cursor: pointer;
+      min-width: 110px;
+    }
+    .class-selector select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    .class-selector .btn {
+      padding: 5px 8px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+    .class-selector .btn:first-of-type {
+      padding: 5px 10px;
+      font-weight: bold;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .panel {
+      background: radial-gradient(120% 120% at 10% 10%, #0c1226, #0a0f1e 40%, #0b1020 100%);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      padding: 10px;
+    }
+
+    .panel h2 {
+      margin: 0 0 8px 0; font-size: 16px; font-weight: 600; color: var(--text);
+    }
+
+    .grid-opts {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 12px;
+      align-items: flex-end;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+    .grid-opts .field { display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; }
+    .grid-opts .field:nth-child(1) input,
+    .grid-opts .field:nth-child(2) input {
+      width: 70px;
+    }
+    .grid-opts .field:nth-child(3) input,
+    .grid-opts .field:nth-child(4) input,
+    .grid-opts .field:nth-child(5) input {
+      width: 150px;
+    }
+    .grid-opts .field:nth-child(6) {
+      margin-left: auto;
+    }
+    .grid-opts label { color: var(--muted); font-size: 12px; }
+    .grid-opts input[type="text"], .grid-opts input[type="number"] {
+      width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--border); background: var(--input); color: var(--text);
+    }
+    .grid-opts input[type="number"]::-webkit-inner-spin-button,
+    .grid-opts input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .grid-opts input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    .plots-header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 4px; }
+    .plots-table { margin-top: 8px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: linear-gradient(180deg, #0c152c, #0a1226); width: 100%; }
+    .plots-scroll { overflow: auto; }
+    .plots-grid { display: grid; grid-auto-rows: minmax(48px, auto); min-width: 600px;
+      grid-template-columns: var(--plot-grid-template);
+      align-items: stretch;
+    }
+    .plots-head { position: sticky; top: 0; z-index: 1; background: #0b142c; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--muted); }
+    .plots-head > div { display: flex; align-items: center; padding: 8px 8px; white-space: nowrap; min-width: 0; border-right: 1px solid var(--border); }
+    .plots-head > div:last-child { border-right: none; }
+    .plot-row > div { border-right: 1px solid var(--border); }
+    .plot-row > div:last-child { border-right: none; }
+    .plot-row { border-bottom: 1px solid var(--border); }
+    .plot-row:last-child { border-bottom: 0; }
+    .plot-row > div { display: flex; align-items: stretch; padding: 0; gap: 0; min-width: 0; }
+    .plot-row input[type="text"], .plot-row input[type="number"] {
+      width: 100%;
+      padding: 8px 8px;
+      border-radius: 0;
+      border: none;
+      background: var(--input);
+      color: var(--text);
+      min-width: 0;
+      box-sizing: border-box;
+      align-self: stretch;
+    }
+    .plot-row input[type="number"]::-webkit-inner-spin-button,
+    .plot-row input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    .plot-row input[type="number"] {
+      -moz-appearance: textfield;
+    }
+    .plot-row > div:nth-child(11) { padding: 8px 8px; align-items: center; }
+    .plot-row > div:nth-child(12) { padding: 8px 8px; align-items: center; }
+    .plot-actions { display: flex; gap: 6px; justify-content: flex-end; width: 100%; }
+    .preview { font-size: 11px; color: var(--muted); background: var(--chip); border-radius: 6px; padding: 0; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .owners-editor { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 4px; min-height: 32px; border: 1px solid var(--border); border-radius: 6px; background: var(--input); }
+    .owner-chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 8px; background: var(--chip); border-radius: 6px; font-size: 12px; color: var(--text); }
+    .owner-chip .chip-remove { cursor: pointer; color: var(--muted); font-weight: bold; padding: 0 2px; line-height: 1; }
+    .owner-chip .chip-remove:hover { color: var(--danger); }
+    .owners-input { border: none; background: transparent; color: var(--text); padding: 4px; flex: 1; min-width: 60px; font-size: 12px; }
+    .owners-input:focus { outline: none; }
+
+    .error { border-color: var(--danger) !important; }
+    .error-text { color: var(--danger); font-size: 12px; }
+
+    .code-top {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; color: var(--muted);
+    }
+
+    details.code-block { border: 1px solid var(--border); border-radius: 10px; background: #0a1226; }
+    details.code-block + details.code-block { margin-top: 10px; }
+    details.code-block summary { cursor: pointer; list-style: none; padding: 10px 12px; font-weight: 600; }
+    details.code-block summary::-webkit-details-marker { display: none; }
+    .code-actions { display: flex; gap: 8px; align-items: center; }
+    .code-body { border-top: 1px solid var(--border); padding: 10px; }
+    textarea.code { width: 100%; min-height: 160px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; color: #d1d5db; background: var(--code); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+
+    .toast { position: fixed; bottom: 16px; right: 16px; background: #16a34a; color: white; padding: 10px 12px; border-radius: 8px; box-shadow: var(--shadow); opacity: 0; transform: translateY(8px); transition: all 0.2s ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+
+    .help { font-size: 14px; color: var(--muted); }
+    .help code { background: #0b1220; color: #e5e7eb; padding: 2px 6px; border-radius: 6px; }
+    .help pre { background: #0b1220; color: #e5e7eb; padding: 10px; border-radius: 8px; overflow: auto; border: 1px solid var(--border); }
+
+    .roster-row { display: contents; }
+    .roster-row > div { padding: 8px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); background: var(--input); display: flex; align-items: center; }
+    .roster-row > div:last-child { border-right: none; }
+    .roster-row:last-of-type > div { border-bottom: none; }
+    .roster-row input[type="text"] { width: 100%; padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--code); color: var(--text); font-size: 12px; }
+    .roster-row .roster-usernames-editor { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 4px; min-height: 28px; border: 1px solid var(--border); border-radius: 6px; background: var(--code); width: 100%; }
+    .roster-row .roster-usernames-input { border: none; background: transparent; color: var(--text); padding: 2px 4px; flex: 1; min-width: 60px; font-size: 12px; }
+    .roster-row .roster-usernames-input:focus { outline: none; }
+    .roster-row .roster-actions { display: flex; gap: 4px; justify-content: flex-end; }
+
+    .owners-editor { position: relative; }
+    .autocomplete-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: var(--panel); border: 1px solid var(--border); border-radius: 6px; max-height: 200px; overflow-y: auto; z-index: 1000; box-shadow: var(--shadow); margin-top: 2px; }
+    .autocomplete-suggestion { padding: 6px 10px; cursor: pointer; font-size: 12px; color: var(--text); }
+    .autocomplete-suggestion:hover { background: var(--input); }
+    .autocomplete-suggestion.highlighted { background: var(--accent-2); color: var(--bg); }
+
+    .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(4px); }
+    .modal.show { display: flex; align-items: center; justify-content: center; }
+    .modal-content { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); width: 90%; max-width: 700px; max-height: 90vh; display: flex; flex-direction: column; }
+    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+    .modal-header h2 { margin: 0; font-size: 18px; font-weight: 600; color: var(--text); }
+    .modal-close { background: none; border: none; color: var(--muted); font-size: 28px; cursor: pointer; padding: 0; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; line-height: 1; }
+    .modal-close:hover { color: var(--text); }
+    .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+    .modal-footer { display: flex; gap: 8px; justify-content: flex-end; padding: 16px 20px; border-top: 1px solid var(--border); }
+    .bulk-textarea { width: 100%; min-height: 300px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 12px; color: var(--text); background: var(--code); border: 1px solid var(--border); border-radius: 8px; padding: 12px; line-height: 1.5; }
+
+    @media (max-width: 1024px) { .content { grid-template-columns: 1fr; } }
+  </style>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+  </head>
+  <body>
+  <div class="container">
+    <div class="toolbar" role="toolbar" aria-label="Top toolbar">
+      <div class="toolbar-left">
+        <div class="btn-group">
+          <div class="class-selector">
+            <label for="classSelect">Class:</label>
+            <select id="classSelect" aria-label="Select class"></select>
+            <button id="btnAddClass" class="btn" aria-label="Add Class" title="Add new class">+</button>
+            <button id="btnRenameClass" class="btn" aria-label="Rename Class" title="Rename current class">Rename</button>
+            <button id="btnDeleteClass" class="btn danger" aria-label="Delete Class" title="Delete current class">Delete</button>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button id="btnAddPlot" class="btn" aria-label="Add Plot">Add Plot</button>
+          <button id="btnBulkAddPlots" class="btn" aria-label="Bulk Add Plots">Bulk Add</button>
+        </div>
+        <div class="btn-group">
+          <button id="btnSave" class="btn primary" aria-label="Save Dataset">Save</button>
+          <button id="btnExport" class="btn" aria-label="Export JSON">Export JSON</button>
+          <button id="btnExportCsv" class="btn" aria-label="Export CSV">Export CSV</button>
+        </div>
+        <div class="btn-group">
+          <button id="btnImport" class="btn" aria-label="Import JSON">Import JSON</button>
+          <button id="btnImportCsv" class="btn" aria-label="Import CSV">Import CSV</button>
+        </div>
+        <div class="btn-group">
+          <button id="btnBackupAll" class="btn" aria-label="Backup All Data" title="Export all classes as JSON">Backup All</button>
+          <button id="btnRestoreBackup" class="btn" aria-label="Restore Backup" title="Restore from backup JSON file">Restore</button>
+        </div>
+        <div class="btn-group">
+          <button id="btnReset" class="btn danger" aria-label="Reset sample data">Reset</button>
+        </div>
+        <input id="fileImport" type="file" accept="application/json" style="display:none" aria-hidden="true" />
+        <input id="fileImportCsv" type="file" accept=".csv,text/csv" style="display:none" aria-hidden="true" />
+        <input id="fileRestoreBackup" type="file" accept="application/json" style="display:none" aria-hidden="true" />
+      </div>
+      <div class="toolbar-right">
+        <div class="btn-group">
+          <button id="btnThemeToggle" class="btn" aria-label="Toggle theme" title="Toggle dark/light theme">🌓</button>
+          <button id="btnUndo" class="btn" aria-label="Undo" title="Undo (Ctrl+Z)" disabled>↶ Undo</button>
+          <button id="btnRedo" class="btn" aria-label="Redo" title="Redo (Ctrl+Y)" disabled>↷ Redo</button>
+        </div>
+        <div class="btn-group">
+          <label class="toggle" title="Game mode default">
+            <input type="radio" name="modeDefault" value="creative" checked /> Creative
+          </label>
+          <label class="toggle">
+            <input type="radio" name="modeDefault" value="adventure" /> Adventure
+          </label>
+          <div class="field">
+            <label class="checkbox">
+              <input id="ownerAnywhere" type="checkbox" /> Owners creative anywhere (optional bypass)
+            </label>
+          </div>
+          <label class="checkbox" title="Generate ticking areas">
+            <input id="chkTickingAreas" type="checkbox" /> Ticking areas
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+      <section class="panel" aria-labelledby="editorHeading">
+        <h2 id="editorHeading">Dataset Editor</h2>
+
+        <div class="grid-opts" aria-label="Global options">
+          <div class="field">
+            <label for="yMin">Default Y min</label>
+            <input id="yMin" type="number" value="0" aria-label="Default Y min" />
+          </div>
+          <div class="field">
+            <label for="dyDefault">Default dY (height)</label>
+            <input id="dyDefault" type="number" value="255" aria-label="Default dY" />
+          </div>
+          <div class="field">
+            <label for="restrictedTag">Global restricted tag</label>
+            <input id="restrictedTag" type="text" value="restricted" aria-label="Restricted tag name" />
+          </div>
+          <div class="field">
+            <label for="ownerTagPrefix">Owner tag prefix</label>
+            <input id="ownerTagPrefix" type="text" value="owner_plot_" aria-label="Owner tag prefix" />
+          </div>
+          <div class="field">
+            <label for="tickingAreaPrefix">Ticking area name prefix</label>
+            <input id="tickingAreaPrefix" type="text" value="plot_" aria-label="Ticking area name prefix" />
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <div class="help">Owner tag per plot defaults to <code>prefix + id</code> unless overridden.</div>
+          </div>
+        </div>
+
+        <details class="help" style="margin-top: 8px;">
+          <summary><strong>Streets Configuration</strong> (optional)</summary>
+          <div style="margin-top: 8px;">
+            <div class="grid-opts">
+              <div class="field">
+                <label class="checkbox">
+                  <input id="chkStreets" type="checkbox" /> Generate streets
+                </label>
+              </div>
+              <div class="field">
+                <label for="streetPlotSize">Plot size (P)</label>
+                <input id="streetPlotSize" type="number" value="80" aria-label="Plot size" />
+              </div>
+              <div class="field">
+                <label for="streetWidth">Street width (W)</label>
+                <input id="streetWidth" type="number" value="10" aria-label="Street width" />
+              </div>
+              <div class="field">
+                <label for="streetCols">Columns (NC)</label>
+                <input id="streetCols" type="number" value="3" aria-label="Number of columns" />
+              </div>
+              <div class="field">
+                <label for="streetRows">Rows (NR)</label>
+                <input id="streetRows" type="number" value="3" aria-label="Number of rows" />
+              </div>
+              <div class="field">
+                <label for="streetX0">Start X</label>
+                <input id="streetX0" type="number" value="0" aria-label="Start X coordinate" />
+              </div>
+              <div class="field">
+                <label for="streetZ0">Start Z</label>
+                <input id="streetZ0" type="number" value="0" aria-label="Start Z coordinate" />
+              </div>
+              <div class="field">
+                <label for="streetOwnerTag">Street tag</label>
+                <input id="streetOwnerTag" type="text" value="street_crew" aria-label="Street owner tag" />
+              </div>
+              <div class="field">
+                <label class="checkbox">
+                  <input id="streetTeamOwned" type="checkbox" /> Team-owned (vs teacher-owned)
+                </label>
+              </div>
+              <div class="field">
+                <label class="checkbox">
+                  <input id="genPerimeterRoad" type="checkbox" /> Perimeter road
+                </label>
+              </div>
+            </div>
+            <div class="help" style="font-size: 11px; margin-top: 4px;">
+              Streets are strips between plots. Teacher-owned uses single tag; team-owned allows per-strip tags. Perimeter road adds outer strips around the grid.
+            </div>
+          </div>
+        </details>
+
+        <details class="help" style="margin-top: 8px;">
+          <summary><strong>Free-Build Zones</strong> (parks, spawn, plaza)</summary>
+          <div style="margin-top: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+              <button class="btn" id="btnAddFreeBuildZone" style="font-size: 11px; padding: 4px 8px;">+ Add Zone</button>
+              <div class="help" style="font-size: 11px;">Zones where players can build freely (restricted tag removed)</div>
+            </div>
+            <div id="freeBuildZonesList" style="display: flex; flex-direction: column; gap: 6px;"></div>
+          </div>
+        </details>
+
+        <div class="plots-header">
+          <div class="help">Manage plots below. Owners comma-separated. All coordinates must be integers.</div>
+          <div id="validationSummary" class="error-text" role="status" aria-live="polite"></div>
+        </div>
+
+        <div class="plots-table" aria-label="Plots table">
+          <div class="plots-scroll">
+            <div class="plots-head plots-grid" role="row">
+              <div>First Name</div>
+              <div>Last Name</div>
+              <div>ID</div>
+              <div>Label</div>
+              <div>Owners</div>
+              <div>X</div>
+              <div>Y</div>
+              <div>Z</div>
+              <div>dX</div>
+              <div>dY</div>
+              <div>dZ</div>
+              <div>Owner Tag</div>
+              <div>Preview</div>
+              <div>Actions</div>
+            </div>
+            <div id="plots" aria-label="Plots list"></div>
+          </div>
+        </div>
+
+        <details class="panel help" style="margin-top:12px;">
+          <summary><strong>Help</strong> — How tags work and installing the function</summary>
+          <div style="margin-top:8px;">
+            <p>
+              This tool tags owners once and then, every tick, tags non-owners inside each plot with the
+              global restricted tag. Depending on the default mode, it flips player gamemodes accordingly.
+            </p>
+            <p>
+              Install the generated <code>my_security.mcfunction</code> here:
+              <br />
+              <code>Documents\Minecraft Education Edition\development_behavior_packs\&lt;Pack&gt;\functions\my_security.mcfunction</code>
+            </p>
+            <p>Add a minimal <code>manifest.json</code> in your behavior pack (example):</p>
+            <pre>{
+  "format_version": 2,
+  "header": {
+    "name": "ME Security Pack",
+    "description": "Security function",
+    "uuid": "11111111-1111-4111-8111-111111111111",
+    "version": [1, 0, 0],
+    "min_engine_version": [1, 16, 0]
+  },
+  "modules": [
+    {
+      "type": "data",
+      "uuid": "22222222-2222-4222-8222-222222222222",
+      "version": [1, 0, 0]
+    }
+  ]
+}</pre>
+            <p>
+              In-game, place one repeating Always Active command block running:
+              <code>/function my_security</code>
+            </p>
+            <p style="margin-top: 8px;">
+              <button class="btn" id="btnDownloadManifest" aria-label="Download manifest.json">Download manifest.json</button>
+              <button class="btn" id="btnDownloadZip" aria-label="Download ZIP pack" style="margin-left: 6px;">Download ZIP Pack</button>
+            </p>
+          </div>
+        </details>
+      </section>
+
+      <section class="panel" aria-labelledby="codeHeading">
+        <div class="code-top">
+          <h2 id="codeHeading">Generated Code</h2>
+          <div id="totals" aria-live="polite">Plots: 0, Owners: 0 unique</div>
+        </div>
+
+        <details class="code-block">
+          <summary>
+            A) Owner Tag Setup (run once)
+            <span class="code-actions">
+              <button class="btn" data-copy="ownerSetup" aria-label="Copy Owner Setup">Copy</button>
+            </span>
+          </summary>
+          <div class="code-body">
+            <textarea id="ownerSetup" class="code" readonly></textarea>
+          </div>
+        </details>
+
+        <details class="code-block">
+          <summary>
+            B) Optional Ticking Areas (per plot)
+            <span class="code-actions">
+              <button class="btn" data-copy="tickingAreas" aria-label="Copy Ticking Areas">Copy</button>
+            </span>
+          </summary>
+          <div class="code-body">
+            <textarea id="tickingAreas" class="code" readonly></textarea>
+          </div>
+        </details>
+
+        <details class="code-block" open>
+          <summary>
+            C) my_security.mcfunction (repeating)
+            <span class="code-actions">
+              <button class="btn" data-copy="functionBody" aria-label="Copy Function Body">Copy</button>
+              <button class="btn" id="btnCopyAll" aria-label="Copy All Sections">Copy All</button>
+              <button class="btn" id="btnDownloadFunction" aria-label="Download Function">Download</button>
+            </span>
+          </summary>
+          <div class="code-body">
+            <textarea id="functionBody" class="code" style="min-height: 120px" readonly></textarea>
+          </div>
+        </details>
+
+        <details class="code-block">
+          <summary>
+            D) Cleanup (optional)
+            <span class="code-actions">
+              <button class="btn" data-copy="cleanup" aria-label="Copy Cleanup">Copy</button>
+            </span>
+          </summary>
+          <div class="code-body">
+            <textarea id="cleanup" class="code" readonly style="min-height: 100px"></textarea>
+          </div>
+        </details>
+
+        <details class="code-block">
+          <summary>
+            E) Audit Tools (debug)
+            <span class="code-actions">
+              <button class="btn" data-copy="auditTools" aria-label="Copy Audit Tools">Copy</button>
+            </span>
+          </summary>
+          <div class="code-body">
+            <textarea id="auditTools" class="code" readonly style="min-height: 100px"></textarea>
+          </div>
+        </details>
+      </section>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- Bulk Add Plots Modal -->
+  <div id="bulkAddModal" class="modal" role="dialog" aria-labelledby="bulkAddModalTitle" aria-hidden="true">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="bulkAddModalTitle">Bulk Add Plots</h2>
+        <button class="modal-close" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="help" style="margin-bottom: 12px;">
+          <p>Paste multiple plots in CSV format. One plot per line. Supports comments (lines starting with #).</p>
+          <p><strong>Format:</strong> <code>firstName,lastName,id,label,owners,x,y,z,dx,dy,dz</code> (or old format: <code>id,label,owners,x,y,z,dx,dy,dz</code>)</p>
+          <p><strong>Example:</strong></p>
+          <pre style="font-size: 11px; margin-top: 8px;"># firstName,lastName,id,label,owners,x,y,z,dx,dy,dz
+Ava,Smith,plot01,Ava NW,ava123,100,0,200,80,255,80
+Jay,Jones,plot02,Jay SE,jaykid,200,0,200,80,255,80
+Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
+        </div>
+        <textarea id="bulkAddTextarea" class="bulk-textarea" placeholder="Paste plot data here..."></textarea>
+        <div id="bulkAddErrors" class="error-text" style="margin-top: 8px; min-height: 20px;"></div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnBulkAddCancel" class="btn">Cancel</button>
+        <button id="btnBulkAddSubmit" class="btn primary">Add Plots</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Class Management Modal -->
+  <div id="classManageModal" class="modal" role="dialog" aria-labelledby="classManageModalTitle" aria-hidden="true">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2 id="classManageModalTitle">Manage Class</h2>
+        <button class="modal-close" aria-label="Close dialog">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 12px;">
+          <label for="classManageInput" style="display: block; margin-bottom: 6px; color: var(--muted); font-size: 14px;">Class Name:</label>
+          <input id="classManageInput" type="text" style="width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--input); color: var(--text); font-size: 14px;" placeholder="Enter class name" />
+          <div id="classManageErrors" class="error-text" style="margin-top: 8px; min-height: 20px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btnClassManageCancel" class="btn">Cancel</button>
+        <button id="btnClassManageSubmit" class="btn primary">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Storage key helpers
+    const getStorageKey = (className) => `meePlotSecurityV1_${className}`;
+    const getOptionsKey = (className) => `meePlotSecurityOptionsV1_${className}`;
+    const CURRENT_CLASS_KEY = 'meePlotSecurityCurrentClass';
+    const CLASSES_LIST_KEY = 'meePlotSecurityClassesList';
+
+    // Elements
+    const plotsEl = document.getElementById('plots');
+    const totalsEl = document.getElementById('totals');
+    const toastEl = document.getElementById('toast');
+    const validationSummaryEl = document.getElementById('validationSummary');
+
+    // Toolbar elements
+    const classSelect = document.getElementById('classSelect');
+    const btnAddClass = document.getElementById('btnAddClass');
+    const btnRenameClass = document.getElementById('btnRenameClass');
+    const btnDeleteClass = document.getElementById('btnDeleteClass');
+    const btnAddPlot = document.getElementById('btnAddPlot');
+    const btnSave = document.getElementById('btnSave');
+    const btnUndo = document.getElementById('btnUndo');
+    const btnRedo = document.getElementById('btnRedo');
+    const btnThemeToggle = document.getElementById('btnThemeToggle');
+    const btnExport = document.getElementById('btnExport');
+    const btnExportCsv = document.getElementById('btnExportCsv');
+    const btnImport = document.getElementById('btnImport');
+    const btnImportCsv = document.getElementById('btnImportCsv');
+    const fileImport = document.getElementById('fileImport');
+    const fileImportCsv = document.getElementById('fileImportCsv');
+    const fileRestoreBackup = document.getElementById('fileRestoreBackup');
+    const btnBackupAll = document.getElementById('btnBackupAll');
+    const btnRestoreBackup = document.getElementById('btnRestoreBackup');
+    const btnReset = document.getElementById('btnReset');
+    
+    // Bulk add modal elements
+    const btnBulkAddPlots = document.getElementById('btnBulkAddPlots');
+    const bulkAddModal = document.getElementById('bulkAddModal');
+    const bulkAddTextarea = document.getElementById('bulkAddTextarea');
+    const bulkAddErrors = document.getElementById('bulkAddErrors');
+    const btnBulkAddCancel = document.getElementById('btnBulkAddCancel');
+    const btnBulkAddSubmit = document.getElementById('btnBulkAddSubmit');
+    const bulkAddModalClose = bulkAddModal?.querySelector('.modal-close');
+    
+    // Class management modal elements
+    const classManageModal = document.getElementById('classManageModal');
+    const classManageInput = document.getElementById('classManageInput');
+    const classManageErrors = document.getElementById('classManageErrors');
+    const classManageModalTitle = document.getElementById('classManageModalTitle');
+    const btnClassManageCancel = document.getElementById('btnClassManageCancel');
+    const btnClassManageSubmit = document.getElementById('btnClassManageSubmit');
+    const classManageModalClose = classManageModal?.querySelector('.modal-close');
+    let classManageMode = null; // 'add' or 'rename'
+    
+    // Undo/Redo state management
+    const HISTORY_SIZE = 50;
+    let historyStack = [];
+    let historyIndex = -1;
+    let isUndoRedo = false;
+
+    function saveToHistory() {
+      if (isUndoRedo) return;
+      
+      const plots = getPlotsFromUI();
+      const options = getOptionsFromUI();
+      const state = { plots: JSON.parse(JSON.stringify(plots)), options: { ...options } };
+      
+      // Remove any states after current index (when user makes new change after undo)
+      historyStack = historyStack.slice(0, historyIndex + 1);
+      
+      // Add new state
+      historyStack.push(state);
+      
+      // Limit history size
+      if (historyStack.length > HISTORY_SIZE) {
+        historyStack.shift();
+      } else {
+        historyIndex++;
+      }
+      
+      updateUndoRedoButtons();
+    }
+
+    function updateUndoRedoButtons() {
+      btnUndo.disabled = historyIndex <= 0;
+      btnRedo.disabled = historyIndex >= historyStack.length - 1;
+    }
+
+    function performUndo() {
+      if (historyIndex <= 0) return;
+      
+      isUndoRedo = true;
+      historyIndex--;
+      const state = historyStack[historyIndex];
+      renderAll(state.plots, state.options);
+      updateUndoRedoButtons();
+      isUndoRedo = false;
+      showToast('Undone');
+    }
+
+    function performRedo() {
+      if (historyIndex >= historyStack.length - 1) return;
+      
+      isUndoRedo = true;
+      historyIndex++;
+      const state = historyStack[historyIndex];
+      renderAll(state.plots, state.options);
+      updateUndoRedoButtons();
+      isUndoRedo = false;
+      showToast('Redone');
+    }
+
+    // Theme management
+    const THEME_KEY = 'meePlotSecurityTheme';
+    
+    function loadTheme() {
+      const saved = localStorage.getItem(THEME_KEY);
+      if (saved === 'light' || saved === 'dark') {
+        document.documentElement.setAttribute('data-theme', saved);
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+      updateThemeButton();
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const newTheme = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem(THEME_KEY, newTheme);
+      updateThemeButton();
+    }
+
+    function updateThemeButton() {
+      if (!btnThemeToggle) return;
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      // Show icon representing current theme (not target theme)
+      btnThemeToggle.textContent = current === 'dark' ? '🌙' : '☀️';
+    }
+
+    // Debounced history save (wait 500ms after last change)
+    let historySaveTimeout = null;
+    function debouncedSaveHistory() {
+      clearTimeout(historySaveTimeout);
+      historySaveTimeout = setTimeout(() => {
+        saveToHistory();
+      }, 500);
+    }
+    
+    // Get current class
+    const getCurrentClass = () => classSelect.value;
+    
+    // Class list management
+    const DEFAULT_CLASSES = ['1st Stem', '3rd CC', '4th Stem', '5th CC', '6th Stem', '7th CC'];
+    
+    function loadClassesList() {
+      try {
+        const saved = localStorage.getItem(CLASSES_LIST_KEY);
+        if (saved) {
+          const classes = JSON.parse(saved);
+          if (Array.isArray(classes) && classes.length > 0) {
+            return classes;
+          }
+        }
+      } catch {}
+      // Migrate from hardcoded classes on first load
+      saveClassesList(DEFAULT_CLASSES);
+      return DEFAULT_CLASSES;
+    }
+    
+    function saveClassesList(classes) {
+      localStorage.setItem(CLASSES_LIST_KEY, JSON.stringify(classes));
+    }
+    
+    function renderClassesList() {
+      const classes = loadClassesList();
+      classSelect.innerHTML = '';
+      classes.forEach(className => {
+        const option = document.createElement('option');
+        option.value = className;
+        option.textContent = className;
+        classSelect.appendChild(option);
+      });
+    }
+    
+    // Load saved class selection
+    const loadCurrentClass = () => {
+      const classes = loadClassesList();
+      const saved = localStorage.getItem(CURRENT_CLASS_KEY);
+      if (saved && classes.includes(saved)) {
+        classSelect.value = saved;
+      } else if (classes.length > 0) {
+        classSelect.value = classes[0];
+        saveCurrentClass();
+      }
+    };
+    
+    // Save current class selection
+    const saveCurrentClass = () => {
+      localStorage.setItem(CURRENT_CLASS_KEY, getCurrentClass());
+    };
+
+    // Global option inputs
+    const modeRadios = Array.from(document.querySelectorAll('input[name="modeDefault"]'));
+    const chkTickingAreas = document.getElementById('chkTickingAreas');
+    const yMinInput = document.getElementById('yMin');
+    const dyDefaultInput = document.getElementById('dyDefault');
+    const restrictedTagInput = document.getElementById('restrictedTag');
+    const ownerTagPrefixInput = document.getElementById('ownerTagPrefix');
+    const tickingAreaPrefixInput = document.getElementById('tickingAreaPrefix');
+
+    // Code textareas
+    const ownerSetupTA = document.getElementById('ownerSetup');
+    const tickingAreasTA = document.getElementById('tickingAreas');
+    const functionBodyTA = document.getElementById('functionBody');
+    const cleanupTA = document.getElementById('cleanup');
+    const auditToolsTA = document.getElementById('auditTools');
+
+    // Utilities
+    const showToast = (msg) => {
+      toastEl.textContent = msg;
+      toastEl.classList.add('show');
+      setTimeout(() => toastEl.classList.remove('show'), 1200);
+    };
+
+    const copyFrom = async (id) => {
+      const ta = document.getElementById(id);
+      try {
+        await navigator.clipboard.writeText(ta.value);
+        showToast('Copied');
+      } catch (e) {
+        ta.select();
+        document.execCommand('copy');
+        showToast('Copied');
+      }
+    };
+
+    // Generate UUID v4
+    function generateUUID() {
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        const r = Math.random() * 16 | 0;
+        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+        return v.toString(16);
+      });
+    }
+
+    // Copy all sections
+    function copyAllSections() {
+      const sections = [
+        ownerSetupTA.value,
+        tickingAreasTA.value,
+        functionBodyTA.value,
+        cleanupTA.value,
+        auditToolsTA.value
+      ].filter(s => s.trim().length > 0);
+      const allContent = sections.join('\n\n# ============================================\n\n');
+      try {
+        navigator.clipboard.writeText(allContent);
+        showToast('Copied all sections');
+      } catch (e) {
+        // Fallback: create temporary textarea
+        const ta = document.createElement('textarea');
+        ta.value = allContent;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Copied all sections');
+      }
+    }
+
+    // Download functions
+    function downloadFunction() {
+      const content = functionBodyTA.value;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'my_security.mcfunction';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('Downloaded my_security.mcfunction');
+    }
+
+    // Download ZIP with function and manifest
+    async function downloadZip() {
+      const JSZip = window.JSZip || null;
+      if (!JSZip) {
+        // Fallback: download files separately
+        downloadFunction();
+        setTimeout(() => downloadManifest(), 300);
+        showToast('Downloaded separately (ZIP requires JSZip library)');
+        return;
+      }
+      
+      const zip = new JSZip();
+      zip.file('functions/my_security.mcfunction', functionBodyTA.value);
+      
+      const headerUUID = generateUUID();
+      const moduleUUID = generateUUID();
+      const manifest = {
+        format_version: 2,
+        header: {
+          name: "ME Security Pack",
+          description: "Security function",
+          uuid: headerUUID,
+          version: [1, 0, 0],
+          min_engine_version: [1, 16, 0]
+        },
+        modules: [{
+          type: "data",
+          uuid: moduleUUID,
+          version: [1, 0, 0]
+        }]
+      };
+      zip.file('manifest.json', JSON.stringify(manifest, null, 2));
+      
+      const blob = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'minecraft-security-pack.zip';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('Downloaded ZIP pack');
+    }
+
+    function downloadManifest() {
+      const headerUUID = generateUUID();
+      const moduleUUID = generateUUID();
+      const manifest = {
+        format_version: 2,
+        header: {
+          name: "ME Security Pack",
+          description: "Security function",
+          uuid: headerUUID,
+          version: [1, 0, 0],
+          min_engine_version: [1, 16, 0]
+        },
+        modules: [
+          {
+            type: "data",
+            uuid: moduleUUID,
+            version: [1, 0, 0]
+          }
+        ]
+      };
+      const blob = new Blob([JSON.stringify(manifest, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'manifest.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('Downloaded manifest.json');
+    }
+
+    document.querySelectorAll('button[data-copy]').forEach(btn => {
+      btn.addEventListener('click', () => copyFrom(btn.getAttribute('data-copy')));
+    });
+
+    // Data model
+    function defaultOptions() {
+      return {
+        creativeByDefault: true,
+        genTickingAreas: false,
+        yDefaultMin: 0,
+        dyDefault: 255,
+        restrictedTag: 'restricted',
+        ownerTagPrefix: 'owner_plot_',
+        tickingAreaPrefix: 'plot_',
+        // Streets configuration
+        genStreets: false,
+        streetPlotSize: 80,
+        streetWidth: 10,
+        streetCols: 3,
+        streetRows: 3,
+        streetX0: 0,
+        streetZ0: 0,
+        streetOwnerTag: 'street_crew',
+        streetTeamOwned: false,
+        genPerimeterRoad: false,
+        freeBuildZones: [],
+        ownerAnywhere: false
+      };
+    }
+
+    function samplePlots(opts) {
+      const y = opts.yDefaultMin;
+      const dy = opts.dyDefault;
+      return [
+        { firstName: '', lastName: '', id: 'plot01', label: 'Sample NW', owners: ['Ava123'], x: 0, y, z: 0, dx: 80, dy, dz: 80, ownerTag: null, locked: false, lockDuration: 0 },
+        { firstName: '', lastName: '', id: 'plot02', label: 'Sample SE', owners: ['MaxKid'], x: 100, y, z: 100, dx: 80, dy, dz: 80, ownerTag: null, locked: false, lockDuration: 0 }
+      ];
+    }
+
+    function loadFromLocalStorage() {
+      const className = getCurrentClass();
+      let plots = [];
+      let options = defaultOptions();
+      try {
+        const sPlots = localStorage.getItem(getStorageKey(className));
+        const sOpts = localStorage.getItem(getOptionsKey(className));
+        if (sOpts) options = { ...options, ...JSON.parse(sOpts) };
+        if (sPlots) plots = JSON.parse(sPlots);
+      } catch {}
+      if (!Array.isArray(plots) || plots.length === 0) {
+        plots = samplePlots(options);
+      }
+      return { plots, options };
+    }
+
+    function saveToLocalStorage(plots, options) {
+      const className = getCurrentClass();
+      localStorage.setItem(getStorageKey(className), JSON.stringify(plots));
+      localStorage.setItem(getOptionsKey(className), JSON.stringify(options));
+    }
+
+    // Bulk paste parser
+    function parseBulkData(text) {
+      const rows = text.trim().split(/\r?\n/);
+      const plots = [];
+      const errors = [];
+      
+      rows.forEach((row, lineNum) => {
+        const line = row.trim();
+        // Skip comments and empty lines
+        if (line.startsWith('#') || line === '') return;
+        
+        try {
+          // Handle quoted fields (especially for owners)
+          const parts = [];
+          let current = '';
+          let inQuotes = false;
+          
+          for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            if (char === '"') {
+              inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+              parts.push(current.trim());
+              current = '';
+            } else {
+              current += char;
+            }
+          }
+          parts.push(current.trim()); // Add last part
+          
+          // Support both formats: 
+          // Old: id,label,owners,x,y,z,dx,dy,dz (9 fields)
+          // New: firstName,lastName,id,label,owners,x,y,z,dx,dy,dz (11 fields)
+          let firstName = '', lastName = '', id, label, ownersStr, x, y, z, dx, dy, dz;
+          
+          if (parts.length === 9) {
+            // Old format without firstName/lastName
+            [id, label, ownersStr, x, y, z, dx, dy, dz] = parts;
+          } else if (parts.length === 11) {
+            // New format with firstName/lastName
+            [firstName, lastName, id, label, ownersStr, x, y, z, dx, dy, dz] = parts;
+          } else {
+            errors.push(`Line ${lineNum + 1}: Expected 9 or 11 fields, got ${parts.length}`);
+            return;
+          }
+          
+          // Parse owners - handle quoted lists and comma/semicolon separated
+          let owners = [];
+          if (ownersStr) {
+            // Remove quotes if present
+            const cleaned = ownersStr.replace(/^["']|["']$/g, '');
+            owners = cleaned.split(/[,;]/).map(o => o.trim()).filter(Boolean);
+          }
+          
+          // Parse numeric values
+          const plot = {
+            firstName: firstName.trim(),
+            lastName: lastName.trim(),
+            id: id.trim(),
+            label: label.trim(),
+            owners: owners,
+            x: ensureInt(+x),
+            y: ensureInt(+y),
+            z: ensureInt(+z),
+            dx: ensureInt(+dx),
+            dy: ensureInt(+dy),
+            dz: ensureInt(+dz),
+            ownerTag: null,
+            locked: false,
+            lockDuration: 0
+          };
+          
+          // Validate required fields
+          if (!nonEmpty(plot.id)) {
+            errors.push(`Line ${lineNum + 1}: id is required`);
+            return;
+          }
+          
+          if (plot.owners.length === 0) {
+            errors.push(`Line ${lineNum + 1}: at least one owner is required`);
+            return;
+          }
+          
+          // Validate numeric fields
+          const nums = ['x', 'y', 'z', 'dx', 'dy', 'dz'];
+          for (const field of nums) {
+            if (!Number.isInteger(plot[field])) {
+              errors.push(`Line ${lineNum + 1}: ${field} must be an integer`);
+              return;
+            }
+            if ((field === 'dx' || field === 'dy' || field === 'dz') && plot[field] < 1) {
+              errors.push(`Line ${lineNum + 1}: ${field} must be ≥ 1`);
+              return;
+            }
+          }
+          
+          // Validate username length
+          plot.owners.forEach(owner => {
+            if (owner.length > 16) {
+              errors.push(`Line ${lineNum + 1}: owner "${owner}" exceeds 16 characters`);
+            }
+          });
+          
+          plots.push(plot);
+        } catch (e) {
+          errors.push(`Line ${lineNum + 1}: Parse error - ${e.message}`);
+        }
+      });
+      
+      return { plots, errors };
+    }
+
+    function resetToSample() {
+      const opts = getOptionsFromUI();
+      const options = { ...defaultOptions(), ...opts };
+      const plots = samplePlots(options);
+      saveToLocalStorage(plots, options);
+      renderAll(plots, options);
+      showToast('Sample data loaded');
+    }
+
+    // Helpers
+    const ensureInt = (v) => Number.isFinite(v) ? Math.trunc(v) : NaN;
+    const nonEmpty = (s) => (typeof s === 'string' && s.trim().length > 0);
+    const unique = (arr) => Array.from(new Set(arr));
+    
+    // Validate Xbox gamertags (allows spaces, dashes, underscores)
+    function isValidGamertag(name) {
+      // Allow letters, numbers, spaces, underscore, hyphen. 3–16 chars.
+      return typeof name === 'string'
+        && name.trim().length >= 3
+        && name.trim().length <= 16
+        && /^[A-Za-z0-9 _-]+$/.test(name);
+    }
+    
+    // Sanitize tag names to valid Minecraft tag format
+    function sanitizeTag(s) {
+      return (s || '').replace(/[^A-Za-z0-9_-]/g, '_');
+    }
+
+    // UI builders
+    function buildOwnerChip(name) {
+      const chip = document.createElement('span');
+      chip.className = 'owner-chip';
+      chip.innerHTML = `<span>${name}</span><span class="chip-remove" aria-label="Remove ${name}">×</span>`;
+      return chip;
+    }
+
+    function buildOwnersEditor(owners, rowIndex, options) {
+      const editor = document.createElement('div');
+      editor.className = 'owners-editor';
+      editor.setAttribute('data-field', 'owners');
+      editor.setAttribute('data-row-index', rowIndex);
+      
+      // Add existing chips
+      (owners || []).forEach(owner => {
+        if (nonEmpty(owner)) {
+          const chip = buildOwnerChip(owner);
+          editor.appendChild(chip);
+        }
+      });
+      
+      // Add input for new owners
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'owners-input';
+      input.placeholder = 'Add owner...';
+      input.setAttribute('aria-label', 'Add owner');
+      editor.appendChild(input);
+      
+      // Handle chip removal
+      editor.addEventListener('click', (e) => {
+        if (e.target.classList.contains('chip-remove')) {
+          e.target.closest('.owner-chip').remove();
+          updateOwnerEditor(editor, options);
+        }
+      });
+      
+      // Handle Enter key to add owner
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+          const value = input.value.trim();
+          if (value) {
+            // Check if already exists
+            const existing = Array.from(editor.querySelectorAll('.owner-chip span:first-child'))
+              .some(span => span.textContent === value);
+            if (!existing) {
+              const chip = buildOwnerChip(value);
+              editor.insertBefore(chip, input);
+              input.value = '';
+              updateOwnerEditor(editor, options);
+            } else {
+              input.value = '';
+            }
+          }
+        } else if (e.key === 'Backspace' && input.value === '' && editor.querySelectorAll('.owner-chip').length > 0) {
+          // Remove last chip on backspace when input is empty
+          const chips = editor.querySelectorAll('.owner-chip');
+          chips[chips.length - 1].remove();
+          updateOwnerEditor(editor, options);
+        }
+      });
+      
+      // Handle paste (comma-separated)
+      input.addEventListener('paste', (e) => {
+        e.preventDefault();
+        const pasted = e.clipboardData.getData('text');
+        const values = pasted.split(/[,;\n]/).map(v => v.trim()).filter(v => v.length > 0);
+        values.forEach(value => {
+          const existing = Array.from(editor.querySelectorAll('.owner-chip span:first-child'))
+            .some(span => span.textContent === value);
+          if (!existing) {
+            const chip = buildOwnerChip(value);
+            editor.insertBefore(chip, input);
+          }
+        });
+        updateOwnerEditor(editor, options);
+      });
+      
+      return editor;
+    }
+
+    function updateOwnerEditor(editor, options) {
+      const row = editor.closest('.plot-row');
+      if (row) {
+        updatePreview(row, options);
+        validateAll();
+        regenOutputs();
+        debouncedUpdateColumnWidths();
+        debouncedSaveHistory();
+      }
+    }
+
+    function getOwnersFromEditor(editor) {
+      return Array.from(editor.querySelectorAll('.owner-chip span:first-child'))
+        .map(span => span.textContent.trim())
+        .filter(nonEmpty);
+    }
+
+    function buildPlotRow(plot, index, options) {
+      const row = document.createElement('div');
+      row.className = 'plot-row plots-grid';
+
+      const owners = Array.isArray(plot.owners) ? plot.owners.filter(nonEmpty) : [];
+      const ownerTagAuto = (plot.ownerTag && nonEmpty(plot.ownerTag)) ? plot.ownerTag : options.ownerTagPrefix + plot.id;
+      const ownerTagSanitized = sanitizeTag(ownerTagAuto);
+      const preview = `tag @a[x=${plot.x ?? ''},y=${plot.y ?? ''},z=${plot.z ?? ''},dx=${plot.dx ?? ''},dy=${plot.dy ?? ''},dz=${plot.dz ?? ''},tag=!${ownerTagSanitized}] add ${options.restrictedTag}`;
+
+      row.innerHTML = `
+        <div><input type="text" data-field="firstName" value="${plot.firstName || ''}" placeholder="First name" aria-label="Student first name" /></div>
+        <div><input type="text" data-field="lastName" value="${plot.lastName || ''}" placeholder="Last name" aria-label="Student last name" /></div>
+        <div><input type="text" data-field="id" value="${plot.id || ''}" aria-label="Plot ID" /></div>
+        <div><input type="text" data-field="label" value="${plot.label || ''}" aria-label="Plot label" /></div>
+        <div></div>
+        <div><input type="number" data-field="x" value="${plot.x ?? ''}" aria-label="X" /></div>
+        <div><input type="number" data-field="y" value="${plot.y ?? options.yDefaultMin}" aria-label="Y" /></div>
+        <div><input type="number" data-field="z" value="${plot.z ?? ''}" aria-label="Z" /></div>
+        <div><input type="number" data-field="dx" value="${plot.dx ?? 80}" aria-label="dX" /></div>
+        <div><input type="number" data-field="dy" value="${plot.dy ?? options.dyDefault}" aria-label="dY" /></div>
+        <div><input type="number" data-field="dz" value="${plot.dz ?? 80}" aria-label="dZ" /></div>
+        <div><input type="text" data-field="ownerTag" value="${plot.ownerTag ?? ''}" placeholder="auto: ${sanitizeTag(options.ownerTagPrefix + plot.id)}" aria-label="Owner tag override" title="Derived tag: ${sanitizeTag(options.ownerTagPrefix + plot.id)}" /></div>
+        <div><div class="preview" title="Detector line preview">${preview}</div></div>
+        <div class="plot-actions">
+          <label class="checkbox" style="font-size: 11px; margin-right: 4px;" title="Lock this plot now (adventure mode)">
+            <input type="checkbox" data-field="locked" ${plot.locked ? 'checked' : ''} /> Lock
+          </label>
+          <button class="btn warn" data-action="autoOwnerTag" aria-label="Auto-fill owner tag">Auto</button>
+          <button class="btn" data-action="duplicate" aria-label="Duplicate plot">Dup</button>
+          <button class="btn danger" data-action="delete" aria-label="Delete plot">Del</button>
+        </div>
+      `;
+
+      // Add owners editor
+      const ownersCell = row.children[4];
+      const ownersEditor = buildOwnersEditor(owners, index, options);
+      ownersCell.appendChild(ownersEditor);
+
+      row.querySelector('[data-action="delete"]').addEventListener('click', () => onDeletePlot(index));
+      row.querySelector('[data-action="duplicate"]').addEventListener('click', () => onDuplicatePlot(index));
+      row.querySelector('[data-action="autoOwnerTag"]').addEventListener('click', () => onAutoOwnerTag(index));
+
+      // Show/hide lock duration dropdown when lock checkbox changes
+      const lockCheckbox = row.querySelector('[data-field="locked"]');
+      const lockDurationSelect = row.querySelector('[data-field="lockDuration"]');
+      if (lockCheckbox && lockDurationSelect) {
+        lockCheckbox.addEventListener('change', () => {
+          lockDurationSelect.style.display = lockCheckbox.checked ? 'inline-block' : 'none';
+        });
+      }
+      
+      row.querySelectorAll('input, select').forEach(inp => {
+        if (inp.classList.contains('owners-input')) return; // Skip owners input, handled separately
+        const eventType = (inp.type === 'checkbox' || inp.tagName === 'SELECT') ? 'change' : 'input';
+        inp.addEventListener(eventType, () => {
+          updatePreview(row, options);
+          validateAll();
+          regenOutputs();
+          debouncedUpdateColumnWidths();
+          debouncedSaveHistory();
+        });
+      });
+
+      return row;
+    }
+
+    // Debounced column width update (throttled more aggressively)
+    let columnWidthTimeout = null;
+    function debouncedUpdateColumnWidths() {
+      clearTimeout(columnWidthTimeout);
+      columnWidthTimeout = setTimeout(() => {
+        updateAllColumnWidths();
+      }, 500);
+    }
+
+    function updateAllColumnWidths() {
+      // Column configuration: [dataField, headerText, cssVar, minWidth]
+      const columns = [
+        ['firstName', 'First Name', '--col-first-name-width', 80],
+        ['lastName', 'Last Name', '--col-last-name-width', 80],
+        ['id', 'ID', '--col-id-width', 60],
+        ['label', 'Label', '--col-label-width', 70],
+        ['owners', 'Owners', '--col-owners-width', 90],
+        ['x', 'X', '--col-x-width', 40],
+        ['y', 'Y', '--col-y-width', 40],
+        ['z', 'Z', '--col-z-width', 40],
+        ['dx', 'dX', '--col-dx-width', 40],
+        ['dy', 'dY', '--col-dy-width', 40],
+        ['dz', 'dZ', '--col-dz-width', 40],
+        ['ownerTag', 'Owner Tag', '--col-owner-tag-width', 120],
+      ];
+      
+      // Get sample input for styling
+      const sampleInput = document.querySelector('[data-field]');
+      if (!sampleInput) return;
+      
+      const styles = window.getComputedStyle(sampleInput);
+      
+      // Create measurer element
+      const measurer = document.createElement('span');
+      measurer.style.position = 'absolute';
+      measurer.style.visibility = 'hidden';
+      measurer.style.whiteSpace = 'nowrap';
+      measurer.style.fontSize = styles.fontSize;
+      measurer.style.fontFamily = styles.fontFamily;
+      measurer.style.fontWeight = styles.fontWeight;
+      measurer.style.letterSpacing = styles.letterSpacing;
+      measurer.style.padding = '0 8px';
+      document.body.appendChild(measurer);
+      
+      // Measure each column
+      columns.forEach(([dataField, headerText, cssVar, minWidth]) => {
+        let maxWidth = minWidth;
+        
+        // Measure header text
+        measurer.textContent = headerText;
+        const headerWidth = measurer.offsetWidth;
+        if (headerWidth > maxWidth) {
+          maxWidth = headerWidth;
+        }
+        
+        if (dataField === 'owners') {
+          // Special handling for owners editor (chips)
+          const editors = Array.from(document.querySelectorAll('.owners-editor'));
+          editors.forEach(editor => {
+            const chips = editor.querySelectorAll('.owner-chip span:first-child');
+            chips.forEach(chip => {
+              measurer.textContent = chip.textContent;
+              const width = measurer.offsetWidth + 40; // Add padding for chip
+              if (width > maxWidth) {
+                maxWidth = width;
+              }
+            });
+          });
+        } else {
+          // Measure all input values
+          const inputs = Array.from(document.querySelectorAll(`[data-field="${dataField}"]`));
+          inputs.forEach(input => {
+            const value = input.value || '';
+            if (value) {
+              measurer.textContent = value;
+              const width = measurer.offsetWidth;
+              if (width > maxWidth) {
+                maxWidth = width;
+              }
+            }
+          });
+        }
+        
+        // Update CSS variable with padding
+        const newWidth = Math.max(minWidth, maxWidth + 16);
+        document.documentElement.style.setProperty(cssVar, `${newWidth}px`);
+      });
+      
+      // Measure Preview column
+      const previewCells = Array.from(document.querySelectorAll('.preview'));
+      let previewMaxWidth = 200;
+      previewCells.forEach(cell => {
+        measurer.textContent = cell.textContent || 'Preview';
+        const width = measurer.offsetWidth;
+        if (width > previewMaxWidth) {
+          previewMaxWidth = width;
+        }
+      });
+      measurer.textContent = 'Preview';
+      const previewHeaderWidth = measurer.offsetWidth;
+      previewMaxWidth = Math.max(previewMaxWidth, previewHeaderWidth);
+      document.documentElement.style.setProperty('--col-preview-width', `${Math.max(200, previewMaxWidth + 16)}px`);
+      
+      // Actions column (fixed width based on buttons)
+      document.documentElement.style.setProperty('--col-actions-width', '160px');
+      
+      document.body.removeChild(measurer);
+    }
+
+    function updatePreview(rowEl, options) {
+      const getVal = (sel) => rowEl.querySelector(`[data-field="${sel}"]`)?.value ?? '';
+      const id = getVal('id');
+      const x = getVal('x');
+      const y = getVal('y');
+      const z = getVal('z');
+      const dx = getVal('dx');
+      const dy = getVal('dy');
+      const dz = getVal('dz');
+      const ownerTagInput = getVal('ownerTag').trim();
+      const ownerTagBase = ownerTagInput || (options.ownerTagPrefix + id);
+      const ownerTag = sanitizeTag(ownerTagBase);
+      const ownersEditor = rowEl.querySelector('.owners-editor');
+      const owners = ownersEditor ? getOwnersFromEditor(ownersEditor) : [];
+      
+      const detectorLine = `tag @a[x=${x},y=${y},z=${z},dx=${dx},dy=${dy},dz=${dz},tag=!${ownerTag}] add ${options.restrictedTag}`;
+      let ownerSetupLine = '';
+      if (owners.length > 0) {
+        const firstOwner = owners[0];
+        const selector = selectorForName(firstOwner);
+        ownerSetupLine = `/tag ${selector} add ${ownerTag}`;
+      }
+      
+      const prev = rowEl.querySelector('.preview');
+      if (prev) {
+        prev.innerHTML = `<div style="font-size: 10px; margin-bottom: 2px;">${detectorLine}</div>${ownerSetupLine ? `<div style="font-size: 10px; color: var(--accent-2);">${ownerSetupLine}</div>` : ''}`;
+      }
+    }
+
+    function nextPlotId(plots) {
+      // Generate plot01, plot02, ...
+      let n = plots.length + 1;
+      while (true) {
+        const id = `plot${String(n).padStart(2, '0')}`;
+        if (!plots.some(p => p.id === id)) return id;
+        n++;
+      }
+    }
+
+    // Global state in-memory while editing
+    let currentPlots = [];
+    let currentOptions = defaultOptions();
+
+    function renderAll(plots, options) {
+      currentPlots = JSON.parse(JSON.stringify(plots));
+      currentOptions = { ...options };
+
+      // Options to UI
+      modeRadios.forEach(r => r.checked = (options.creativeByDefault ? r.value === 'creative' : r.value === 'adventure'));
+      chkTickingAreas.checked = !!options.genTickingAreas;
+      yMinInput.value = options.yDefaultMin;
+      dyDefaultInput.value = options.dyDefault;
+      restrictedTagInput.value = options.restrictedTag;
+      ownerTagPrefixInput.value = options.ownerTagPrefix;
+      tickingAreaPrefixInput.value = options.tickingAreaPrefix;
+      // Streets options (with null checks for backward compatibility)
+      const chkStreetsEl = document.getElementById('chkStreets');
+      const streetPlotSizeEl = document.getElementById('streetPlotSize');
+      const streetWidthEl = document.getElementById('streetWidth');
+      const streetColsEl = document.getElementById('streetCols');
+      const streetRowsEl = document.getElementById('streetRows');
+      const streetX0El = document.getElementById('streetX0');
+      const streetZ0El = document.getElementById('streetZ0');
+      const streetOwnerTagEl = document.getElementById('streetOwnerTag');
+      const streetTeamOwnedEl = document.getElementById('streetTeamOwned');
+      if (chkStreetsEl) chkStreetsEl.checked = !!options.genStreets;
+      if (streetPlotSizeEl) streetPlotSizeEl.value = options.streetPlotSize || 80;
+      if (streetWidthEl) streetWidthEl.value = options.streetWidth || 10;
+      if (streetColsEl) streetColsEl.value = options.streetCols || 3;
+      if (streetRowsEl) streetRowsEl.value = options.streetRows || 3;
+      if (streetX0El) streetX0El.value = options.streetX0 || 0;
+      if (streetZ0El) streetZ0El.value = options.streetZ0 || 0;
+      if (streetOwnerTagEl) streetOwnerTagEl.value = options.streetOwnerTag || 'street_crew';
+      if (streetTeamOwnedEl) streetTeamOwnedEl.checked = !!options.streetTeamOwned;
+      const genPerimeterRoadEl = document.getElementById('genPerimeterRoad');
+      if (genPerimeterRoadEl) genPerimeterRoadEl.checked = !!options.genPerimeterRoad;
+      if (ownerAnywhereInput) ownerAnywhereInput.checked = !!options.ownerAnywhere;
+      
+      // Render free-build zones
+      renderFreeBuildZones(options.freeBuildZones || []);
+
+      // Plots list
+      plotsEl.innerHTML = '';
+      currentPlots.forEach((p, idx) => {
+        plotsEl.appendChild(buildPlotRow(p, idx, options));
+      });
+
+      validateAll();
+      regenOutputs();
+      setTimeout(() => updateAllColumnWidths(), 0);
+    }
+
+    // Free-build zones UI
+    function renderFreeBuildZones(zones) {
+      const list = document.getElementById('freeBuildZonesList');
+      if (!list) return;
+      list.innerHTML = '';
+      
+      zones.forEach((z, i) => {
+        const row = document.createElement('div');
+        row.className = 'free-build-zone-row';
+        row.style.display = 'grid';
+        row.style.gridTemplateColumns = '80px 60px 60px 60px 60px 60px 60px 100px auto';
+        row.style.gap = '4px';
+        row.style.alignItems = 'center';
+        row.style.padding = '4px';
+        row.style.border = '1px solid var(--border)';
+        row.style.borderRadius = '4px';
+        row.style.backgroundColor = 'var(--input)';
+        
+        row.innerHTML = `
+          <input type="text" data-zone-field="label" placeholder="Label" value="${z.label || ''}" style="font-size: 11px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--code); color: var(--text);" />
+          <input type="number" data-zone-field="x" placeholder="X" value="${z.x ?? ''}" style="font-size: 11px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--code); color: var(--text);" />
+          <input type="number" data-zone-field="y" placeholder="Y" value="${z.y ?? ''}" style="font-size: 11px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--code); color: var(--text);" />
+          <input type="number" data-zone-field="z" placeholder="Z" value="${z.z ?? ''}" style="font-size: 11px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--code); color: var(--text);" />
+          <input type="number" data-zone-field="dx" placeholder="dX" value="${z.dx ?? ''}" style="font-size: 11px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--code); color: var(--text);" />
+          <input type="number" data-zone-field="dy" placeholder="dY" value="${z.dy ?? ''}" style="font-size: 11px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--code); color: var(--text);" />
+          <input type="number" data-zone-field="dz" placeholder="dZ" value="${z.dz ?? ''}" style="font-size: 11px; padding: 4px; border: 1px solid var(--border); border-radius: 4px; background: var(--code); color: var(--text);" />
+          <button class="btn danger" data-del="${i}" style="font-size: 10px; padding: 4px 8px;">Del</button>
+        `;
+        
+        list.appendChild(row);
+      });
+      
+      list.querySelectorAll('input').forEach(inp => {
+        inp.addEventListener('input', () => {
+          validateAll();
+          regenOutputs();
+        });
+      });
+      
+      list.querySelectorAll('button[data-del]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const opts = getOptionsFromUI();
+          const idx = +btn.getAttribute('data-del');
+          const zones = [...opts.freeBuildZones];
+          zones.splice(idx, 1);
+          const plots = getPlotsFromUI();
+          const newOptions = { ...opts, freeBuildZones: zones };
+          saveToLocalStorage(plots, newOptions);
+          renderAll(plots, newOptions);
+        });
+      });
+    }
+
+    function addFreeBuildZone() {
+      const opts = getOptionsFromUI();
+      const plots = getPlotsFromUI();
+      const zones = [...opts.freeBuildZones, { label: 'Park', x: 0, y: opts.yDefaultMin, z: 0, dx: 20, dy: opts.dyDefault, dz: 20 }];
+      const newOptions = { ...opts, freeBuildZones: zones };
+      saveToLocalStorage(plots, newOptions);
+      renderAll(plots, newOptions);
+    }
+
+    function getOptionsFromUI() {
+      const creativeByDefault = modeRadios.find(r => r.checked)?.value !== 'adventure';
+      return {
+        creativeByDefault,
+        genTickingAreas: !!chkTickingAreas.checked,
+        yDefaultMin: ensureInt(+yMinInput.value),
+        dyDefault: ensureInt(+dyDefaultInput.value),
+        restrictedTag: restrictedTagInput.value.trim() || 'restricted',
+        ownerTagPrefix: ownerTagPrefixInput.value.trim() || 'owner_plot_',
+        tickingAreaPrefix: tickingAreaPrefixInput.value.trim() || 'plot_',
+        genStreets: !!chkStreets?.checked || false,
+        streetPlotSize: ensureInt(+streetPlotSizeInput?.value || 80),
+        streetWidth: ensureInt(+streetWidthInput?.value || 10),
+        streetCols: ensureInt(+streetColsInput?.value || 3),
+        streetRows: ensureInt(+streetRowsInput?.value || 3),
+        streetX0: ensureInt(+streetX0Input?.value || 0),
+        streetZ0: ensureInt(+streetZ0Input?.value || 0),
+        streetOwnerTag: (streetOwnerTagInput?.value.trim() || 'street_crew'),
+        streetTeamOwned: !!streetTeamOwnedInput?.checked || false,
+        genPerimeterRoad: !!genPerimeterRoadInput?.checked || false,
+        freeBuildZones: getFreeBuildZonesFromUI(),
+        ownerAnywhere: !!ownerAnywhereInput?.checked || false
+      };
+    }
+    
+    function getFreeBuildZonesFromUI() {
+      // Get free-build zones from UI (will be added as a list component)
+      const zones = [];
+      const zoneRows = Array.from(document.querySelectorAll('.free-build-zone-row'));
+      zoneRows.forEach(row => {
+        const x = ensureInt(+row.querySelector('[data-zone-field="x"]')?.value);
+        const y = ensureInt(+row.querySelector('[data-zone-field="y"]')?.value);
+        const z = ensureInt(+row.querySelector('[data-zone-field="z"]')?.value);
+        const dx = ensureInt(+row.querySelector('[data-zone-field="dx"]')?.value);
+        const dy = ensureInt(+row.querySelector('[data-zone-field="dy"]')?.value);
+        const dz = ensureInt(+row.querySelector('[data-zone-field="dz"]')?.value);
+        const label = row.querySelector('[data-zone-field="label"]')?.value.trim() || '';
+        if (Number.isInteger(x) && Number.isInteger(z) && Number.isInteger(dx) && Number.isInteger(dz) && dx > 0 && dz > 0) {
+          zones.push({ x, y: Number.isInteger(y) ? y : undefined, z, dx, dy: Number.isInteger(dy) ? dy : undefined, dz, label });
+        }
+      });
+      return zones;
+    }
+
+    function getPlotsFromUI() {
+      const options = getOptionsFromUI();
+      const rows = Array.from(plotsEl.children);
+      const plots = rows.map((row) => {
+        const v = (name) => row.querySelector(`[data-field="${name}"]`)?.value || '';
+        const vb = (name) => row.querySelector(`[data-field="${name}"]`)?.checked || false;
+        const ownersEditor = row.querySelector('.owners-editor');
+        const owners = ownersEditor ? getOwnersFromEditor(ownersEditor) : [];
+        return {
+          firstName: v('firstName').trim(),
+          lastName: v('lastName').trim(),
+          id: v('id').trim(),
+          label: v('label').trim(),
+          owners,
+          x: ensureInt(+v('x')),
+          y: ensureInt(+v('y')),
+          z: ensureInt(+v('z')),
+          dx: ensureInt(+v('dx')),
+          dy: ensureInt(+v('dy')),
+          dz: ensureInt(+v('dz')),
+          ownerTag: (v('ownerTag').trim().length > 0 ? v('ownerTag').trim() : null),
+          locked: vb('locked'),
+          lockDuration: ensureInt(+row.querySelector('[data-field="lockDuration"]')?.value || 0)
+        };
+      });
+      // Fill defaults for missing y/dy
+      plots.forEach(p => {
+        if (!Number.isFinite(p.y)) p.y = options.yDefaultMin;
+        if (!Number.isFinite(p.dy)) p.dy = options.dyDefault;
+      });
+      return plots;
+    }
+
+    function validateAll() {
+      const plots = getPlotsFromUI();
+      const idSet = new Set();
+      let ok = true;
+      let messages = [];
+
+      const rows = Array.from(plotsEl.children);
+      rows.forEach((row, idx) => {
+        const mark = (name, good) => {
+          if (name === 'owners') {
+            const el = row.querySelector('.owners-editor');
+            if (el) el.classList.toggle('error', !good);
+          } else {
+            const el = row.querySelector(`[data-field="${name}"]`);
+            if (el) el.classList.toggle('error', !good);
+          }
+        };
+        const p = plots[idx];
+
+        const idOk = nonEmpty(p.id) && !idSet.has(p.id);
+        if (!nonEmpty(p.id)) messages.push(`Row ${idx+1}: id required`);
+        if (idSet.has(p.id)) messages.push(`Row ${idx+1}: duplicate id '${p.id}'`);
+        // Validate id contains only valid tag characters
+        if (nonEmpty(p.id) && !/^[A-Za-z0-9_-]+$/.test(p.id)) {
+          messages.push(`Row ${idx+1}: id "${p.id}" contains invalid characters (only letters, numbers, underscores, hyphens allowed)`);
+        }
+        idSet.add(p.id);
+        mark('id', idOk);
+
+        const ownersOk = Array.isArray(p.owners) && p.owners.length > 0 && p.owners.every(nonEmpty);
+        if (!ownersOk) messages.push(`Row ${idx+1}: at least one owner`);
+        
+        // Validate username length (Minecraft max is 16)
+        p.owners.forEach(owner => {
+          if (owner.length > 16) {
+            messages.push(`Row ${idx+1}: owner "${owner}" exceeds 16 characters`);
+          }
+        });
+        
+        mark('owners', ownersOk);
+
+        const nums = ['x','y','z','dx','dy','dz'];
+        nums.forEach(n => {
+          const isInt = Number.isInteger(p[n]);
+          const ge1 = (n === 'dx' || n === 'dy' || n === 'dz') ? p[n] >= 1 : true;
+          const valid = isInt && ge1;
+          if (!valid) messages.push(`Row ${idx+1}: ${n} must be integer${(n==='dx'||n==='dy'||n==='dz')?' and ≥1':''}`);
+          mark(n, valid);
+        });
+        
+        // Warn if coordinates are outside reasonable bounds (Minecraft world limits)
+        // Minecraft Bedrock/Education Edition: roughly -30,000,000 to 30,000,000
+        if (Number.isInteger(p.x) && (p.x < -30000000 || p.x > 30000000)) {
+          messages.push(`Row ${idx+1}: x coordinate ${p.x} is outside reasonable bounds (±30,000,000)`);
+        }
+        if (Number.isInteger(p.y) && (p.y < -64 || p.y > 320)) {
+          messages.push(`Row ${idx+1}: y coordinate ${p.y} is outside reasonable bounds (-64 to 320)`);
+        }
+        if (Number.isInteger(p.z) && (p.z < -30000000 || p.z > 30000000)) {
+          messages.push(`Row ${idx+1}: z coordinate ${p.z} is outside reasonable bounds (±30,000,000)`);
+        }
+        
+        // Validate owner usernames against Minecraft naming rules
+        p.owners.forEach(owner => {
+          if (!nonEmpty(owner)) return;
+          
+          // Xbox gamertag rules: 3-16 chars, letters/numbers/spaces/underscores/hyphens
+          if (!isValidGamertag(owner)) {
+            // Warn instead of error - teachers may want to proceed anyway
+            messages.push(`Warning: Row ${idx+1}: owner "${owner}" may not be a valid gamertag (3-16 chars, letters/numbers/spaces/underscores/hyphens only)`);
+          }
+        });
+      });
+
+      // Check for overlapping plots
+      const overlaps = [];
+      for (let i = 0; i < plots.length; i++) {
+        for (let j = i + 1; j < plots.length; j++) {
+          const a = plots[i];
+          const b = plots[j];
+          if (!a.id || !b.id) continue;
+          
+          // Check if boxes overlap in 3D
+          const aX2 = a.x + a.dx - 1;
+          const aY2 = a.y + a.dy - 1;
+          const aZ2 = a.z + a.dz - 1;
+          const bX2 = b.x + b.dx - 1;
+          const bY2 = b.y + b.dy - 1;
+          const bZ2 = b.z + b.dz - 1;
+          
+          const xOverlap = !(aX2 < b.x || bX2 < a.x);
+          const yOverlap = !(aY2 < b.y || bY2 < a.y);
+          const zOverlap = !(aZ2 < b.z || bZ2 < a.z);
+          
+          if (xOverlap && yOverlap && zOverlap) {
+            overlaps.push(`${a.id} & ${b.id}`);
+          }
+        }
+      }
+      
+      if (overlaps.length > 0) {
+        const overlapLinks = overlaps.map((pair, idx) => {
+          const [id1, id2] = pair.split(' & ');
+          const row1 = rows.findIndex((r, i) => {
+            const p = plots[i];
+            return p && p.id === id1;
+          });
+          const row2 = rows.findIndex((r, i) => {
+            const p = plots[i];
+            return p && p.id === id2;
+          });
+          return `<a href="#" data-scroll-to="${row1},${row2}" style="color: var(--accent-2); text-decoration: underline; cursor: pointer;">${pair}</a>`;
+        });
+        messages.push(`Overlapping plots: ${overlapLinks.join(', ')}`);
+      }
+
+      // Check for owners appearing in many plots (likely typo)
+      const ownerCounts = new Map();
+      plots.forEach(p => {
+        (p.owners || []).forEach(owner => {
+          ownerCounts.set(owner, (ownerCounts.get(owner) || 0) + 1);
+        });
+      });
+      ownerCounts.forEach((count, owner) => {
+        if (count >= 20) {
+          messages.push(`Warning: "${owner}" appears in ${count} plots (possible typo?)`);
+        }
+      });
+      
+      // Check for duplicate owner assignments across plots (same owner in multiple plots - warn if suspicious)
+      // This is less strict than the "many plots" check - just warns if same owner appears in multiple plots
+      const ownerPlotMap = new Map(); // owner -> [plotIds]
+      plots.forEach(p => {
+        if (!p.id) return;
+        (p.owners || []).forEach(owner => {
+          if (!ownerPlotMap.has(owner)) {
+            ownerPlotMap.set(owner, []);
+          }
+          ownerPlotMap.get(owner).push(p.id);
+        });
+      });
+      ownerPlotMap.forEach((plotIds, owner) => {
+        // Show info if owner is in 3+ plots (but less than 20, which would be a warning)
+        // This helps catch potential mistakes while allowing legitimate multi-plot assignments
+        if (plotIds.length >= 3 && plotIds.length < 20) {
+          messages.push(`Info: "${owner}" assigned to ${plotIds.length} plots: ${plotIds.join(', ')}`);
+        }
+      });
+
+      // Validate tag names and check for collisions
+      const options = getOptionsFromUI();
+      const tagPattern = /^[A-Za-z0-9_\-]+$/;
+      
+      if (!tagPattern.test(options.restrictedTag)) {
+        messages.push(`Restricted tag must be [A-Za-z0-9_-] only`);
+      }
+      
+      if (!tagPattern.test(options.ownerTagPrefix)) {
+        messages.push(`Owner tag prefix must be [A-Za-z0-9_-] only`);
+      }
+      
+      // Check for tag collisions
+      const allOwnerTags = plots.map(p => {
+        const tag = (p.ownerTag && nonEmpty(p.ownerTag)) ? p.ownerTag : options.ownerTagPrefix + p.id;
+        return tag;
+      });
+      
+      if (allOwnerTags.includes(options.restrictedTag)) {
+        messages.push(`Restricted tag "${options.restrictedTag}" conflicts with an owner tag`);
+      }
+      
+      if (options.restrictedTag.startsWith(options.ownerTagPrefix) || options.ownerTagPrefix.startsWith(options.restrictedTag)) {
+        messages.push(`Tag prefix collision: restricted tag and owner prefix overlap`);
+      }
+
+      // Separate errors/warnings from info messages
+      // Errors/warnings block saving, info messages are just informational
+      const errorMessages = messages.filter(m => !m.startsWith('Warning:') && !m.startsWith('Info:'));
+      const warningMessages = messages.filter(m => m.startsWith('Warning:'));
+      const infoMessages = messages.filter(m => m.startsWith('Info:'));
+      
+      // Disable save when there are errors (warnings don't block, info doesn't block)
+      ok = errorMessages.length === 0;
+      btnSave.disabled = !ok;
+      
+      // Show validation summary: errors first, then warnings, then info (up to 3 total)
+      const summaryMessages = [];
+      if (errorMessages.length > 0) {
+        summaryMessages.push(...errorMessages.slice(0, 2));
+      }
+      if (summaryMessages.length < 3 && warningMessages.length > 0) {
+        summaryMessages.push(...warningMessages.slice(0, 3 - summaryMessages.length));
+      }
+      if (summaryMessages.length < 3 && infoMessages.length > 0) {
+        summaryMessages.push(...infoMessages.slice(0, 3 - summaryMessages.length));
+      }
+      
+      validationSummaryEl.innerHTML = summaryMessages.length > 0 ? summaryMessages.join(' • ') : '';
+      
+      // Add click handlers for overlap links
+      validationSummaryEl.querySelectorAll('a[data-scroll-to]').forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const indices = link.getAttribute('data-scroll-to').split(',').map(Number);
+          indices.forEach(idx => {
+            if (idx >= 0 && idx < rows.length) {
+              rows[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+              rows[idx].style.outline = '2px solid var(--accent-2)';
+              setTimeout(() => { rows[idx].style.outline = ''; }, 2000);
+            }
+          });
+        });
+      });
+      
+      return ok;
+    }
+
+    // Plot actions
+    function onAddPlot() {
+      const plots = getPlotsFromUI();
+      const options = getOptionsFromUI();
+      const id = nextPlotId(plots);
+      plots.push({ firstName: '', lastName: '', id, label: '', owners: [], x: NaN, y: options.yDefaultMin, z: NaN, dx: 80, dy: options.dyDefault, dz: 80, ownerTag: null, locked: false, lockDuration: 0 });
+      renderAll(plots, options);
+      saveToHistory();
+    }
+
+    function onDeletePlot(index) {
+      const plots = getPlotsFromUI();
+      if (!confirm('Delete this plot?')) return;
+      plots.splice(index, 1);
+      renderAll(plots, getOptionsFromUI());
+      saveToHistory();
+    }
+
+    function onDuplicatePlot(index) {
+      const plots = getPlotsFromUI();
+      const copy = JSON.parse(JSON.stringify(plots[index]));
+      copy.id = nextPlotId(plots);
+      plots.splice(index + 1, 0, copy);
+      renderAll(plots, getOptionsFromUI());
+      saveToHistory();
+    }
+
+    function onAutoOwnerTag(index) {
+      const options = getOptionsFromUI();
+      const row = plotsEl.children[index];
+      if (!row) return;
+      const id = row.querySelector('[data-field="id"]').value.trim();
+      const f = row.querySelector('[data-field="ownerTag"]');
+      f.value = `${options.ownerTagPrefix}${id}`;
+      updatePreview(row, options);
+      validateAll();
+      regenOutputs();
+    }
+
+    // Export / Import
+    function exportJson() {
+      const className = getCurrentClass().replace(/\s+/g, '-');
+      const now = new Date();
+      const timestamp = now.toISOString().slice(0, 16).replace(/[-:]/g, '').replace('T', '-');
+      const data = { 
+        schemaVersion: 1,
+        plots: getPlotsFromUI(), 
+        options: getOptionsFromUI(), 
+        className: getCurrentClass(),
+        exportedAt: now.toISOString()
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `mee-plot-security-${className}-${timestamp}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function importJsonFile(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const parsed = JSON.parse(String(reader.result));
+          if (!parsed || !Array.isArray(parsed.plots) || typeof parsed.options !== 'object') {
+            alert('Invalid file format'); return;
+          }
+          // If imported file has a className, optionally switch to it or add it
+          if (parsed.className) {
+            const classes = loadClassesList();
+            if (classes.includes(parsed.className)) {
+              if (confirm(`Switch to class "${parsed.className}"?`)) {
+                classSelect.value = parsed.className;
+                saveCurrentClass();
+              }
+            } else {
+              if (confirm(`Class "${parsed.className}" doesn't exist. Add it and switch?`)) {
+                classes.push(parsed.className);
+                saveClassesList(classes);
+                renderClassesList();
+                classSelect.value = parsed.className;
+                saveCurrentClass();
+              }
+            }
+          }
+          const mergedOptions = { ...defaultOptions(), ...parsed.options };
+          saveToLocalStorage(parsed.plots, mergedOptions);
+          renderAll(parsed.plots, mergedOptions);
+          showToast(`Imported for ${getCurrentClass()}`);
+        } catch (e) {
+          alert('Failed to parse JSON');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function exportCsv() {
+      const className = getCurrentClass().replace(/\s+/g, '-');
+      const now = new Date();
+      const timestamp = now.toISOString().slice(0, 16).replace(/[-:]/g, '').replace('T', '-');
+      const plots = getPlotsFromUI();
+      
+      // CSV header
+      const headers = ['firstName', 'lastName', 'id', 'label', 'owners', 'x', 'y', 'z', 'dx', 'dy', 'dz', 'ownerTag'];
+      const csvRows = [headers.join(',')];
+      
+      // CSV rows
+      plots.forEach(plot => {
+        const row = headers.map(header => {
+          let value = plot[header];
+          if (header === 'owners') {
+            // Join owners array with semicolon
+            value = Array.isArray(value) ? value.join(';') : '';
+          }
+          // Escape quotes and wrap in quotes if contains comma, quote, or newline
+          if (value == null) value = '';
+          const str = String(value);
+          if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+            return `"${str.replace(/"/g, '""')}"`;
+          }
+          return str;
+        });
+        csvRows.push(row.join(','));
+      });
+      
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `mee-plots-${className}-${timestamp}.csv`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast('CSV exported');
+    }
+
+    function importCsvFile(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const text = String(reader.result);
+          const { plots: newPlots, errors } = parseBulkData(text);
+          
+          if (errors.length > 0) {
+            alert(`CSV import errors:\n${errors.slice(0, 10).join('\n')}${errors.length > 10 ? `\n... and ${errors.length - 10} more` : ''}`);
+            return;
+          }
+          
+          if (newPlots.length === 0) {
+            alert('No valid plots found in CSV file');
+            return;
+          }
+          
+          // Check for duplicate IDs
+          const currentPlots = getPlotsFromUI();
+          const existingIds = new Set(currentPlots.map(p => p.id));
+          const duplicateIds = newPlots.filter(p => existingIds.has(p.id)).map(p => p.id);
+          
+          if (duplicateIds.length > 0) {
+            if (!confirm(`Found ${duplicateIds.length} duplicate ID(s): ${duplicateIds.slice(0, 5).join(', ')}${duplicateIds.length > 5 ? '...' : ''}\n\nReplace existing plots with imported data?`)) {
+              return;
+            }
+          }
+          
+          // Replace all plots with imported data
+          const options = getOptionsFromUI();
+          const allPlots = [...newPlots];
+          
+          // Fill defaults for y/dy if needed
+          allPlots.forEach(p => {
+            if (!Number.isFinite(p.y)) p.y = options.yDefaultMin;
+            if (!Number.isFinite(p.dy)) p.dy = options.dyDefault;
+          });
+          
+          renderAll(allPlots, options);
+          showToast(`Imported ${newPlots.length} plot(s) from CSV`);
+        } catch (e) {
+          alert('Failed to parse CSV file: ' + e.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function backupAllData() {
+      const now = new Date();
+      const timestamp = now.toISOString().slice(0, 16).replace(/[-:]/g, '').replace('T', '-');
+      const classes = loadClassesList();
+      const backup = {
+        schemaVersion: 1,
+        exportedAt: now.toISOString(),
+        classes: {}
+      };
+      
+      // Export data for each class
+      classes.forEach(className => {
+        try {
+          const plotsData = localStorage.getItem(getStorageKey(className));
+          const optionsData = localStorage.getItem(getOptionsKey(className));
+          
+          if (plotsData || optionsData) {
+            backup.classes[className] = {
+              plots: plotsData ? JSON.parse(plotsData) : [],
+              options: optionsData ? JSON.parse(optionsData) : defaultOptions()
+            };
+          }
+        } catch (e) {
+          console.error(`Error backing up class ${className}:`, e);
+        }
+      });
+      
+      // Also include class list
+      backup.classList = classes;
+      backup.currentClass = getCurrentClass();
+      
+      const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `mee-backup-all-${timestamp}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      showToast(`Backed up ${classes.length} class(es)`);
+    }
+
+    function restoreBackupFile(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const backup = JSON.parse(String(reader.result));
+          
+          if (!backup || typeof backup !== 'object') {
+            alert('Invalid backup file format');
+            return;
+          }
+          
+          if (!confirm(`This will restore data for all classes in the backup.\n\nCurrent data will be replaced. Continue?`)) {
+            return;
+          }
+          
+          // Restore class list if present
+          if (backup.classList && Array.isArray(backup.classList)) {
+            saveClassesList(backup.classList);
+            renderClassesList();
+          }
+          
+          // Restore data for each class
+          if (backup.classes && typeof backup.classes === 'object') {
+            Object.keys(backup.classes).forEach(className => {
+              const classData = backup.classes[className];
+              if (classData.plots && Array.isArray(classData.plots)) {
+                localStorage.setItem(getStorageKey(className), JSON.stringify(classData.plots));
+              }
+              if (classData.options && typeof classData.options === 'object') {
+                localStorage.setItem(getOptionsKey(className), JSON.stringify(classData.options));
+              }
+            });
+          }
+          
+          // Switch to backed up current class if available
+          if (backup.currentClass) {
+            const classes = loadClassesList();
+            if (classes.includes(backup.currentClass)) {
+              classSelect.value = backup.currentClass;
+              saveCurrentClass();
+            }
+          }
+          
+          // Reload current class data
+          const { plots, options } = loadFromLocalStorage();
+          renderAll(plots, options);
+          
+          showToast('Backup restored successfully');
+        } catch (e) {
+          alert('Failed to parse backup file: ' + e.message);
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    // Generators
+    function computeOwnerTag(plot, options) {
+      const base = (plot.ownerTag && nonEmpty(plot.ownerTag)) ? plot.ownerTag : (options.ownerTagPrefix + plot.id);
+      return sanitizeTag(base);
+    }
+
+    function selectorForName(name) {
+      const needsQuotes = /\s|["\\]/.test(name);
+      const safe = name.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+      return `@a[name=${needsQuotes ? `"${safe}"` : safe}]`;
+    }
+
+    function generateOwnerSetup(plots, options) {
+      const seen = new Set();
+      const lines = [];
+      lines.push('# Section A: One-time owner tag setup');
+      lines.push('# Run these commands once before starting the tick function');
+      
+      // Show owner tag preview (first 3 unique tags)
+      const allTags = new Set();
+      plots.forEach(p => {
+        const tag = computeOwnerTag(p, options);
+        allTags.add(tag);
+      });
+      const previewTags = Array.from(allTags).slice(0, 3);
+      if (previewTags.length > 0) {
+        lines.push(`# Owner tags preview: ${previewTags.join(', ')}${allTags.size > 3 ? ` (+${allTags.size - 3} more)` : ''}`);
+      }
+      lines.push('');
+      
+      plots.forEach(p => {
+        const tag = computeOwnerTag(p, options);
+        (p.owners || []).forEach(u => {
+          if (!nonEmpty(u)) return;
+          const sel = selectorForName(u);
+          const key = `${sel}::${tag}`;
+          if (!seen.has(key)) {
+            seen.add(key);
+            lines.push(`/tag ${sel} add ${tag}`);
+          }
+        });
+      });
+      
+      // Add street owner setup if streets are enabled
+      if (options.genStreets) {
+        const streetStrips = generateStreetStrips(options);
+        const perimeterStrips = options.genPerimeterRoad ? generatePerimeterRoads(options) : [];
+        if (streetStrips.length > 0 || perimeterStrips.length > 0) {
+          lines.push('');
+          lines.push('# Street owner tags (one-time setup)');
+          const streetTagBase = sanitizeTag(options.streetOwnerTag || 'street_crew');
+          if (options.streetTeamOwned) {
+            // Team-owned: per-strip tags (deduplicated)
+            const seenTags = new Set();
+            streetStrips.forEach((s, idx) => {
+              const tag = `${streetTagBase}_strip${String(idx + 1).padStart(2, '0')}`;
+              if (!seenTags.has(tag)) {
+                seenTags.add(tag);
+                lines.push(`# /tag @a[name="TeamMember"] add ${tag}  # Replace TeamMember with actual username`);
+              }
+            });
+            // Perimeter roads use same base tag for team-owned
+            if (perimeterStrips.length > 0 && !seenTags.has(streetTagBase)) {
+              seenTags.add(streetTagBase);
+              lines.push(`# /tag @a[name="TeamMember"] add ${streetTagBase}  # Perimeter roads (replace TeamMember)`);
+            }
+          } else {
+            // Teacher-owned: single tag
+            lines.push(`# /tag @a[name="YourName"] add ${streetTagBase}  # Replace YourName with teacher username`);
+          }
+          
+          // Role tags presets (admin/TA bypass)
+          lines.push('');
+          lines.push('# Role tags (admin/TA bypass - uncomment and customize)');
+          lines.push(`# /tag @a[name="Your TA"] add ${streetTagBase}`);
+          lines.push(`# /tag @a[name="You"] add admin_build`);
+        }
+      }
+      
+      // Owner-anywhere bypass (optional)
+      if (options.ownerAnywhere) {
+        lines.push('');
+        lines.push('# Owner-anywhere bypass (optional):');
+        lines.push('# /tag @a[name="TeacherOrStudent"] add OWNER_ANYWHERE');
+      }
+      
+      return lines.join('\n');
+    }
+
+    function generateTickingAreas(plots, options) {
+      if (!options.genTickingAreas) return '# Ticking areas disabled';
+      const lines = [];
+      plots.forEach(p => {
+        const x2 = p.x + p.dx - 1;
+        const y2 = p.y + p.dy - 1;
+        const z2 = p.z + p.dz - 1;
+        lines.push(`/tickingarea add ${options.tickingAreaPrefix}${p.id} ${p.x} ${p.y} ${p.z} ${x2} ${y2} ${z2}`);
+      });
+      return lines.join('\n');
+    }
+
+    function generateFunctionBody(plots, options) {
+      const lines = [];
+      lines.push('# my_security.mcfunction');
+      lines.push('# Generated by Minecraft Education Plot Security Builder');
+      if (options.genStreets) {
+        lines.push(`# Streets config: P=${options.streetPlotSize || 80}, W=${options.streetWidth || 10}, ${options.streetCols || 3}x${options.streetRows || 3}, origin (${options.streetX0 || 0}, ${options.streetZ0 || 0})`);
+      }
+      lines.push('# Optional noise control:');
+      lines.push('# /gamerule sendcommandfeedback false');
+      lines.push('# /gamerule commandblockoutput false');
+      lines.push('');
+      lines.push('# PANIC: uncomment to lock everything');
+      lines.push('# gamemode adventure @a');
+      lines.push('');
+      lines.push('# FREE BUILD: comment detection & gm lines below to suspend security');
+      lines.push('');
+      lines.push(`# Clear restricted tag each tick`);
+      lines.push(`tag @a remove ${options.restrictedTag}`);
+      lines.push('');
+      
+      // Locked plots (permanent or timed adventure mode)
+      const lockedPlots = plots.filter(p => p.locked);
+      if (lockedPlots.length > 0) {
+        lines.push('# Locked plots (adventure mode)');
+        lockedPlots.forEach(p => {
+          const dy = Number.isFinite(p.dy) ? p.dy : options.dyDefault;
+          const duration = p.lockDuration || 0;
+          if (duration > 0) {
+            lines.push(`# Auto-unlock after ${duration} minutes (uncomment scoreboard timer below)`);
+            lines.push(`# scoreboard players set @a[tag=locked_${p.id}] timer 0`);
+            lines.push(`gamemode adventure @a[x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${dy},dz=${p.dz}]`);
+            lines.push(`tag @a[x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${dy},dz=${p.dz}] add locked_${sanitizeTag(p.id)}`);
+          } else {
+            lines.push(`gamemode adventure @a[x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${dy},dz=${p.dz}]`);
+          }
+        });
+        lines.push('');
+      }
+      
+      lines.push('# Tag non-owners standing inside plots');
+      plots.forEach(p => {
+        const ownerTag = computeOwnerTag(p, options);
+        lines.push(`tag @a[x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${p.dy},dz=${p.dz},tag=!${ownerTag}] add ${options.restrictedTag}`);
+      });
+      lines.push('');
+      
+      // Streets (if enabled)
+      if (options.genStreets) {
+        const streetStrips = generateStreetStrips(options);
+        const perimeterStrips = options.genPerimeterRoad ? generatePerimeterRoads(options) : [];
+        const allStrips = [...streetStrips, ...perimeterStrips];
+        
+        if (allStrips.length > 0) {
+          lines.push('# Streets (restricted unless tagged)');
+          const streetTag = sanitizeTag(options.streetOwnerTag || 'street_crew');
+          allStrips.forEach((s, idx) => {
+            const tag = options.streetTeamOwned && idx < streetStrips.length 
+              ? `${streetTag}_strip${String(idx + 1).padStart(2, '0')}` 
+              : streetTag;
+            if (s.label) {
+              lines.push(`# ${s.label}`);
+            }
+            lines.push(`tag @a[x=${s.x},y=${options.yDefaultMin},z=${s.z},dx=${s.dx},dy=${options.dyDefault},dz=${s.dz},tag=!${tag}] add ${options.restrictedTag}`);
+          });
+          lines.push('');
+        }
+      }
+      
+      // Free-build zones (whitelisted areas)
+      if (options.freeBuildZones && options.freeBuildZones.length > 0) {
+        lines.push('# Free-build zones (remove restricted tag)');
+        options.freeBuildZones.forEach((zone, idx) => {
+          if (zone.label) lines.push(`# ${zone.label}`);
+          lines.push(`tag @a[x=${zone.x},y=${zone.y || options.yDefaultMin},z=${zone.z},dx=${zone.dx},dy=${zone.dy || options.dyDefault},dz=${zone.dz}] remove ${options.restrictedTag}`);
+        });
+        lines.push('');
+      }
+      if (options.creativeByDefault) {
+        lines.push('# Creative by default');
+        lines.push('# Rate-limit gamemode churn (optional - uncomment to enable):');
+        lines.push('# scoreboard objectives add gm_changed dummy');
+        lines.push(`# gamemode adventure @a[tag=${options.restrictedTag},scores={gm_changed=..0}]`);
+        lines.push(`# gamemode creative @a[tag=!${options.restrictedTag},scores={gm_changed=..0}]`);
+        lines.push(`# scoreboard players set @a[tag=${options.restrictedTag}] gm_changed 1`);
+        lines.push(`# scoreboard players set @a[tag=!${options.restrictedTag}] gm_changed 1`);
+        lines.push('');
+        lines.push('# Standard mode (uncomment above lines to rate-limit):');
+        lines.push(`gamemode adventure @a[tag=${options.restrictedTag}]`);
+        lines.push(`gamemode creative @a[tag=!${options.restrictedTag}]`);
+        if (options.ownerAnywhere) {
+          lines.push('');
+          lines.push('# Optional owner-anywhere line (uncomment if used):');
+          lines.push('# gamemode creative @a[tag=OWNER_ANYWHERE]');
+        }
+      } else {
+        lines.push('# Adventure by default');
+        lines.push('# Owners are granted creative only while inside their own plot');
+        lines.push('# Rate-limit gamemode churn (optional - uncomment to enable):');
+        lines.push('# scoreboard objectives add gm_changed dummy');
+        plots.forEach(p => {
+          const ownerTag = computeOwnerTag(p, options);
+          lines.push(`gamemode creative @a[tag=${ownerTag},x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${p.dy},dz=${p.dz}]`);
+        });
+        lines.push(`gamemode adventure @a[tag=!${options.restrictedTag}]`);
+        lines.push('# Note: For owner-wide exceptions, add broader rules as needed.');
+        if (options.ownerAnywhere) {
+          lines.push('');
+          lines.push('# Optional owner-anywhere line (uncomment if used):');
+          lines.push('# gamemode creative @a[tag=OWNER_ANYWHERE]');
+        }
+      }
+      lines.push('');
+      lines.push('# Place one repeating Always Active command block running:');
+      lines.push('# /function my_security');
+      return lines.join('\n');
+    }
+
+    function generateCleanup(plots, options) {
+      const lines = [];
+      lines.push(`# Remove restricted tag from everyone`);
+      lines.push(`/tag @a remove ${options.restrictedTag}`);
+      lines.push('');
+      lines.push('# Remove owner tags (unique)');
+      const uniqueOwnerTags = unique(plots.map(p => computeOwnerTag(p, options)));
+      uniqueOwnerTags.forEach(t => lines.push(`/tag @a remove ${t}`));
+      lines.push('');
+      if (options.genTickingAreas) {
+        lines.push('# Remove ticking areas');
+        plots.forEach(p => lines.push(`/tickingarea remove ${options.tickingAreaPrefix}${p.id}`));
+      } else {
+        lines.push('# Ticking areas were not generated');
+      }
+      return lines.join('\n');
+    }
+
+    // Generate street strips
+    function generateStreetStrips(options) {
+      if (!options.genStreets) return [];
+      const { streetPlotSize: P, streetWidth: W, streetCols: NC, streetRows: NR, streetX0: X0, streetZ0: Z0 } = options;
+      const strips = [];
+      
+      // Horizontal gaps (between rows)
+      for (let r = 0; r < NR - 1; r++) {
+        const z = Z0 + r * (P + W) + P;
+        const x = X0;
+        const dx = NC * P + (NC - 1) * W;
+        const dz = W;
+        const label = options.streetTeamOwned ? `row_${String(r + 1).padStart(2, '0')}` : null;
+        strips.push({ x, z, dx, dz, label });
+      }
+      
+      // Vertical gaps (between columns)
+      for (let c = 0; c < NC - 1; c++) {
+        const x = X0 + c * (P + W) + P;
+        const z = Z0;
+        const dx = W;
+        const dz = NR * P + (NR - 1) * W;
+        const label = options.streetTeamOwned ? `col_${String(c + 1).padStart(2, '0')}` : null;
+        strips.push({ x, z, dx, dz, label });
+      }
+      
+      return strips;
+    }
+
+    // Generate perimeter roads (outer strips around grid)
+    function generatePerimeterRoads(options) {
+      if (!options.genStreets || !options.genPerimeterRoad) return [];
+      const P = options.streetPlotSize;
+      const W = options.streetWidth;
+      const NC = options.streetCols;
+      const NR = options.streetRows;
+      const X0 = options.streetX0;
+      const Z0 = options.streetZ0;
+      const width = NC * P + (NC - 1) * W;
+      const height = NR * P + (NR - 1) * W;
+      return [
+        { x: X0, z: Z0 - W, dx: width, dz: W, label: 'perimeter_north' },
+        { x: X0, z: Z0 + height, dx: width, dz: W, label: 'perimeter_south' },
+        { x: X0 - W, z: Z0, dx: W, dz: height, label: 'perimeter_west' },
+        { x: X0 + width, z: Z0, dx: W, dz: height, label: 'perimeter_east' }
+      ];
+    }
+
+    function generateAuditTools(plots, options) {
+      const lines = [];
+      lines.push('# Debug: list restricted players (comment out in class)');
+      lines.push(`# say Restricted: @a[tag=${options.restrictedTag}]`);
+      lines.push('');
+      lines.push('# Silent scoreboard counter (uncomment to track restricted counts)');
+      lines.push(`# scoreboard objectives add restricted_count dummy`);
+      lines.push(`# scoreboard players add @a[tag=${options.restrictedTag}] restricted_count 1`);
+      lines.push('');
+      lines.push('# Per-plot probes:');
+      plots.forEach(p => {
+        const ownerTag = computeOwnerTag(p, options);
+        lines.push(`# say ${p.id} non-owners: @a[x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${p.dy},dz=${p.dz},tag=!${ownerTag}]`);
+      });
+      return lines.join('\n');
+    }
+
+    function computeTotals(plots) {
+      const owners = new Set();
+      plots.forEach(p => (p.owners || []).forEach(o => { if (nonEmpty(o)) owners.add(o); }));
+      return { plotCount: plots.length, ownerCount: owners.size };
+    }
+
+    function regenOutputs() {
+      const plots = getPlotsFromUI();
+      const options = getOptionsFromUI();
+      // Deduplicate identical explicit ownerTags for cleanup
+      const ownerSetup = generateOwnerSetup(plots, options);
+      const ticking = generateTickingAreas(plots, options);
+      const body = generateFunctionBody(plots, options);
+      const cleanup = generateCleanup(plots, options);
+      const auditTools = generateAuditTools(plots, options);
+
+      ownerSetupTA.value = ownerSetup;
+      tickingAreasTA.value = ticking;
+      functionBodyTA.value = body;
+      cleanupTA.value = cleanup;
+      auditToolsTA.value = auditTools;
+
+      const totals = computeTotals(plots);
+      totalsEl.textContent = `Plots: ${totals.plotCount}, Owners: ${totals.ownerCount} unique`;
+    }
+
+    // Bulk add modal functions
+    function openBulkAddModal() {
+      bulkAddTextarea.value = '';
+      bulkAddErrors.textContent = '';
+      bulkAddModal.classList.add('show');
+      bulkAddModal.setAttribute('aria-hidden', 'false');
+      bulkAddTextarea.focus();
+    }
+
+    function closeBulkAddModal() {
+      bulkAddModal.classList.remove('show');
+      bulkAddModal.setAttribute('aria-hidden', 'true');
+      bulkAddTextarea.value = '';
+      bulkAddErrors.textContent = '';
+    }
+
+    function processBulkAdd() {
+      const text = bulkAddTextarea.value.trim();
+      if (!text) {
+        bulkAddErrors.textContent = 'Please paste plot data';
+        return;
+      }
+
+      const { plots: newPlots, errors } = parseBulkData(text);
+      
+      if (errors.length > 0) {
+        bulkAddErrors.textContent = errors.slice(0, 5).join('\n') + (errors.length > 5 ? `\n... and ${errors.length - 5} more errors` : '');
+        return;
+      }
+
+      if (newPlots.length === 0) {
+        bulkAddErrors.textContent = 'No valid plots found. Check format and try again.';
+        return;
+      }
+
+      // Check for duplicate IDs in existing plots
+      const currentPlots = getPlotsFromUI();
+      const existingIds = new Set(currentPlots.map(p => p.id));
+      const duplicateIds = newPlots.filter(p => existingIds.has(p.id)).map(p => p.id);
+      
+      if (duplicateIds.length > 0) {
+        bulkAddErrors.textContent = `Duplicate IDs found: ${duplicateIds.join(', ')}. Please use unique IDs.`;
+        return;
+      }
+
+      // Check for duplicate IDs within new plots
+      const newIds = new Set();
+      const duplicatesInNew = [];
+      newPlots.forEach(p => {
+        if (newIds.has(p.id)) {
+          duplicatesInNew.push(p.id);
+        } else {
+          newIds.add(p.id);
+        }
+      });
+      
+      if (duplicatesInNew.length > 0) {
+        bulkAddErrors.textContent = `Duplicate IDs in pasted data: ${[...new Set(duplicatesInNew)].join(', ')}`;
+        return;
+      }
+
+      // All validation passed - add plots
+      const options = getOptionsFromUI();
+      const allPlots = [...currentPlots, ...newPlots];
+      
+      // Fill defaults for y/dy if needed
+      allPlots.forEach(p => {
+        if (!Number.isFinite(p.y)) p.y = options.yDefaultMin;
+        if (!Number.isFinite(p.dy)) p.dy = options.dyDefault;
+      });
+      
+      renderAll(allPlots, options);
+      saveToHistory();
+      closeBulkAddModal();
+      showToast(`Added ${newPlots.length} plot(s)`);
+    }
+
+    // Event wiring
+    if (btnThemeToggle) {
+      btnThemeToggle.addEventListener('click', toggleTheme);
+    }
+    btnAddPlot.addEventListener('click', onAddPlot);
+    btnSave.addEventListener('click', () => {
+      if (!validateAll()) {
+        alert('Please fix validation errors.');
+        return;
+      }
+      const plots = getPlotsFromUI();
+      const options = getOptionsFromUI();
+      saveToLocalStorage(plots, options);
+      saveCurrentClass();
+      renderAll(plots, options);
+      showToast(`Saved for ${getCurrentClass()}`);
+    });
+    btnExport.addEventListener('click', exportJson);
+    btnExportCsv.addEventListener('click', exportCsv);
+    btnImport.addEventListener('click', () => fileImport.click());
+    btnImportCsv.addEventListener('click', () => fileImportCsv.click());
+    fileImport.addEventListener('change', (e) => {
+      const f = e.target.files?.[0];
+      if (f) importJsonFile(f);
+      fileImport.value = '';
+    });
+    fileImportCsv.addEventListener('change', (e) => {
+      const f = e.target.files?.[0];
+      if (f) importCsvFile(f);
+      fileImportCsv.value = '';
+    });
+    btnBackupAll.addEventListener('click', backupAllData);
+    btnRestoreBackup.addEventListener('click', () => fileRestoreBackup.click());
+    fileRestoreBackup.addEventListener('change', (e) => {
+      const f = e.target.files?.[0];
+      if (f) restoreBackupFile(f);
+      fileRestoreBackup.value = '';
+    });
+    btnReset.addEventListener('click', () => {
+      if (!confirm('Reset and load sample data?')) return;
+      resetToSample();
+    });
+
+    // Class management modal functions
+    function openClassManageModal(mode) {
+      classManageMode = mode;
+      classManageInput.value = '';
+      classManageErrors.textContent = '';
+      
+      if (mode === 'add') {
+        classManageModalTitle.textContent = 'Add New Class';
+        btnClassManageSubmit.textContent = 'Add';
+      } else if (mode === 'rename') {
+        classManageModalTitle.textContent = 'Rename Class';
+        btnClassManageSubmit.textContent = 'Rename';
+        classManageInput.value = getCurrentClass();
+      }
+      
+      classManageModal.classList.add('show');
+      classManageModal.setAttribute('aria-hidden', 'false');
+      classManageInput.focus();
+      if (mode === 'rename') classManageInput.select();
+    }
+
+    function closeClassManageModal() {
+      classManageModal.classList.remove('show');
+      classManageModal.setAttribute('aria-hidden', 'true');
+      classManageInput.value = '';
+      classManageErrors.textContent = '';
+      classManageMode = null;
+    }
+
+    function processClassManage() {
+      const newName = classManageInput.value.trim();
+      
+      if (!newName) {
+        classManageErrors.textContent = 'Class name is required';
+        return;
+      }
+      
+      if (newName.length > 50) {
+        classManageErrors.textContent = 'Class name must be 50 characters or less';
+        return;
+      }
+      
+      const classes = loadClassesList();
+      
+      if (classManageMode === 'add') {
+        if (classes.includes(newName)) {
+          classManageErrors.textContent = 'A class with this name already exists';
+          return;
+        }
+        
+        // Add new class
+        classes.push(newName);
+        saveClassesList(classes);
+        renderClassesList();
+        classSelect.value = newName;
+        saveCurrentClass();
+        
+        // Load empty data for new class
+        const { plots, options } = loadFromLocalStorage();
+        renderAll(plots, options);
+        
+        closeClassManageModal();
+        showToast(`Added class "${newName}"`);
+        
+      } else if (classManageMode === 'rename') {
+        const oldName = getCurrentClass();
+        
+        if (newName === oldName) {
+          closeClassManageModal();
+          return;
+        }
+        
+        if (classes.includes(newName)) {
+          classManageErrors.textContent = 'A class with this name already exists';
+          return;
+        }
+        
+        // Migrate data from old name to new name
+        try {
+          const plotsData = localStorage.getItem(getStorageKey(oldName));
+          const optionsData = localStorage.getItem(getOptionsKey(oldName));
+          
+          if (plotsData) localStorage.setItem(getStorageKey(newName), plotsData);
+          if (optionsData) localStorage.setItem(getOptionsKey(newName), optionsData);
+          
+          // Remove old data
+          localStorage.removeItem(getStorageKey(oldName));
+          localStorage.removeItem(getOptionsKey(oldName));
+        } catch (e) {
+          console.error('Error migrating class data:', e);
+        }
+        
+        // Update class list
+        const index = classes.indexOf(oldName);
+        if (index !== -1) {
+          classes[index] = newName;
+          saveClassesList(classes);
+          renderClassesList();
+          classSelect.value = newName;
+          saveCurrentClass();
+          
+          // Reload data
+          const { plots, options } = loadFromLocalStorage();
+          renderAll(plots, options);
+          
+          closeClassManageModal();
+          showToast(`Renamed class to "${newName}"`);
+        }
+      }
+    }
+
+    function deleteCurrentClass() {
+      const className = getCurrentClass();
+      const classes = loadClassesList();
+      
+      if (classes.length <= 1) {
+        alert('Cannot delete the last class. Add another class first.');
+        return;
+      }
+      
+      if (!confirm(`Delete class "${className}"?\n\nThis will delete all plots and options for this class. This action cannot be undone.`)) {
+        return;
+      }
+      
+      // Remove data
+      localStorage.removeItem(getStorageKey(className));
+      localStorage.removeItem(getOptionsKey(className));
+      
+      // Remove from class list
+      const index = classes.indexOf(className);
+      if (index !== -1) {
+        classes.splice(index, 1);
+        saveClassesList(classes);
+        renderClassesList();
+        
+        // Switch to first available class
+        if (classes.length > 0) {
+          classSelect.value = classes[0];
+          saveCurrentClass();
+          
+          const { plots, options } = loadFromLocalStorage();
+          renderAll(plots, options);
+          
+          showToast(`Deleted class "${className}"`);
+        }
+      }
+    }
+
+    // Bulk add modal listeners
+    btnBulkAddPlots.addEventListener('click', openBulkAddModal);
+    btnBulkAddCancel.addEventListener('click', closeBulkAddModal);
+    btnBulkAddSubmit.addEventListener('click', processBulkAdd);
+    if (bulkAddModalClose) {
+      bulkAddModalClose.addEventListener('click', closeBulkAddModal);
+    }
+    
+    // Close modal on background click
+    bulkAddModal.addEventListener('click', (e) => {
+      if (e.target === bulkAddModal) {
+        closeBulkAddModal();
+      }
+    });
+    
+    // Close bulk add modal on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (bulkAddModal.classList.contains('show')) {
+          closeBulkAddModal();
+        } else if (classManageModal.classList.contains('show')) {
+          closeClassManageModal();
+        }
+      }
+    });
+
+    // Class management button listeners
+    btnAddClass.addEventListener('click', () => openClassManageModal('add'));
+    btnRenameClass.addEventListener('click', () => openClassManageModal('rename'));
+    btnDeleteClass.addEventListener('click', deleteCurrentClass);
+    
+    btnClassManageCancel.addEventListener('click', closeClassManageModal);
+    btnClassManageSubmit.addEventListener('click', processClassManage);
+    if (classManageModalClose) {
+      classManageModalClose.addEventListener('click', closeClassManageModal);
+    }
+    
+    // Close class management modal on background click
+    classManageModal.addEventListener('click', (e) => {
+      if (e.target === classManageModal) {
+        closeClassManageModal();
+      }
+    });
+    
+    // Submit on Enter key in class management input
+    classManageInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        processClassManage();
+      }
+    });
+
+    // Download button listeners
+    const btnDownloadFunction = document.getElementById('btnDownloadFunction');
+    const btnDownloadManifest = document.getElementById('btnDownloadManifest');
+    const btnCopyAll = document.getElementById('btnCopyAll');
+    const btnDownloadZip = document.getElementById('btnDownloadZip');
+    if (btnDownloadFunction) btnDownloadFunction.addEventListener('click', downloadFunction);
+    if (btnDownloadManifest) btnDownloadManifest.addEventListener('click', downloadManifest);
+    if (btnCopyAll) btnCopyAll.addEventListener('click', copyAllSections);
+    if (btnDownloadZip) btnDownloadZip.addEventListener('click', downloadZip);
+
+    // Streets input elements
+    const chkStreets = document.getElementById('chkStreets');
+    const streetPlotSizeInput = document.getElementById('streetPlotSize');
+    const streetWidthInput = document.getElementById('streetWidth');
+    const streetColsInput = document.getElementById('streetCols');
+    const streetRowsInput = document.getElementById('streetRows');
+    const streetX0Input = document.getElementById('streetX0');
+    const streetZ0Input = document.getElementById('streetZ0');
+    const streetOwnerTagInput = document.getElementById('streetOwnerTag');
+    const streetTeamOwnedInput = document.getElementById('streetTeamOwned');
+    const genPerimeterRoadInput = document.getElementById('genPerimeterRoad');
+    const btnAddFreeBuildZone = document.getElementById('btnAddFreeBuildZone');
+    
+    if (btnAddFreeBuildZone) {
+      btnAddFreeBuildZone.addEventListener('click', addFreeBuildZone);
+    }
+
+    // Options update triggers regeneration
+    const allOptionInputs = [
+      ...modeRadios, chkTickingAreas, yMinInput, dyDefaultInput, restrictedTagInput, ownerTagPrefixInput, tickingAreaPrefixInput,
+      chkStreets, streetPlotSizeInput, streetWidthInput, streetColsInput, streetRowsInput, streetX0Input, streetZ0Input, streetOwnerTagInput, streetTeamOwnedInput, genPerimeterRoadInput
+    ].filter(Boolean);
+    allOptionInputs.forEach(el => {
+      const eventType = el.type === 'checkbox' || el.type === 'radio' ? 'change' : 'input';
+      el.addEventListener(eventType, () => { validateAll(); regenOutputs(); });
+    });
+
+    // Class switching
+    classSelect.addEventListener('change', () => {
+      // Save current class data before switching
+      const currentPlots = getPlotsFromUI();
+      const currentOptions = getOptionsFromUI();
+      saveToLocalStorage(currentPlots, currentOptions);
+      saveCurrentClass();
+      
+      // Load new class data
+      const { plots, options } = loadFromLocalStorage();
+      renderAll(plots, options);
+      showToast(`Switched to ${getCurrentClass()}`);
+    });
+
+    // Init
+    (function init() {
+      loadTheme();
+      renderClassesList();
+      loadCurrentClass();
+      const { plots, options } = loadFromLocalStorage();
+      renderAll(plots, options);
+    })();
+  </script>
+</body>
+</html>
+
+
