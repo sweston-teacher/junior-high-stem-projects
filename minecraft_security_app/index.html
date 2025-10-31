@@ -451,6 +451,7 @@
           <button id="btnRestoreBackup" class="btn" aria-label="Restore Backup" title="Restore from backup JSON file">Restore</button>
         </div>
         <div class="btn-group">
+          <button id="btnAutoIds" class="btn" aria-label="Auto-suggest IDs" title="Generate plot_&lt;x&gt;_&lt;z&gt; IDs for blank IDs and normalize auto-style IDs">Auto IDs</button>
           <button id="btnReset" class="btn danger" aria-label="Reset sample data">Reset</button>
         </div>
         <input id="fileImport" type="file" accept="application/json" style="display:none" aria-hidden="true" />
@@ -770,7 +771,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
 
   <script>
     // Version number - UPDATE THIS WHEN MAKING CHANGES
-    const APP_VERSION = 'v2025.10.31.6';
+    const APP_VERSION = 'v2025.10.31.7';
     
     // Storage key helpers
     const getStorageKey = (className) => `meePlotSecurityV1_${className}`;
@@ -804,6 +805,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
     const btnBackupAll = document.getElementById('btnBackupAll');
     const btnRestoreBackup = document.getElementById('btnRestoreBackup');
     const btnReset = document.getElementById('btnReset');
+    const btnAutoIds = document.getElementById('btnAutoIds');
     
     // Bulk add modal elements
     const btnBulkAddPlots = document.getElementById('btnBulkAddPlots');
@@ -1258,7 +1260,14 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
             lockDuration: 0
           };
           
-          // Validate required fields
+          // Auto-generate ID if missing
+          if (!nonEmpty(plot.id)) {
+            plot.id = sanitizeId(autoIdFromXZ(plot.x, plot.z));
+          } else {
+            plot.id = sanitizeId(plot.id);
+          }
+          
+          // Validate that we have an ID now
           if (!nonEmpty(plot.id)) {
             errors.push(`Line ${lineNum + 1}: id is required`);
             return;
@@ -1300,6 +1309,13 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
         }
       });
       
+      // Uniquify all IDs after parsing
+      const seen = new Set();
+      plots.forEach(p => {
+        p.id = makeUniqueId(p.id, seen);
+        seen.add(p.id);
+      });
+      
       return { plots, errors };
     }
 
@@ -1329,6 +1345,35 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
     // Sanitize tag names to valid Minecraft tag format
     function sanitizeTag(s) {
       return (s || '').replace(/[^A-Za-z0-9_-]/g, '_');
+    }
+
+    // ID generation helpers
+    function sanitizeId(s) {
+      return (s || '').toString().trim().replace(/[^A-Za-z0-9_-]/g, '_');
+    }
+
+    function autoIdFromXZ(x, z) {
+      // Supports negatives; keep exact integers teacher entered
+      return `plot_${Number(x) || 0}_${Number(z) || 0}`;
+    }
+
+    function isAutoId(id) {
+      // True if id matches the auto-id pattern (plot_<int>_<int>)
+      return /^plot_-?\d+_-?\d+(_\d+)?$/.test(id);
+    }
+
+    function isSequentialId(id) {
+      // True if id matches sequential pattern (plot01, plot02, etc.) - these should be replaced
+      return /^plot\d+$/.test(id);
+    }
+
+    function makeUniqueId(baseId, existingIds) {
+      let id = baseId;
+      let n = 2;
+      while (existingIds.has(id)) {
+        id = `${baseId}_${n++}`;
+      }
+      return id;
     }
 
     // UI builders
@@ -1485,13 +1530,27 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       row.querySelectorAll('input, select').forEach(inp => {
         if (inp.classList.contains('owners-input')) return; // Skip owners input, handled separately
         const eventType = (inp.type === 'checkbox' || inp.tagName === 'SELECT') ? 'change' : 'input';
-        inp.addEventListener(eventType, () => {
-          updatePreview(row, options);
-          validateAll();
-          regenOutputs();
-          debouncedUpdateColumnWidths();
-          debouncedSaveHistory();
-        });
+        const field = inp.getAttribute('data-field');
+        
+        // Special handling for x/z to auto-update IDs
+        if (field === 'x' || field === 'z') {
+          inp.addEventListener(eventType, () => {
+            onXZChanged(index, row, options);
+            updatePreview(row, options);
+            validateAll();
+            regenOutputs();
+            debouncedUpdateColumnWidths();
+            debouncedSaveHistory();
+          });
+        } else {
+          inp.addEventListener(eventType, () => {
+            updatePreview(row, options);
+            validateAll();
+            regenOutputs();
+            debouncedUpdateColumnWidths();
+            debouncedSaveHistory();
+          });
+        }
       });
 
       return row;
@@ -2062,11 +2121,48 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       return ok;
     }
 
+    // Auto-update ID when x/z change (only if ID is auto-generated or blank)
+    function onXZChanged(rowIndex, rowEl, options) {
+      const plots = getPlotsFromUI();
+      const p = plots[rowIndex];
+      if (!p) return;
+      
+      const xInput = rowEl.querySelector('[data-field="x"]');
+      const zInput = rowEl.querySelector('[data-field="z"]');
+      const idInput = rowEl.querySelector('[data-field="id"]');
+      
+      if (!xInput || !zInput || !idInput) return;
+      
+      const x = Number(xInput.value);
+      const z = Number(zInput.value);
+      
+      // Only proceed if both x and z are valid numbers
+      if (!Number.isFinite(x) || !Number.isFinite(z)) return;
+      
+      const oldId = p.id || '';
+      
+      // Update if ID is blank OR matches the auto pattern OR is a sequential ID (plot01, plot02, etc.)
+      if (!oldId.trim() || isAutoId(oldId) || isSequentialId(oldId)) {
+        const newAuto = sanitizeId(autoIdFromXZ(x, z));
+        // Keep unique across all other plots
+        const others = new Set(plots.map((q, i) => i !== rowIndex ? q.id : '').filter(Boolean));
+        const newId = makeUniqueId(newAuto, others);
+        
+        // Update the plot object and UI
+        p.id = newId;
+        idInput.value = newId;
+      }
+    }
+
     // Plot actions
     function onAddPlot() {
       const plots = getPlotsFromUI();
       const options = getOptionsFromUI();
+      
+      // Start with blank ID - it will be auto-generated when x/z are entered
+      // Or use sequential fallback if coords never get set
       const id = nextPlotId(plots);
+      
       plots.push({ firstName: '', lastName: '', id, label: '', owners: [], x: NaN, y: options.yDefaultMin, z: NaN, dx: 80, dy: options.dyDefault, dz: 80, ownerTag: null, locked: false, lockDuration: 0 });
       renderAll(plots, options);
       saveToHistory();
@@ -2790,6 +2886,78 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       if (!confirm('Reset and load sample data?')) return;
       resetToSample();
     });
+
+    // Migration: Auto-suggest IDs for blanks & normalize auto-style IDs
+    function migratePlotIds() {
+      const plots = getPlotsFromUI();
+      const options = getOptionsFromUI();
+      let changed = false;
+      
+      // First pass: generate IDs for blanks and collect existing IDs
+      const existingIds = new Set();
+      plots.forEach(p => {
+        if (p.id && p.id.trim()) {
+          existingIds.add(p.id);
+        }
+      });
+      
+      // Second pass: update IDs
+      plots.forEach(p => {
+        const oldId = p.id || '';
+        const hasCoords = Number.isFinite(p.x) && Number.isFinite(p.z);
+        
+        if (!oldId.trim() && hasCoords) {
+          // Generate for blank IDs
+          const base = sanitizeId(autoIdFromXZ(p.x, p.z));
+          p.id = makeUniqueId(base, existingIds);
+          existingIds.add(p.id);
+          changed = true;
+        } else if (oldId.trim() && isAutoId(oldId) && hasCoords) {
+          // Normalize existing auto IDs (fix collisions)
+          const base = sanitizeId(autoIdFromXZ(p.x, p.z));
+          if (base !== oldId) {
+            // Coords changed, update ID
+            p.id = makeUniqueId(base, existingIds);
+            existingIds.add(p.id);
+            changed = true;
+          } else {
+            // Same base, but might need uniquification
+            if (existingIds.has(oldId)) {
+              p.id = makeUniqueId(base, existingIds);
+              existingIds.add(p.id);
+              changed = true;
+            } else {
+              existingIds.add(oldId);
+            }
+          }
+        } else if (oldId.trim()) {
+          // Custom ID - ensure uniqueness if collision
+          if (existingIds.has(oldId)) {
+            const base = oldId;
+            p.id = makeUniqueId(base, existingIds);
+            existingIds.add(p.id);
+            changed = true;
+          } else {
+            existingIds.add(oldId);
+          }
+        }
+      });
+      
+      if (changed) {
+        renderAll(plots, options);
+        saveToHistory();
+        showToast('IDs updated: blanks filled, auto IDs normalized');
+      } else {
+        showToast('No changes needed');
+      }
+    }
+
+    if (btnAutoIds) {
+      btnAutoIds.addEventListener('click', () => {
+        if (!confirm('Auto-generate plot_<x>_<z> IDs for blank IDs and normalize existing auto-style IDs?\n\nCustom IDs will not be changed.')) return;
+        migratePlotIds();
+      });
+    }
 
     // Class management modal functions
     function openClassManageModal(mode) {
