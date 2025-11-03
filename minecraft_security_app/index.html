@@ -344,9 +344,6 @@
     .owner-chip .chip-remove { cursor: pointer; color: var(--muted); font-weight: bold; padding: 0 2px; line-height: 1; }
     .owner-chip .chip-remove:hover { color: var(--danger); }
     .owners-input { border: none; background: transparent; color: var(--text); padding: 4px; flex: 1; min-width: 60px; font-size: 12px; }
-
-    .toolbar-version { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 4px; font-weight: 600; }
-    .toolbar-version span { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background: var(--chip); color: var(--text); padding: 2px 6px; border-radius: 4px; }
     .owners-input:focus { outline: none; }
 
     .error { border-color: var(--danger) !important; }
@@ -460,7 +457,6 @@
         <input id="fileImportCsv" type="file" accept=".csv,text/csv" style="display:none" aria-hidden="true" />
         <input id="fileRestoreBackup" type="file" accept="application/json" style="display:none" aria-hidden="true" />
       </div>
-      <div class="toolbar-version">Version <span id="appVersionBadge"></span></div>
       <div class="toolbar-right">
         <div class="btn-group">
           <button id="btnThemeToggle" class="btn" aria-label="Toggle theme" title="Toggle dark/light theme">🌓</button>
@@ -2524,7 +2520,6 @@
       const lines = [];
       lines.push('# Section A: One-time owner tag setup');
       lines.push('# Run these commands once before starting the tick function');
-      let addedAny = false;
       
       // Show owner tag preview (first 3 unique tags)
       const allTags = new Set();
@@ -2554,7 +2549,6 @@
           if (!seen.has(key)) {
             seen.add(key);
             lines.push(`/tag ${sel} add ${tag}`);
-            addedAny = true;
           }
         });
       });
@@ -2575,19 +2569,16 @@
               if (!seenTags.has(stripTag)) {
                 seenTags.add(stripTag);
                 lines.push(`# /tag @a[name="TeamMember"] add ${stripTag}  # Replace TeamMember with actual username`);
-                addedAny = true;
               }
             });
             // Perimeter roads use same base tag for team-owned
             if (perimeterStrips.length > 0 && !seenTags.has(streetTagBase)) {
               seenTags.add(streetTagBase);
               lines.push(`# /tag @a[name="TeamMember"] add ${streetTagBase}  # Perimeter roads (replace TeamMember)`);
-              addedAny = true;
             }
           } else {
             // Teacher-owned: single tag
             lines.push(`# /tag @a[name="YourName"] add ${streetTagBase}  # Replace YourName with teacher username`);
-            addedAny = true;
           }
           
           // Role tags presets (admin/TA bypass)
@@ -2595,13 +2586,7 @@
           lines.push('# Role tags (admin/TA bypass - uncomment and customize)');
           lines.push(`# /tag @a[name="Your TA"] add ${streetTagBase}`);
           lines.push(`# /tag @a[name="You"] add admin_build`);
-          addedAny = true;
         }
-      }
-      
-      if (!addedAny) {
-        lines.push('');
-        lines.push('# No plots with student names and owners were found. Fill in the Name and Owners columns to generate setup commands.');
       }
       
       return lines.join('\n');
@@ -2636,7 +2621,6 @@
       lines.push('');
       
       // Generate one line per plot with owner tag (generated from student name)
-      let addedAny = false;
       plots.forEach(p => {
         // Generate tag from student's name
         const tag = getGeneratedOwnerTag(p, options);
@@ -2644,18 +2628,12 @@
         
         // Create line: tag players who have this tag AND are in the plot coordinates
         lines.push(`tag @a[tag=${tag},x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${p.dy},dz=${p.dz}] add ${CAN_BE_CREATIVE_TAG}`);
-        addedAny = true;
       });
       
-      if (!addedAny) {
-        lines.push('# No plots with student names and owners were found. Add names and owners to generate detection commands.');
-        lines.push('');
-      } else {
-        lines.push('');
-        lines.push('# (example for your next plot - replace JuanGM with tag generated from student name)');
-        lines.push(`# tag @a[tag=JuanGM,x=0,y=165,z=0,dx=30,dy=30,dz=30] add ${CAN_BE_CREATIVE_TAG}`);
-        lines.push('');
-      }
+      lines.push('');
+      lines.push('# (example for your next plot - replace JuanGM with tag generated from student name)');
+      lines.push(`# tag @a[tag=JuanGM,x=0,y=165,z=0,dx=30,dy=30,dz=30] add ${CAN_BE_CREATIVE_TAG}`);
+      lines.push('');
       lines.push('# STEP 3: "Execute" the gamemodes based on that mark.');
       lines.push('# This has no flicker, because a player can\'t be in both groups.');
       lines.push('');
@@ -2678,11 +2656,7 @@
         const tag = getGeneratedOwnerTag(p, options);
         if (tag) uniqueOwnerTags.add(tag);
       });
-      if (uniqueOwnerTags.size > 0) {
-        Array.from(uniqueOwnerTags).forEach(t => lines.push(`/tag @a remove ${t}`));
-      } else {
-        lines.push('# No student owner tags detected; nothing to remove.');
-      }
+      Array.from(uniqueOwnerTags).forEach(t => lines.push(`/tag @a remove ${t}`));
       lines.push('');
       if (options.genTickingAreas) {
         lines.push('# Remove ticking areas');
@@ -2754,17 +2728,12 @@
       lines.push(`# scoreboard players add @a[tag=${CAN_BE_CREATIVE_TAG}] creative_count 1`);
       lines.push('');
       lines.push('# Per-plot probes:');
-      let probesAdded = false;
       plots.forEach(p => {
         const tag = getGeneratedOwnerTag(p, options);
         if (tag) {
           lines.push(`# say ${p.id} (${p.name || 'unnamed'}) - players on plot with tag ${tag}: @a[tag=${tag},x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${p.dy},dz=${p.dz}]`);
-          probesAdded = true;
         }
       });
-      if (!probesAdded) {
-        lines.push('# (No plots with student names and owners found for per-plot probes)');
-      }
       return lines.join('\n');
     }
 
@@ -3257,11 +3226,6 @@
           div.setAttribute('data-field', col.field);
           plotsHead.appendChild(div);
         });
-      }
-
-      const topVersion = document.getElementById('appVersionBadge');
-      if (topVersion) {
-        topVersion.textContent = APP_VERSION;
       }
       
       loadTheme();
