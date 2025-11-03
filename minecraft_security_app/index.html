@@ -78,8 +78,7 @@
     }
 
     :root {
-      --col-first-name-width: 100px;
-      --col-last-name-width: 100px;
+      --col-name-width: 150px;
       --col-id-width: 80px;
       --col-label-width: 100px;
       --col-owners-width: 105px;
@@ -92,7 +91,7 @@
       --col-owner-tag-width: 260px;
       --col-preview-width: 240px;
       --col-actions-width: 180px;
-      --plot-grid-template: var(--col-first-name-width) var(--col-last-name-width) var(--col-id-width) var(--col-label-width) var(--col-owners-width) var(--col-x-width) var(--col-y-width) var(--col-z-width) var(--col-dx-width) var(--col-dy-width) var(--col-dz-width) var(--col-owner-tag-width) var(--col-preview-width) var(--col-actions-width);
+      --plot-grid-template: var(--col-name-width) var(--col-id-width) var(--col-label-width) var(--col-owners-width) var(--col-x-width) var(--col-y-width) var(--col-z-width) var(--col-dx-width) var(--col-dy-width) var(--col-dz-width) var(--col-owner-tag-width) var(--col-preview-width) var(--col-actions-width);
     }
 
     * { box-sizing: border-box; }
@@ -309,7 +308,7 @@
     }
     .plots-head { position: sticky; top: 0; z-index: 1; background: #0b142c; border-bottom: 1px solid var(--border); font-size: 12px; color: var(--muted); }
     .plots-head > div { display: flex; align-items: center; padding: 8px 8px; white-space: nowrap; min-width: 0; border-right: 1px solid var(--border); }
-    .plots-head > div:nth-child(12) { min-width: var(--col-owner-tag-width); }
+    .plots-head > div[data-field="ownerTag"] { min-width: var(--col-owner-tag-width); }
     .plots-head > div:last-child { border-right: none; }
     .plot-row > div { border-right: 1px solid var(--border); }
     .plot-row > div:last-child { border-right: none; }
@@ -335,9 +334,9 @@
     .plot-row input[type="number"] {
       -moz-appearance: textfield;
     }
-    .plot-row > div:nth-child(11) { padding: 8px 8px; align-items: center; }
-    .plot-row > div:nth-child(12) { padding: 8px 8px; align-items: center; min-width: var(--col-owner-tag-width); }
-    .plot-row > div:nth-child(12) input[type="text"] { min-width: 240px; }
+    .plot-row > div[data-field="ownerTag"] { padding: 8px 8px; align-items: center; min-width: var(--col-owner-tag-width); }
+    .plot-row > div[data-field="ownerTag"] input[type="text"] { min-width: 240px; }
+    .plot-row > div[data-field="preview"] { padding: 8px 8px; align-items: center; }
     .plot-actions { display: flex; gap: 6px; justify-content: flex-end; width: 100%; }
     .preview { font-size: 11px; color: var(--muted); background: var(--chip); border-radius: 6px; padding: 0; width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .owners-editor { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; padding: 4px; min-height: 32px; border: 1px solid var(--border); border-radius: 6px; background: var(--input); }
@@ -465,17 +464,6 @@
           <button id="btnRedo" class="btn" aria-label="Redo" title="Redo (Ctrl+Y)" disabled>↷ Redo</button>
         </div>
         <div class="btn-group">
-          <label class="toggle" title="Game mode default">
-            <input type="radio" name="modeDefault" value="creative" checked /> Creative
-          </label>
-          <label class="toggle">
-            <input type="radio" name="modeDefault" value="adventure" /> Adventure
-          </label>
-          <div class="field">
-            <label class="checkbox">
-              <input id="ownerAnywhere" type="checkbox" /> Owners creative anywhere (optional bypass)
-            </label>
-          </div>
           <label class="checkbox" title="Generate ticking areas">
             <input id="chkTickingAreas" type="checkbox" /> Ticking areas
           </label>
@@ -497,20 +485,12 @@
             <input id="dyDefault" type="number" value="255" aria-label="Default dY" />
           </div>
           <div class="field">
-            <label for="restrictedTag">Global restricted tag</label>
-            <input id="restrictedTag" type="text" value="restricted" aria-label="Restricted tag name" />
-          </div>
-          <div class="field">
-            <label for="ownerTagPrefix">Owner tag prefix</label>
-            <input id="ownerTagPrefix" type="text" value="owner_plot_" aria-label="Owner tag prefix" />
-          </div>
-          <div class="field">
             <label for="tickingAreaPrefix">Ticking area name prefix</label>
             <input id="tickingAreaPrefix" type="text" value="plot_" aria-label="Ticking area name prefix" />
           </div>
           <div class="field">
             <label>&nbsp;</label>
-            <div class="help">Owner tag per plot defaults to <code>prefix + id</code> unless overridden.</div>
+            <div class="help">Owner tags are auto-generated from student names (FirstName + last name initials, e.g., "JuanGM" from "Garcia Martinez, Juan").</div>
           </div>
         </div>
 
@@ -573,7 +553,7 @@
           <div style="margin-top: 8px;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
               <button class="btn" id="btnAddFreeBuildZone" style="font-size: 11px; padding: 4px 8px;">+ Add Zone</button>
-              <div class="help" style="font-size: 11px;">Zones where players can build freely (restricted tag removed)</div>
+              <div class="help" style="font-size: 11px;">Zones where players can build freely (can_be_creative tag applies)</div>
             </div>
             <div id="freeBuildZonesList" style="display: flex; flex-direction: column; gap: 6px;"></div>
           </div>
@@ -586,22 +566,7 @@
 
         <div class="plots-table" aria-label="Plots table">
           <div class="plots-scroll">
-            <div class="plots-head plots-grid" role="row">
-              <div>First Name</div>
-              <div>Last Name</div>
-              <div>ID</div>
-              <div>Label</div>
-              <div>Owners</div>
-              <div>X</div>
-              <div>Y</div>
-              <div>Z</div>
-              <div>dX</div>
-              <div>dY</div>
-              <div>dZ</div>
-              <div>Owner Tag</div>
-              <div>Preview</div>
-              <div>Actions</div>
-            </div>
+            <div class="plots-head plots-grid" role="row" id="plots-head"></div>
             <div id="plots" aria-label="Plots list"></div>
           </div>
         </div>
@@ -610,9 +575,13 @@
           <summary><strong>Help</strong> — How tags work and installing the function</summary>
           <div style="margin-top:8px;">
             <p>
-              This tool tags owners once and then, every tick, tags non-owners inside each plot with the
-              global restricted tag. Depending on the default mode, it flips player gamemodes accordingly.
+              This tool uses a three-step process:
             </p>
+            <ol style="margin-left: 20px; margin-top: 8px;">
+              <li><strong>One-time setup:</strong> Tag each Minecraft username with their student's name-based tag (e.g., "JuanGM" from "Garcia Martinez, Juan").</li>
+              <li><strong>Repeating function:</strong> Every tick, mark players on their own plots with the <code>can_be_creative</code> tag, then set gamemodes accordingly (creative for tagged, adventure for others).</li>
+              <li><strong>Cleanup:</strong> Remove all tags when done.</li>
+            </ol>
             <p>
               Install the generated <code>my_security.mcfunction</code> here:
               <br />
@@ -731,12 +700,13 @@
       <div class="modal-body">
         <div class="help" style="margin-bottom: 12px;">
           <p>Paste multiple plots in CSV format. One plot per line. Supports comments (lines starting with #).</p>
-          <p><strong>Format:</strong> <code>firstName,lastName,id,label,owners,x,y,z,dx,dy,dz</code> (or old format: <code>id,label,owners,x,y,z,dx,dy,dz</code>)</p>
+          <p><strong>Format:</strong> <code>name,id,label,owners,x,y,z,dx,dy,dz</code></p>
+          <p style="font-size: 11px; margin-top: 4px;">Name format: "LastName, FirstName" (middle names after first name are discarded).</p>
           <p><strong>Example:</strong></p>
-          <pre style="font-size: 11px; margin-top: 8px;"># firstName,lastName,id,label,owners,x,y,z,dx,dy,dz
-Ava,Smith,plot01,Ava NW,ava123,100,0,200,80,255,80
-Jay,Jones,plot02,Jay SE,jaykid,200,0,200,80,255,80
-Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
+          <pre style="font-size: 11px; margin-top: 8px;"># name,id,label,owners,x,y,z,dx,dy,dz
+"Smith, Ava",plot01,Ava NW,ava123,100,0,200,80,255,80
+"Jones, Jay",plot02,Jay SE,jaykid,200,0,200,80,255,80
+"Brown, Maya",plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
         </div>
         <textarea id="bulkAddTextarea" class="bulk-textarea" placeholder="Paste plot data here..."></textarea>
         <div id="bulkAddErrors" class="error-text" style="margin-top: 8px; min-height: 20px;"></div>
@@ -771,7 +741,46 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
 
   <script>
     // Version number - UPDATE THIS WHEN MAKING CHANGES
-    const APP_VERSION = 'v2025.10.31.8';
+    const APP_VERSION = 'v2025.10.31.16';
+    
+    // Core constants
+    const CAN_BE_CREATIVE_TAG = 'can_be_creative';
+    
+    // Column layout definition - single source of truth
+    const PLOTS_COLUMNS = [
+      { field: 'name', header: 'Name (Last, First)', cssVar: '--col-name-width', minWidth: 150 },
+      { field: 'id', header: 'ID', cssVar: '--col-id-width', minWidth: 60 },
+      { field: 'label', header: 'Label', cssVar: '--col-label-width', minWidth: 70 },
+      { field: 'owners', header: 'Owners', cssVar: '--col-owners-width', minWidth: 90 },
+      { field: 'x', header: 'X', cssVar: '--col-x-width', minWidth: 40 },
+      { field: 'y', header: 'Y', cssVar: '--col-y-width', minWidth: 40 },
+      { field: 'z', header: 'Z', cssVar: '--col-z-width', minWidth: 40 },
+      { field: 'dx', header: 'dX', cssVar: '--col-dx-width', minWidth: 40 },
+      { field: 'dy', header: 'dY', cssVar: '--col-dy-width', minWidth: 40 },
+      { field: 'dz', header: 'dZ', cssVar: '--col-dz-width', minWidth: 40 },
+      { field: 'ownerTag', header: 'Owner Tag', cssVar: '--col-owner-tag-width', minWidth: 260 },
+      { field: 'preview', header: 'Preview', cssVar: '--col-preview-width', minWidth: 200 },
+      { field: 'actions', header: 'Actions', cssVar: '--col-actions-width', minWidth: 160 }
+    ];
+    
+    // Default options - single source of truth
+    const DEFAULT_OPTIONS = {
+      genTickingAreas: false,
+      yDefaultMin: 0,
+      dyDefault: 255,
+      tickingAreaPrefix: 'plot_',
+      genStreets: false,
+      streetPlotSize: 80,
+      streetWidth: 10,
+      streetCols: 3,
+      streetRows: 3,
+      streetX0: 0,
+      streetZ0: 0,
+      streetOwnerTag: 'street_crew',
+      streetTeamOwned: false,
+      genPerimeterRoad: false,
+      freeBuildZones: []
+    };
     
     // Storage key helpers
     const getStorageKey = (className) => `meePlotSecurityV1_${className}`;
@@ -975,14 +984,10 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
     };
 
     // Global option inputs
-    const modeRadios = Array.from(document.querySelectorAll('input[name="modeDefault"]'));
     const chkTickingAreas = document.getElementById('chkTickingAreas');
     const yMinInput = document.getElementById('yMin');
     const dyDefaultInput = document.getElementById('dyDefault');
-    const restrictedTagInput = document.getElementById('restrictedTag');
-    const ownerTagPrefixInput = document.getElementById('ownerTagPrefix');
     const tickingAreaPrefixInput = document.getElementById('tickingAreaPrefix');
-    const ownerAnywhereInput = document.getElementById('ownerAnywhere');
 
     // Code textareas
     const ownerSetupTA = document.getElementById('ownerSetup');
@@ -1133,36 +1138,15 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
 
     // Data model
     function defaultOptions() {
-      return {
-        creativeByDefault: true,
-        genTickingAreas: false,
-        yDefaultMin: 0,
-        dyDefault: 255,
-        restrictedTag: 'restricted',
-        ownerTagPrefix: 'owner_plot_',
-        tickingAreaPrefix: 'plot_',
-        // Streets configuration
-        genStreets: false,
-        streetPlotSize: 80,
-        streetWidth: 10,
-        streetCols: 3,
-        streetRows: 3,
-        streetX0: 0,
-        streetZ0: 0,
-        streetOwnerTag: 'street_crew',
-        streetTeamOwned: false,
-        genPerimeterRoad: false,
-        freeBuildZones: [],
-        ownerAnywhere: false
-      };
+      return JSON.parse(JSON.stringify(DEFAULT_OPTIONS)); // Clone
     }
 
     function samplePlots(opts) {
       const y = opts.yDefaultMin;
       const dy = opts.dyDefault;
       return [
-        { firstName: '', lastName: '', id: 'plot01', label: 'Sample NW', owners: ['Ava123'], x: 0, y, z: 0, dx: 80, dy, dz: 80, ownerTag: null, locked: false, lockDuration: 0 },
-        { firstName: '', lastName: '', id: 'plot02', label: 'Sample SE', owners: ['MaxKid'], x: 100, y, z: 100, dx: 80, dy, dz: 80, ownerTag: null, locked: false, lockDuration: 0 }
+        { name: 'Smith, Ava', id: 'plot01', label: 'Sample NW', owners: ['Ava123'], x: 0, y, z: 0, dx: 80, dy, dz: 80, ownerTag: null, locked: false, lockDuration: 0 },
+        { name: 'Jones, Max', id: 'plot02', label: 'Sample SE', owners: ['MaxKid'], x: 100, y, z: 100, dx: 80, dy, dz: 80, ownerTag: null, locked: false, lockDuration: 0 }
       ];
     }
 
@@ -1218,19 +1202,25 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
           }
           parts.push(current.trim()); // Add last part
           
-          // Support both formats: 
-          // Old: id,label,owners,x,y,z,dx,dy,dz (9 fields)
-          // New: firstName,lastName,id,label,owners,x,y,z,dx,dy,dz (11 fields)
-          let firstName = '', lastName = '', id, label, ownersStr, x, y, z, dx, dy, dz;
+          // Tokenize CSV line into fields
+          const fields = parts;
           
-          if (parts.length === 9) {
-            // Old format without firstName/lastName
-            [id, label, ownersStr, x, y, z, dx, dy, dz] = parts;
-          } else if (parts.length === 11) {
-            // New format with firstName/lastName
-            [firstName, lastName, id, label, ownersStr, x, y, z, dx, dy, dz] = parts;
-          } else {
-            errors.push(`Line ${lineNum + 1}: Expected 9 or 11 fields, got ${parts.length}`);
+          // Validate field count
+          if (fields.length !== 10) {
+            if (fields.length === 9) {
+              errors.push(`Line ${lineNum + 1}: Old 9-field format no longer supported. Please use format: name,id,label,owners,x,y,z,dx,dy,dz (name format: "LastName, FirstName")`);
+            } else {
+              errors.push(`Line ${lineNum + 1}: Expected 10 fields (name,id,label,owners,x,y,z,dx,dy,dz), got ${fields.length}. Name is required.`);
+            }
+            return;
+          }
+          
+          // Normalize plot fields
+          const [name, id, label, ownersStr, x, y, z, dx, dy, dz] = fields;
+          
+          // Require name to be non-empty
+          if (!name || !name.trim()) {
+            errors.push(`Line ${lineNum + 1}: Student name is required (format: "LastName, FirstName")`);
             return;
           }
           
@@ -1244,8 +1234,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
           
           // Parse numeric values
           const plot = {
-            firstName: firstName.trim(),
-            lastName: lastName.trim(),
+            name: name.trim(),
             id: id.trim(),
             label: label.trim(),
             owners: owners,
@@ -1269,7 +1258,15 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
           
           // Validate that we have an ID now
           if (!nonEmpty(plot.id)) {
-            errors.push(`Line ${lineNum + 1}: id is required`);
+            errors.push(`Line ${lineNum + 1}: Plot ID is required (or provide x/z coordinates for auto-generation)`);
+            return;
+          }
+          
+          // Validate name can generate a tag (need options for this, get default)
+          const defaultOpts = defaultOptions();
+          const generatedTag = getGeneratedOwnerTag(plot, defaultOpts);
+          if (!generatedTag) {
+            errors.push(`Line ${lineNum + 1}: Student name "${plot.name}" cannot generate a valid tag. Format: "LastName, FirstName"`);
             return;
           }
           
@@ -1376,13 +1373,44 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       return id;
     }
 
-    function combineOwnerTagPrefix(prefix, id) {
-      // If ID is auto-generated (starts with "plot_") and prefix ends with "plot_", 
-      // strip "plot_" from ID to avoid duplication
-      if (id && id.startsWith('plot_') && prefix.endsWith('plot_')) {
-        id = id.substring(5); // Remove "plot_" (5 characters)
+    // Name parsing helpers
+    function parseName(nameStr) {
+      // Format: "LastName1 LastName2, FirstName MiddleName1 MiddleName2"
+      // Returns: { lastNames: ["LastName1", "LastName2"], firstName: "FirstName" }
+      if (!nameStr || !nameStr.trim()) {
+        return { lastNames: [], firstName: '' };
       }
-      return prefix + id;
+      
+      const parts = nameStr.split(',').map(s => s.trim());
+      if (parts.length < 2) {
+        // No comma found, treat entire string as first name
+        const firstPart = parts[0].split(/\s+/)[0];
+        return { lastNames: [], firstName: firstPart };
+      }
+      
+      // Everything before comma is last names (may have multiple)
+      const lastNames = parts[0].split(/\s+/).filter(n => n.length > 0);
+      
+      // Everything after comma - take only first word (discard middle names)
+      const firstName = parts[1].split(/\s+/)[0];
+      
+      return { lastNames, firstName };
+    }
+
+    function generateOwnerTagFromName(nameStr) {
+      // Generate tag: FirstName + first letter of each last name (capitalized)
+      // Example: "Garcia Martinez, Juan Carlos" -> "JuanGM"
+      const { lastNames, firstName } = parseName(nameStr);
+      
+      if (!firstName) return '';
+      
+      // Capitalize first letter of first name
+      const firstNameCap = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+      
+      // Get first letter of each last name (capitalized)
+      const lastInitials = lastNames.map(ln => ln.charAt(0).toUpperCase()).join('');
+      
+      return firstNameCap + lastInitials;
     }
 
     // UI builders
@@ -1490,25 +1518,31 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       row.className = 'plot-row plots-grid';
 
       const owners = Array.isArray(plot.owners) ? plot.owners.filter(nonEmpty) : [];
-      const ownerTagAuto = (plot.ownerTag && nonEmpty(plot.ownerTag)) ? plot.ownerTag : combineOwnerTagPrefix(options.ownerTagPrefix, plot.id);
-      const ownerTagSanitized = sanitizeTag(ownerTagAuto);
-      const preview = `tag @a[x=${plot.x ?? ''},y=${plot.y ?? ''},z=${plot.z ?? ''},dx=${plot.dx ?? ''},dy=${plot.dy ?? ''},dz=${plot.dz ?? ''},tag=!${ownerTagSanitized}] add ${options.restrictedTag}`;
+      // Generate preview tag from student name (required)
+      const ownerTag = getGeneratedOwnerTag(plot, options);
+      const ownerTagSanitized = ownerTag ? sanitizeTag(ownerTag) : null;
+      // Preview shows the STEP 2 line: tag players on their plot
+      const preview = ownerTagSanitized 
+        ? `tag @a[tag=${ownerTagSanitized},x=${plot.x ?? ''},y=${plot.y ?? ''},z=${plot.z ?? ''},dx=${plot.dx ?? ''},dy=${plot.dy ?? ''},dz=${plot.dz ?? ''}] add ${CAN_BE_CREATIVE_TAG}`
+        : `(Enter student name to generate tag)`;
+      
+      // Store plot data on row for preview/validation consistency
+      row.dataset.plotIndex = index;
 
       row.innerHTML = `
-        <div><input type="text" data-field="firstName" value="${plot.firstName || ''}" placeholder="First name" aria-label="Student first name" /></div>
-        <div><input type="text" data-field="lastName" value="${plot.lastName || ''}" placeholder="Last name" aria-label="Student last name" /></div>
-        <div><input type="text" data-field="id" value="${plot.id || ''}" aria-label="Plot ID" /></div>
-        <div><input type="text" data-field="label" value="${plot.label || ''}" aria-label="Plot label" /></div>
-        <div></div>
-        <div><input type="number" data-field="x" value="${plot.x ?? ''}" aria-label="X" /></div>
-        <div><input type="number" data-field="y" value="${plot.y ?? options.yDefaultMin}" aria-label="Y" /></div>
-        <div><input type="number" data-field="z" value="${plot.z ?? ''}" aria-label="Z" /></div>
-        <div><input type="number" data-field="dx" value="${plot.dx ?? 80}" aria-label="dX" /></div>
-        <div><input type="number" data-field="dy" value="${plot.dy ?? options.dyDefault}" aria-label="dY" /></div>
-        <div><input type="number" data-field="dz" value="${plot.dz ?? 80}" aria-label="dZ" /></div>
-        <div><input type="text" data-field="ownerTag" value="${plot.ownerTag ?? ''}" placeholder="auto: ${sanitizeTag(combineOwnerTagPrefix(options.ownerTagPrefix, plot.id))}" aria-label="Owner tag override" title="Derived tag: ${sanitizeTag(combineOwnerTagPrefix(options.ownerTagPrefix, plot.id))}" /></div>
-        <div><div class="preview" title="Detector line preview">${preview}</div></div>
-        <div class="plot-actions">
+        <div data-field="name"><input type="text" data-field="name" value="${plot.name || ''}" placeholder="LastName, FirstName" aria-label="Student name (Last, First)" /></div>
+        <div data-field="id"><input type="text" data-field="id" value="${plot.id || ''}" aria-label="Plot ID" /></div>
+        <div data-field="label"><input type="text" data-field="label" value="${plot.label || ''}" aria-label="Plot label" /></div>
+        <div data-field="owners"></div>
+        <div data-field="x"><input type="number" data-field="x" value="${plot.x ?? ''}" aria-label="X" /></div>
+        <div data-field="y"><input type="number" data-field="y" value="${plot.y ?? options.yDefaultMin}" aria-label="Y" /></div>
+        <div data-field="z"><input type="number" data-field="z" value="${plot.z ?? ''}" aria-label="Z" /></div>
+        <div data-field="dx"><input type="number" data-field="dx" value="${plot.dx ?? 80}" aria-label="dX" /></div>
+        <div data-field="dy"><input type="number" data-field="dy" value="${plot.dy ?? options.dyDefault}" aria-label="dY" /></div>
+        <div data-field="dz"><input type="number" data-field="dz" value="${plot.dz ?? 80}" aria-label="dZ" /></div>
+        <div data-field="ownerTag"><input type="text" data-field="ownerTag" value="${plot.ownerTag ?? ''}" placeholder="auto: ${ownerTagSanitized || '(Enter name)'}" aria-label="Owner tag override" title="Auto-generated from student name (FirstName + last initials)" /></div>
+        <div data-field="preview"><div class="preview" title="Detector line preview">${preview}</div></div>
+        <div class="plot-actions" data-field="actions">
           <label class="checkbox" style="font-size: 11px; margin-right: 4px;" title="Lock this plot now (adventure mode)">
             <input type="checkbox" data-field="locked" ${plot.locked ? 'checked' : ''} /> Lock
           </label>
@@ -1518,10 +1552,13 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
         </div>
       `;
 
-      // Add owners editor
-      const ownersCell = row.children[4];
-      const ownersEditor = buildOwnersEditor(owners, index, options);
-      ownersCell.appendChild(ownersEditor);
+      // Add owners editor - find owners column dynamically
+      const ownersColIndex = PLOTS_COLUMNS.findIndex(col => col.field === 'owners');
+      const ownersCell = ownersColIndex >= 0 ? row.children[ownersColIndex] : row.querySelector('[data-field="owners"]');
+      if (ownersCell) {
+        const ownersEditor = buildOwnersEditor(owners, index, options);
+        ownersCell.appendChild(ownersEditor);
+      }
 
       row.querySelector('[data-action="delete"]').addEventListener('click', () => onDeletePlot(index));
       row.querySelector('[data-action="duplicate"]').addEventListener('click', () => onDuplicatePlot(index));
@@ -1575,24 +1612,11 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
     }
 
     function updateAllColumnWidths() {
-      // Column configuration: [dataField, headerText, cssVar, minWidth]
-      const columns = [
-        ['firstName', 'First Name', '--col-first-name-width', 80],
-        ['lastName', 'Last Name', '--col-last-name-width', 80],
-        ['id', 'ID', '--col-id-width', 60],
-        ['label', 'Label', '--col-label-width', 70],
-        ['owners', 'Owners', '--col-owners-width', 90],
-        ['x', 'X', '--col-x-width', 40],
-        ['y', 'Y', '--col-y-width', 40],
-        ['z', 'Z', '--col-z-width', 40],
-        ['dx', 'dX', '--col-dx-width', 40],
-        ['dy', 'dY', '--col-dy-width', 40],
-        ['dz', 'dZ', '--col-dz-width', 40],
-        ['ownerTag', 'Owner Tag', '--col-owner-tag-width', 260],
-      ];
+      // Use centralized column definition
+      const columns = PLOTS_COLUMNS.filter(col => col.field !== 'preview' && col.field !== 'actions');
       
       // Get sample input for styling
-      const sampleInput = document.querySelector('[data-field]');
+      const sampleInput = document.querySelector('.plot-row input, .plot-row .owners-editor');
       if (!sampleInput) return;
       
       const styles = window.getComputedStyle(sampleInput);
@@ -1610,7 +1634,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       document.body.appendChild(measurer);
       
       // Measure each column
-      columns.forEach(([dataField, headerText, cssVar, minWidth]) => {
+      columns.forEach(({ field: dataField, header: headerText, cssVar, minWidth }) => {
         let maxWidth = minWidth;
         
         // Measure header text
@@ -1692,17 +1716,34 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       const dy = getVal('dy');
       const dz = getVal('dz');
       const ownerTagInput = getVal('ownerTag').trim();
-      const ownerTagBase = ownerTagInput || combineOwnerTagPrefix(options.ownerTagPrefix, id);
-      const ownerTag = sanitizeTag(ownerTagBase);
+      const name = getVal('name').trim();
       const ownersEditor = rowEl.querySelector('.owners-editor');
       const owners = ownersEditor ? getOwnersFromEditor(ownersEditor) : [];
+      // Get plot data from row if available, otherwise construct from inputs
+      const plotIndex = parseInt(rowEl.dataset.plotIndex);
+      let plotData = null;
+      const plots = getPlotsFromUI();
+      if (!isNaN(plotIndex) && plots[plotIndex]) {
+        plotData = plots[plotIndex];
+        // Update plotData with current input values
+        plotData = { ...plotData, name, id, x, y, z, dx, dy, dz, ownerTag: ownerTagInput || null };
+      } else {
+        plotData = { name, id, x, y, z, dx, dy, dz, ownerTag: ownerTagInput || null };
+      }
       
-      const detectorLine = `tag @a[x=${x},y=${y},z=${z},dx=${dx},dy=${dy},dz=${dz},tag=!${ownerTag}] add ${options.restrictedTag}`;
+      const ownerTag = getGeneratedOwnerTag(plotData, options);
+      const ownerTagSanitized = ownerTag ? sanitizeTag(ownerTag) : null;
+      
+      // Preview shows STEP 2 line: tag players on their plot
+      const detectorLine = ownerTagSanitized
+        ? `tag @a[tag=${ownerTagSanitized},x=${x},y=${y},z=${z},dx=${dx},dy=${dy},dz=${dz}] add ${CAN_BE_CREATIVE_TAG}`
+        : `(Enter student name to generate tag)`;
+      
       let ownerSetupLine = '';
-      if (owners.length > 0) {
+      if (owners.length > 0 && ownerTagSanitized) {
         const firstOwner = owners[0];
         const selector = selectorForName(firstOwner);
-        ownerSetupLine = `/tag ${selector} add ${ownerTag}`;
+        ownerSetupLine = `/tag ${selector} add ${ownerTagSanitized}`;
       }
       
       const prev = rowEl.querySelector('.preview');
@@ -1730,12 +1771,9 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       currentOptions = { ...options };
 
       // Options to UI
-      modeRadios.forEach(r => r.checked = (options.creativeByDefault ? r.value === 'creative' : r.value === 'adventure'));
       chkTickingAreas.checked = !!options.genTickingAreas;
       yMinInput.value = options.yDefaultMin;
       dyDefaultInput.value = options.dyDefault;
-      restrictedTagInput.value = options.restrictedTag;
-      ownerTagPrefixInput.value = options.ownerTagPrefix;
       tickingAreaPrefixInput.value = options.tickingAreaPrefix;
       // Streets options (with null checks for backward compatibility)
       const chkStreetsEl = document.getElementById('chkStreets');
@@ -1758,7 +1796,6 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       if (streetTeamOwnedEl) streetTeamOwnedEl.checked = !!options.streetTeamOwned;
       const genPerimeterRoadEl = document.getElementById('genPerimeterRoad');
       if (genPerimeterRoadEl) genPerimeterRoadEl.checked = !!options.genPerimeterRoad;
-      if (ownerAnywhereInput) ownerAnywhereInput.checked = !!options.ownerAnywhere;
       
       // Render free-build zones
       renderFreeBuildZones(options.freeBuildZones || []);
@@ -1837,14 +1874,10 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
     }
 
     function getOptionsFromUI() {
-      const creativeByDefault = modeRadios.find(r => r.checked)?.value !== 'adventure';
       return {
-        creativeByDefault,
         genTickingAreas: !!chkTickingAreas.checked,
         yDefaultMin: ensureInt(+yMinInput.value),
         dyDefault: ensureInt(+dyDefaultInput.value),
-        restrictedTag: restrictedTagInput.value.trim() || 'restricted',
-        ownerTagPrefix: ownerTagPrefixInput.value.trim() || 'owner_plot_',
         tickingAreaPrefix: tickingAreaPrefixInput.value.trim() || 'plot_',
         genStreets: !!chkStreets?.checked || false,
         streetPlotSize: ensureInt(+streetPlotSizeInput?.value || 80),
@@ -1856,8 +1889,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
         streetOwnerTag: (streetOwnerTagInput?.value.trim() || 'street_crew'),
         streetTeamOwned: !!streetTeamOwnedInput?.checked || false,
         genPerimeterRoad: !!genPerimeterRoadInput?.checked || false,
-        freeBuildZones: getFreeBuildZonesFromUI(),
-        ownerAnywhere: !!ownerAnywhereInput?.checked || false
+        freeBuildZones: getFreeBuildZonesFromUI()
       };
     }
     
@@ -1889,8 +1921,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
         const ownersEditor = row.querySelector('.owners-editor');
         const owners = ownersEditor ? getOwnersFromEditor(ownersEditor) : [];
         return {
-          firstName: v('firstName').trim(),
-          lastName: v('lastName').trim(),
+          name: v('name').trim(),
           id: v('id').trim(),
           label: v('label').trim(),
           owners,
@@ -2062,31 +2093,21 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
         }
       });
 
-      // Validate tag names and check for collisions
-      const options = getOptionsFromUI();
-      const tagPattern = /^[A-Za-z0-9_\-]+$/;
-      
-      if (!tagPattern.test(options.restrictedTag)) {
-        messages.push(`Restricted tag must be [A-Za-z0-9_-] only`);
-      }
-      
-      if (!tagPattern.test(options.ownerTagPrefix)) {
-        messages.push(`Owner tag prefix must be [A-Za-z0-9_-] only`);
-      }
-      
-      // Check for tag collisions
-      const allOwnerTags = plots.map(p => {
-        const tag = (p.ownerTag && nonEmpty(p.ownerTag)) ? p.ownerTag : options.ownerTagPrefix + p.id;
-        return tag;
+      // Validate that plots have names (required for tag generation)
+      plots.forEach((p, idx) => {
+        if (!p.name || !p.name.trim()) {
+          messages.push(`Row ${idx + 1}: Student name is required`);
+        }
       });
       
-      if (allOwnerTags.includes(options.restrictedTag)) {
-        messages.push(`Restricted tag "${options.restrictedTag}" conflicts with an owner tag`);
-      }
-      
-      if (options.restrictedTag.startsWith(options.ownerTagPrefix) || options.ownerTagPrefix.startsWith(options.restrictedTag)) {
-        messages.push(`Tag prefix collision: restricted tag and owner prefix overlap`);
-      }
+      // Validate owner tags are valid Minecraft tag format
+      const tagPattern = /^[A-Za-z0-9_\-]+$/;
+      plots.forEach((p, idx) => {
+        const tag = getGeneratedOwnerTag(p, options);
+        if (tag && !tagPattern.test(tag)) {
+          messages.push(`Row ${idx + 1}: Generated tag "${tag}" contains invalid characters`);
+        }
+      });
 
       // Separate errors/warnings from info messages
       // Errors/warnings block saving, info messages are just informational
@@ -2172,7 +2193,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       // Or use sequential fallback if coords never get set
       const id = nextPlotId(plots);
       
-      plots.push({ firstName: '', lastName: '', id, label: '', owners: [], x: NaN, y: options.yDefaultMin, z: NaN, dx: 80, dy: options.dyDefault, dz: 80, ownerTag: null, locked: false, lockDuration: 0 });
+      plots.push({ name: '', id, label: '', owners: [], x: NaN, y: options.yDefaultMin, z: NaN, dx: 80, dy: options.dyDefault, dz: 80, ownerTag: null, locked: false, lockDuration: 0 });
       renderAll(plots, options);
       saveToHistory();
     }
@@ -2195,15 +2216,33 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
     }
 
     function onAutoOwnerTag(index) {
-      const options = getOptionsFromUI();
-      const row = plotsEl.children[index];
-      if (!row) return;
-      const id = row.querySelector('[data-field="id"]').value.trim();
-      const f = row.querySelector('[data-field="ownerTag"]');
-      f.value = `${options.ownerTagPrefix}${id}`;
-      updatePreview(row, options);
-      validateAll();
-      regenOutputs();
+      // Auto-fill owner tag from student name
+      const plots = getPlotsFromUI();
+      const plot = plots[index];
+      if (!plot) return;
+      
+      const row = document.querySelectorAll('.plot-row')[index];
+      const nameInput = row?.querySelector('[data-field="name"]');
+      const ownerTagInput = row?.querySelector('[data-field="ownerTag"]');
+      
+      if (!nameInput || !ownerTagInput) return;
+      
+      const name = nameInput.value.trim();
+      if (!name) {
+        showToast('Enter student name first');
+        return;
+      }
+      
+      const optionsSnapshot = getOptionsFromUI();
+      const plotForTag = { ownerTag: null, name: name };
+      const generatedTag = getGeneratedOwnerTag(plotForTag, optionsSnapshot);
+      if (generatedTag) {
+        ownerTagInput.value = generatedTag;
+        updatePreview(row, optionsSnapshot);
+        validateAll();
+        regenOutputs();
+        debouncedSaveHistory();
+      }
     }
 
     // Export / Import
@@ -2270,7 +2309,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       const plots = getPlotsFromUI();
       
       // CSV header
-      const headers = ['firstName', 'lastName', 'id', 'label', 'owners', 'x', 'y', 'z', 'dx', 'dy', 'dz', 'ownerTag'];
+      const headers = ['name', 'id', 'label', 'owners', 'x', 'y', 'z', 'dx', 'dy', 'dz', 'ownerTag'];
       const csvRows = [headers.join(',')];
       
       // CSV rows
@@ -2445,13 +2484,31 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
     }
 
     // Generators
-    function computeOwnerTag(plot, options) {
-      const base = (plot.ownerTag && nonEmpty(plot.ownerTag)) 
-        ? plot.ownerTag 
-        : combineOwnerTagPrefix(options.ownerTagPrefix, plot.id);
-      return sanitizeTag(base);
+    function computeOwnerTag(plot, ownerName, options) {
+      // If plot has explicit ownerTag, use it
+      if (plot.ownerTag && nonEmpty(plot.ownerTag)) {
+        return sanitizeTag(plot.ownerTag);
+      }
+      
+      // Generate tag from student's name (plot.name), not from Minecraft username
+      // Format: FirstName + first letter of each last name (capitalized)
+      // Example: "Garcia Martinez, Juan Carlos" -> "JuanGM"
+      if (plot.name && nonEmpty(plot.name)) {
+        const tag = generateOwnerTagFromName(plot.name);
+        return sanitizeTag(tag);
+      }
+      
+      // No fallback - name is required
+      return '';
     }
-
+    
+    function getGeneratedOwnerTag(plot, options) {
+      const resolvedPlot = plot || {};
+      const resolvedOptions = options || defaultOptions();
+      const tag = computeOwnerTag(resolvedPlot, null, resolvedOptions);
+      return tag && tag.trim() ? tag : '';
+    }
+    
     function selectorForName(name) {
       const needsQuotes = /\s|["\\]/.test(name);
       const safe = name.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
@@ -2467,8 +2524,8 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       // Show owner tag preview (first 3 unique tags)
       const allTags = new Set();
       plots.forEach(p => {
-        const tag = computeOwnerTag(p, options);
-        allTags.add(tag);
+        const tag = getGeneratedOwnerTag(p, options);
+        if (tag) allTags.add(tag);
       });
       const previewTags = Array.from(allTags).slice(0, 3);
       if (previewTags.length > 0) {
@@ -2477,10 +2534,17 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       lines.push('');
       
       plots.forEach(p => {
-        const tag = computeOwnerTag(p, options);
-        (p.owners || []).forEach(u => {
-          if (!nonEmpty(u)) return;
-          const sel = selectorForName(u);
+        if (!p.name || !nonEmpty(p.name)) return;
+        if (!p.owners || p.owners.length === 0) return;
+        
+        // Generate tag from student's name
+        const tag = getGeneratedOwnerTag(p, options);
+        if (!tag) return;
+        
+        // Add tag setup command for each Minecraft username (owner)
+        p.owners.forEach(ownerName => {
+          if (!nonEmpty(ownerName)) return;
+          const sel = selectorForName(ownerName);
           const key = `${sel}::${tag}`;
           if (!seen.has(key)) {
             seen.add(key);
@@ -2501,10 +2565,10 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
             // Team-owned: per-strip tags (deduplicated)
             const seenTags = new Set();
             streetStrips.forEach((s, idx) => {
-              const tag = `${streetTagBase}_strip${String(idx + 1).padStart(2, '0')}`;
-              if (!seenTags.has(tag)) {
-                seenTags.add(tag);
-                lines.push(`# /tag @a[name="TeamMember"] add ${tag}  # Replace TeamMember with actual username`);
+              const stripTag = `${streetTagBase}_strip${String(idx + 1).padStart(2, '0')}`;
+              if (!seenTags.has(stripTag)) {
+                seenTags.add(stripTag);
+                lines.push(`# /tag @a[name="TeamMember"] add ${stripTag}  # Replace TeamMember with actual username`);
               }
             });
             // Perimeter roads use same base tag for team-owned
@@ -2523,13 +2587,6 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
           lines.push(`# /tag @a[name="Your TA"] add ${streetTagBase}`);
           lines.push(`# /tag @a[name="You"] add admin_build`);
         }
-      }
-      
-      // Owner-anywhere bypass (optional)
-      if (options.ownerAnywhere) {
-        lines.push('');
-        lines.push('# Owner-anywhere bypass (optional):');
-        lines.push('# /tag @a[name="TeacherOrStudent"] add OWNER_ANYWHERE');
       }
       
       return lines.join('\n');
@@ -2551,113 +2608,37 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       const lines = [];
       lines.push('# my_security.mcfunction');
       lines.push('# Generated by Minecraft Education Plot Security Builder');
-      if (options.genStreets) {
-        lines.push(`# Streets config: P=${options.streetPlotSize || 80}, W=${options.streetWidth || 10}, ${options.streetCols || 3}x${options.streetRows || 3}, origin (${options.streetX0 || 0}, ${options.streetZ0 || 0})`);
-      }
       lines.push('# Optional noise control:');
       lines.push('# /gamerule sendcommandfeedback false');
       lines.push('# /gamerule commandblockoutput false');
       lines.push('');
-      lines.push('# PANIC: uncomment to lock everything');
-      lines.push('# gamemode adventure @a');
+      lines.push('# STEP 1: Reset the "creative" status for all players.');
       lines.push('');
-      lines.push('# FREE BUILD: comment detection & gm lines below to suspend security');
+      lines.push(`tag @a remove ${CAN_BE_CREATIVE_TAG}`);
       lines.push('');
-      lines.push(`# Clear restricted tag each tick`);
-      lines.push(`tag @a remove ${options.restrictedTag}`);
+      lines.push('# STEP 2: "Mark" any player who is on a plot they own.');
+      lines.push('# Add a new line here for every plot in your world.');
       lines.push('');
       
-      // Locked plots (permanent or timed adventure mode)
-      const lockedPlots = plots.filter(p => p.locked);
-      if (lockedPlots.length > 0) {
-        lines.push('# Locked plots (adventure mode)');
-        lockedPlots.forEach(p => {
-          const dy = Number.isFinite(p.dy) ? p.dy : options.dyDefault;
-          const duration = p.lockDuration || 0;
-          if (duration > 0) {
-            lines.push(`# Auto-unlock after ${duration} minutes (uncomment scoreboard timer below)`);
-            lines.push(`# scoreboard players set @a[tag=locked_${p.id}] timer 0`);
-            lines.push(`gamemode adventure @a[x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${dy},dz=${p.dz}]`);
-            lines.push(`tag @a[x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${dy},dz=${p.dz}] add locked_${sanitizeTag(p.id)}`);
-          } else {
-            lines.push(`gamemode adventure @a[x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${dy},dz=${p.dz}]`);
-          }
-        });
-        lines.push('');
-      }
-      
-      lines.push('# Tag non-owners standing inside plots');
+      // Generate one line per plot with owner tag (generated from student name)
       plots.forEach(p => {
-        const ownerTag = computeOwnerTag(p, options);
-        lines.push(`tag @a[x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${p.dy},dz=${p.dz},tag=!${ownerTag}] add ${options.restrictedTag}`);
-      });
-      lines.push('');
-      
-      // Streets (if enabled)
-      if (options.genStreets) {
-        const streetStrips = generateStreetStrips(options);
-        const perimeterStrips = options.genPerimeterRoad ? generatePerimeterRoads(options) : [];
-        const allStrips = [...streetStrips, ...perimeterStrips];
+        // Generate tag from student's name
+        const tag = getGeneratedOwnerTag(p, options);
+        if (!tag) return;
         
-        if (allStrips.length > 0) {
-          lines.push('# Streets (restricted unless tagged)');
-          const streetTag = sanitizeTag(options.streetOwnerTag || 'street_crew');
-          allStrips.forEach((s, idx) => {
-            const tag = options.streetTeamOwned && idx < streetStrips.length 
-              ? `${streetTag}_strip${String(idx + 1).padStart(2, '0')}` 
-              : streetTag;
-            if (s.label) {
-              lines.push(`# ${s.label}`);
-            }
-            lines.push(`tag @a[x=${s.x},y=${options.yDefaultMin},z=${s.z},dx=${s.dx},dy=${options.dyDefault},dz=${s.dz},tag=!${tag}] add ${options.restrictedTag}`);
-          });
-          lines.push('');
-        }
-      }
+        // Create line: tag players who have this tag AND are in the plot coordinates
+        lines.push(`tag @a[tag=${tag},x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${p.dy},dz=${p.dz}] add ${CAN_BE_CREATIVE_TAG}`);
+      });
       
-      // Free-build zones (whitelisted areas)
-      if (options.freeBuildZones && options.freeBuildZones.length > 0) {
-        lines.push('# Free-build zones (remove restricted tag)');
-        options.freeBuildZones.forEach((zone, idx) => {
-          if (zone.label) lines.push(`# ${zone.label}`);
-          lines.push(`tag @a[x=${zone.x},y=${zone.y || options.yDefaultMin},z=${zone.z},dx=${zone.dx},dy=${zone.dy || options.dyDefault},dz=${zone.dz}] remove ${options.restrictedTag}`);
-        });
-        lines.push('');
-      }
-      if (options.creativeByDefault) {
-        lines.push('# Creative by default');
-        lines.push('# Rate-limit gamemode churn (optional - uncomment to enable):');
-        lines.push('# scoreboard objectives add gm_changed dummy');
-        lines.push(`# gamemode adventure @a[tag=${options.restrictedTag},scores={gm_changed=..0}]`);
-        lines.push(`# gamemode creative @a[tag=!${options.restrictedTag},scores={gm_changed=..0}]`);
-        lines.push(`# scoreboard players set @a[tag=${options.restrictedTag}] gm_changed 1`);
-        lines.push(`# scoreboard players set @a[tag=!${options.restrictedTag}] gm_changed 1`);
-        lines.push('');
-        lines.push('# Standard mode (uncomment above lines to rate-limit):');
-        lines.push(`gamemode adventure @a[tag=${options.restrictedTag}]`);
-        lines.push(`gamemode creative @a[tag=!${options.restrictedTag}]`);
-        if (options.ownerAnywhere) {
-          lines.push('');
-          lines.push('# Optional owner-anywhere line (uncomment if used):');
-          lines.push('# gamemode creative @a[tag=OWNER_ANYWHERE]');
-        }
-      } else {
-        lines.push('# Adventure by default');
-        lines.push('# Owners are granted creative only while inside their own plot');
-        lines.push('# Rate-limit gamemode churn (optional - uncomment to enable):');
-        lines.push('# scoreboard objectives add gm_changed dummy');
-        plots.forEach(p => {
-          const ownerTag = computeOwnerTag(p, options);
-          lines.push(`gamemode creative @a[tag=${ownerTag},x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${p.dy},dz=${p.dz}]`);
-        });
-        lines.push(`gamemode adventure @a[tag=!${options.restrictedTag}]`);
-        lines.push('# Note: For owner-wide exceptions, add broader rules as needed.');
-        if (options.ownerAnywhere) {
-          lines.push('');
-          lines.push('# Optional owner-anywhere line (uncomment if used):');
-          lines.push('# gamemode creative @a[tag=OWNER_ANYWHERE]');
-        }
-      }
+      lines.push('');
+      lines.push('# (example for your next plot - replace JuanGM with tag generated from student name)');
+      lines.push(`# tag @a[tag=JuanGM,x=0,y=165,z=0,dx=30,dy=30,dz=30] add ${CAN_BE_CREATIVE_TAG}`);
+      lines.push('');
+      lines.push('# STEP 3: "Execute" the gamemodes based on that mark.');
+      lines.push('# This has no flicker, because a player can\'t be in both groups.');
+      lines.push('');
+      lines.push(`gamemode creative @a[tag=${CAN_BE_CREATIVE_TAG}]`);
+      lines.push(`gamemode adventure @a[tag=!${CAN_BE_CREATIVE_TAG}]`);
       lines.push('');
       lines.push('# Place one repeating Always Active command block running:');
       lines.push('# /function my_security');
@@ -2666,12 +2647,16 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
 
     function generateCleanup(plots, options) {
       const lines = [];
-      lines.push(`# Remove restricted tag from everyone`);
-      lines.push(`/tag @a remove ${options.restrictedTag}`);
+      lines.push(`# Remove ${CAN_BE_CREATIVE_TAG} tag from everyone`);
+      lines.push(`/tag @a remove ${CAN_BE_CREATIVE_TAG}`);
       lines.push('');
-      lines.push('# Remove owner tags (unique)');
-      const uniqueOwnerTags = unique(plots.map(p => computeOwnerTag(p, options)));
-      uniqueOwnerTags.forEach(t => lines.push(`/tag @a remove ${t}`));
+      lines.push('# Remove owner tags (unique - generated from student names)');
+      const uniqueOwnerTags = new Set();
+      plots.forEach(p => {
+        const tag = getGeneratedOwnerTag(p, options);
+        if (tag) uniqueOwnerTags.add(tag);
+      });
+      Array.from(uniqueOwnerTags).forEach(t => lines.push(`/tag @a remove ${t}`));
       lines.push('');
       if (options.genTickingAreas) {
         lines.push('# Remove ticking areas');
@@ -2732,17 +2717,22 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
 
     function generateAuditTools(plots, options) {
       const lines = [];
-      lines.push('# Debug: list restricted players (comment out in class)');
-      lines.push(`# say Restricted: @a[tag=${options.restrictedTag}]`);
+      lines.push('# Debug: list players who can be creative (comment out in class)');
+      lines.push(`# say Can be creative: @a[tag=${CAN_BE_CREATIVE_TAG}]`);
       lines.push('');
-      lines.push('# Silent scoreboard counter (uncomment to track restricted counts)');
-      lines.push(`# scoreboard objectives add restricted_count dummy`);
-      lines.push(`# scoreboard players add @a[tag=${options.restrictedTag}] restricted_count 1`);
+      lines.push('# Debug: list players in adventure mode');
+      lines.push(`# say In adventure: @a[tag=!${CAN_BE_CREATIVE_TAG}]`);
+      lines.push('');
+      lines.push('# Silent scoreboard counter (uncomment to track creative counts)');
+      lines.push(`# scoreboard objectives add creative_count dummy`);
+      lines.push(`# scoreboard players add @a[tag=${CAN_BE_CREATIVE_TAG}] creative_count 1`);
       lines.push('');
       lines.push('# Per-plot probes:');
       plots.forEach(p => {
-        const ownerTag = computeOwnerTag(p, options);
-        lines.push(`# say ${p.id} non-owners: @a[x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${p.dy},dz=${p.dz},tag=!${ownerTag}]`);
+        const tag = getGeneratedOwnerTag(p, options);
+        if (tag) {
+          lines.push(`# say ${p.id} (${p.name || 'unnamed'}) - players on plot with tag ${tag}: @a[tag=${tag},x=${p.x},y=${p.y},z=${p.z},dx=${p.dx},dy=${p.dy},dz=${p.dz}]`);
+        }
       });
       return lines.join('\n');
     }
@@ -3199,7 +3189,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
 
     // Options update triggers regeneration
     const allOptionInputs = [
-      ...modeRadios, chkTickingAreas, yMinInput, dyDefaultInput, restrictedTagInput, ownerTagPrefixInput, tickingAreaPrefixInput, ownerAnywhereInput,
+      chkTickingAreas, yMinInput, dyDefaultInput, tickingAreaPrefixInput,
       chkStreets, streetPlotSizeInput, streetWidthInput, streetColsInput, streetRowsInput, streetX0Input, streetZ0Input, streetOwnerTagInput, streetTeamOwnedInput, genPerimeterRoadInput
     ].filter(Boolean);
     allOptionInputs.forEach(el => {
@@ -3223,6 +3213,21 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
 
     // Init
     (function init() {
+      // Sync grid template with column definition
+      const templateValue = PLOTS_COLUMNS.map(col => `var(${col.cssVar})`).join(' ');
+      document.documentElement.style.setProperty('--plot-grid-template', templateValue);
+      
+      // Build plots-head from PLOTS_COLUMNS
+      const plotsHead = document.getElementById('plots-head');
+      if (plotsHead) {
+        PLOTS_COLUMNS.forEach(col => {
+          const div = document.createElement('div');
+          div.textContent = col.header;
+          div.setAttribute('data-field', col.field);
+          plotsHead.appendChild(div);
+        });
+      }
+      
       loadTheme();
       renderClassesList();
       loadCurrentClass();
@@ -3238,4 +3243,3 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
   </script>
 </body>
 </html>
-
