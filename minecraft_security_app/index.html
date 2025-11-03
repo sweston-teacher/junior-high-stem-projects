@@ -1565,8 +1565,8 @@
       row.querySelector('[data-action="autoOwnerTag"]').addEventListener('click', () => onAutoOwnerTag(index));
 
       // Show/hide lock duration dropdown when lock checkbox changes
-      const lockCheckbox = row.querySelector('[data-field="locked"]');
-      const lockDurationSelect = row.querySelector('[data-field="lockDuration"]');
+      const lockCheckbox = row.querySelector('input[data-field="locked"]');
+      const lockDurationSelect = row.querySelector('select[data-field="lockDuration"], input[data-field="lockDuration"]');
       if (lockCheckbox && lockDurationSelect) {
         lockCheckbox.addEventListener('change', () => {
           lockDurationSelect.style.display = lockCheckbox.checked ? 'inline-block' : 'none';
@@ -1659,7 +1659,7 @@
           });
         } else {
           // Measure all input values
-          const inputs = Array.from(document.querySelectorAll(`[data-field="${dataField}"]`));
+          const inputs = Array.from(document.querySelectorAll(`input[data-field="${dataField}"], select[data-field="${dataField}"], textarea[data-field="${dataField}"]`));
           inputs.forEach(input => {
             const value = input.value || '';
             if (value) {
@@ -1707,7 +1707,8 @@
     }
 
     function updatePreview(rowEl, options) {
-      const getVal = (sel) => rowEl.querySelector(`[data-field="${sel}"]`)?.value ?? '';
+      const selectField = (name) => rowEl.querySelector(`input[data-field="${name}"], select[data-field="${name}"], textarea[data-field="${name}"]`);
+      const getVal = (sel) => selectField(sel)?.value ?? '';
       const id = getVal('id');
       const x = getVal('x');
       const y = getVal('y');
@@ -1915,9 +1916,10 @@
     function getPlotsFromUI() {
       const options = getOptionsFromUI();
       const rows = Array.from(plotsEl.children);
+      const getField = (row, name) => row.querySelector(`input[data-field="${name}"], select[data-field="${name}"], textarea[data-field="${name}"]`);
       const plots = rows.map((row) => {
-        const v = (name) => row.querySelector(`[data-field="${name}"]`)?.value || '';
-        const vb = (name) => row.querySelector(`[data-field="${name}"]`)?.checked || false;
+        const v = (name) => getField(row, name)?.value || '';
+        const vb = (name) => !!getField(row, name)?.checked;
         const ownersEditor = row.querySelector('.owners-editor');
         const owners = ownersEditor ? getOwnersFromEditor(ownersEditor) : [];
         return {
@@ -1933,7 +1935,7 @@
           dz: ensureInt(+v('dz')),
           ownerTag: (v('ownerTag').trim().length > 0 ? v('ownerTag').trim() : null),
           locked: vb('locked'),
-          lockDuration: ensureInt(+row.querySelector('[data-field="lockDuration"]')?.value || 0)
+          lockDuration: ensureInt(+getField(row, 'lockDuration')?.value || 0)
         };
       });
       // Fill defaults for missing y/dy
@@ -2157,9 +2159,9 @@
       const p = plots[rowIndex];
       if (!p) return;
       
-      const xInput = rowEl.querySelector('[data-field="x"]');
-      const zInput = rowEl.querySelector('[data-field="z"]');
-      const idInput = rowEl.querySelector('[data-field="id"]');
+      const xInput = rowEl.querySelector('input[data-field="x"]');
+      const zInput = rowEl.querySelector('input[data-field="z"]');
+      const idInput = rowEl.querySelector('input[data-field="id"]');
       
       if (!xInput || !zInput || !idInput) return;
       
@@ -2222,8 +2224,8 @@
       if (!plot) return;
       
       const row = document.querySelectorAll('.plot-row')[index];
-      const nameInput = row?.querySelector('[data-field="name"]');
-      const ownerTagInput = row?.querySelector('[data-field="ownerTag"]');
+      const nameInput = row?.querySelector('input[data-field="name"]');
+      const ownerTagInput = row?.querySelector('input[data-field="ownerTag"]');
       
       if (!nameInput || !ownerTagInput) return;
       
