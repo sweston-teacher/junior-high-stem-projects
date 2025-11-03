@@ -344,6 +344,9 @@
     .owner-chip .chip-remove { cursor: pointer; color: var(--muted); font-weight: bold; padding: 0 2px; line-height: 1; }
     .owner-chip .chip-remove:hover { color: var(--danger); }
     .owners-input { border: none; background: transparent; color: var(--text); padding: 4px; flex: 1; min-width: 60px; font-size: 12px; }
+
+    .toolbar-version { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 4px; font-weight: 600; }
+    .toolbar-version span { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background: var(--chip); color: var(--text); padding: 2px 6px; border-radius: 4px; }
     .owners-input:focus { outline: none; }
 
     .error { border-color: var(--danger) !important; }
@@ -457,6 +460,7 @@
         <input id="fileImportCsv" type="file" accept=".csv,text/csv" style="display:none" aria-hidden="true" />
         <input id="fileRestoreBackup" type="file" accept="application/json" style="display:none" aria-hidden="true" />
       </div>
+      <div class="toolbar-version">Version <span id="appVersionBadge"></span></div>
       <div class="toolbar-right">
         <div class="btn-group">
           <button id="btnThemeToggle" class="btn" aria-label="Toggle theme" title="Toggle dark/light theme">🌓</button>
@@ -3226,6 +3230,11 @@
           div.setAttribute('data-field', col.field);
           plotsHead.appendChild(div);
         });
+      }
+
+      const topVersion = document.getElementById('appVersionBadge');
+      if (topVersion) {
+        topVersion.textContent = APP_VERSION;
       }
       
       loadTheme();
