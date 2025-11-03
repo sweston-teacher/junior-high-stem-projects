@@ -771,7 +771,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
 
   <script>
     // Version number - UPDATE THIS WHEN MAKING CHANGES
-    const APP_VERSION = 'v2025.10.31.7';
+    const APP_VERSION = 'v2025.10.31.8';
     
     // Storage key helpers
     const getStorageKey = (className) => `meePlotSecurityV1_${className}`;
@@ -1376,6 +1376,15 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       return id;
     }
 
+    function combineOwnerTagPrefix(prefix, id) {
+      // If ID is auto-generated (starts with "plot_") and prefix ends with "plot_", 
+      // strip "plot_" from ID to avoid duplication
+      if (id && id.startsWith('plot_') && prefix.endsWith('plot_')) {
+        id = id.substring(5); // Remove "plot_" (5 characters)
+      }
+      return prefix + id;
+    }
+
     // UI builders
     function buildOwnerChip(name) {
       const chip = document.createElement('span');
@@ -1481,7 +1490,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       row.className = 'plot-row plots-grid';
 
       const owners = Array.isArray(plot.owners) ? plot.owners.filter(nonEmpty) : [];
-      const ownerTagAuto = (plot.ownerTag && nonEmpty(plot.ownerTag)) ? plot.ownerTag : options.ownerTagPrefix + plot.id;
+      const ownerTagAuto = (plot.ownerTag && nonEmpty(plot.ownerTag)) ? plot.ownerTag : combineOwnerTagPrefix(options.ownerTagPrefix, plot.id);
       const ownerTagSanitized = sanitizeTag(ownerTagAuto);
       const preview = `tag @a[x=${plot.x ?? ''},y=${plot.y ?? ''},z=${plot.z ?? ''},dx=${plot.dx ?? ''},dy=${plot.dy ?? ''},dz=${plot.dz ?? ''},tag=!${ownerTagSanitized}] add ${options.restrictedTag}`;
 
@@ -1497,7 +1506,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
         <div><input type="number" data-field="dx" value="${plot.dx ?? 80}" aria-label="dX" /></div>
         <div><input type="number" data-field="dy" value="${plot.dy ?? options.dyDefault}" aria-label="dY" /></div>
         <div><input type="number" data-field="dz" value="${plot.dz ?? 80}" aria-label="dZ" /></div>
-        <div><input type="text" data-field="ownerTag" value="${plot.ownerTag ?? ''}" placeholder="auto: ${sanitizeTag(options.ownerTagPrefix + plot.id)}" aria-label="Owner tag override" title="Derived tag: ${sanitizeTag(options.ownerTagPrefix + plot.id)}" /></div>
+        <div><input type="text" data-field="ownerTag" value="${plot.ownerTag ?? ''}" placeholder="auto: ${sanitizeTag(combineOwnerTagPrefix(options.ownerTagPrefix, plot.id))}" aria-label="Owner tag override" title="Derived tag: ${sanitizeTag(combineOwnerTagPrefix(options.ownerTagPrefix, plot.id))}" /></div>
         <div><div class="preview" title="Detector line preview">${preview}</div></div>
         <div class="plot-actions">
           <label class="checkbox" style="font-size: 11px; margin-right: 4px;" title="Lock this plot now (adventure mode)">
@@ -1683,7 +1692,7 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
       const dy = getVal('dy');
       const dz = getVal('dz');
       const ownerTagInput = getVal('ownerTag').trim();
-      const ownerTagBase = ownerTagInput || (options.ownerTagPrefix + id);
+      const ownerTagBase = ownerTagInput || combineOwnerTagPrefix(options.ownerTagPrefix, id);
       const ownerTag = sanitizeTag(ownerTagBase);
       const ownersEditor = rowEl.querySelector('.owners-editor');
       const owners = ownersEditor ? getOwnersFromEditor(ownersEditor) : [];
@@ -2437,7 +2446,9 @@ Maya,Brown,plot03,Team 3,"maya,bob",300,0,200,80,255,80</pre>
 
     // Generators
     function computeOwnerTag(plot, options) {
-      const base = (plot.ownerTag && nonEmpty(plot.ownerTag)) ? plot.ownerTag : (options.ownerTagPrefix + plot.id);
+      const base = (plot.ownerTag && nonEmpty(plot.ownerTag)) 
+        ? plot.ownerTag 
+        : combineOwnerTagPrefix(options.ownerTagPrefix, plot.id);
       return sanitizeTag(base);
     }
 
