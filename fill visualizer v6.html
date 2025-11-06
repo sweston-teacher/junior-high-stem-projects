@@ -564,8 +564,18 @@
             return isNaN(parsed) ? 0 : parsed;
         }
 
+        function normalizeAscii(text) {
+            if (typeof text !== 'string') return '';
+            return text
+                .replace(/[\u2012\u2013\u2014\u2015\u2212]/g, '-')
+                .replace(/[\u2018\u2019]/g, "'")
+                .replace(/[\u201C\u201D]/g, '"')
+                .replace(/\u00A0/g, ' ');
+        }
+
         function sanitizeBlockName(raw) {
-            const value = (raw || '').toLowerCase().trim().replace(/\s+/g, '_');
+            const ascii = normalizeAscii(raw || '');
+            const value = ascii.toLowerCase().trim().replace(/\s+/g, '_');
             const cleaned = value.replace(/[^a-z0-9_:-]/g, '');
             return cleaned.length === 0 ? 'stone' : cleaned;
         }
@@ -603,10 +613,12 @@
                     if (num === 0) return '~';
                     return `~${num}`;
                 };
-                commandOutput.textContent = `/fill ${formatRelative(coords.x1)} ${formatRelative(coords.y1)} ${formatRelative(coords.z1)} ${formatRelative(coords.x2)} ${formatRelative(coords.y2)} ${formatRelative(coords.z2)} ${blockName}`;
+                const command = `/fill ${formatRelative(coords.x1)} ${formatRelative(coords.y1)} ${formatRelative(coords.z1)} ${formatRelative(coords.x2)} ${formatRelative(coords.y2)} ${formatRelative(coords.z2)} ${blockName}`;
+                commandOutput.textContent = normalizeAscii(command);
             } else {
                 const world = getWorldCoordinates(coords, ground);
-                commandOutput.textContent = `/fill ${world.x1} ${world.y1} ${world.z1} ${world.x2} ${world.y2} ${world.z2} ${blockName}`;
+                const command = `/fill ${world.x1} ${world.y1} ${world.z1} ${world.x2} ${world.y2} ${world.z2} ${blockName}`;
+                commandOutput.textContent = normalizeAscii(command);
             }
             refreshInsights(coords, ground);
         }
