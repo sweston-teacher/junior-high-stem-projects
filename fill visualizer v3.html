@@ -238,7 +238,7 @@
             // Old position: camera.position.set(8, 18, -28);
             // New position: Pulled back and up even further to ensure
             // all labels are visible, even in smaller preview windows.
-            camera.position.set(10, 20, -32);
+            camera.position.set(18, 20, -32);
 
             // --- Renderer ---
             renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -256,7 +256,7 @@
             // --- Camera Controls ---
             controls = new OrbitControls(camera, renderer.domElement);
             // Look slightly above the origin, not at the floor
-            controls.target.set(0, 5, 0); 
+            controls.target.set(8, 5, 0); 
             // --- Camera Restrictions ---
             // Calculate the initial polar angle based on camera position and target
             const cameraVec = new THREE.Vector3().subVectors(camera.position, controls.target);
