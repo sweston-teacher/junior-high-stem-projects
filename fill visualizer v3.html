@@ -549,7 +549,6 @@
 
             // 2. Get all coordinate values (as numbers)
             const coords = getCoordinates();
-            const ground = currentMode === 'world' ? getGroundLevel() : 0;
 
             // 3. Calculate box dimensions and center (Minecraft block logic)
             // A fill from (0,0,0) to (0,0,0) is 1 block.
@@ -562,7 +561,7 @@
 
             // The center of the box is the average of the coordinates
             const centerX = (coords.x1 + coords.x2) / 2;
-            const centerY = ((coords.y1 + coords.y2) / 2) + (currentMode === 'world' ? ground : 0);
+            const centerY = (coords.y1 + coords.y2) / 2;
             const centerZ = (coords.z1 + coords.z2) / 2;
 
             // 4. Create new box geometry
@@ -579,10 +578,6 @@
             currentBox = new THREE.LineSegments(edges, material);
             currentBox.position.set(centerX, centerY, centerZ);
             scene.add(currentBox);
-
-            if (gridHelper) {
-                gridHelper.position.y = currentMode === 'world' ? ground : 0;
-            }
         }
 
         // --- Animation Loop ---
