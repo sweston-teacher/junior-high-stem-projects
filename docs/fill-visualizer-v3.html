@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minecraft Fill Command Visualizer</title>
+    <!-- 1. Load Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Basic page setup */
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            overflow: hidden; /* Prevent scrollbars */
+            background-color: #111827; /* Dark background */
+        }
+
+        /* Make the 3D canvas fill the background */
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 0; /* Place it behind the UI */
+        }
+
+        /* Style for the 3D HTML labels */
+        .label {
+            color: #FFF;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            text-shadow: 0 0 5px #000;
+            padding: 4px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+        }
+
+        /* Make range sliders look better */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: #4B5563; /* gray-600 */
+            outline: none;
+            opacity: 0.9;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+
+        input[type="range"]:hover {
+            opacity: 1;
+        }
+
+        /* Custom slider thumb */
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f0f0f0; /* White */
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #f0f0f0; /* White */
+            cursor: pointer;
+        }
+    </style>
+    <!-- 2. Import three.js (the 3D library) -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://cdn.jsdelivr.net/npm/three@0.166.1/build/three.module.js",
+                "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.166.1/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+<body class="text-white">
+
+    <!-- 3. UI Panel: This is the 'controller' for the fill command -->
+    <!-- Panel width reduced from max-w-2xl to max-w-md -->
+    <div class="fixed top-4 left-4 z-10 p-4 bg-gray-900 bg-opacity-80 backdrop-blur-sm rounded-2xl shadow-xl max-w-md w-full">
+        <h1 class="text-xl font-bold mb-4 text-center">Fill Command Visualizer</h1>
+        <p class="text-xs text-gray-300 mb-4 text-center">Drag sliders to set the two corners. Click and drag the background to rotate. Scroll to zoom.</p>
+
+        <!-- Command tools -->
+        <div class="flex flex-col gap-3 mb-4">
+            <div class="grid grid-cols-1 gap-3">
+                <div class="flex flex-wrap items-center gap-3">
+                    <label for="blockType" class="text-sm text-gray-200">Block:</label>
+                    <input id="blockType" type="text" value="stone" class="flex-1 min-w-[120px] px-3 py-1 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400" />
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <label class="text-sm text-gray-200">Command type:</label>
+                    <div class="flex items-center gap-2">
+                        <label class="flex items-center gap-1 text-sm text-gray-100">
+                            <input type="radio" name="mode" value="relative" id="modeRelative" class="accent-cyan-500" checked>
+                            Relative (~)
+                        </label>
+                        <label class="flex items-center gap-1 text-sm text-gray-100">
+                            <input type="radio" name="mode" value="world" id="modeWorld" class="accent-cyan-500">
+                            World
+                        </label>
+                    </div>
+                </div>
+                <div id="groundRow" class="hidden flex flex-wrap items-center gap-3">
+                    <label for="groundLevel" class="text-sm text-gray-200">Ground level (Y):</label>
+                    <input id="groundLevel" type="number" value="0" class="w-24 px-3 py-1 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400" />
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button id="resetView" class="px-3 py-1 rounded-md bg-cyan-600 hover:bg-cyan-500 text-sm font-semibold text-gray-900 transition">Reset view</button>
+                    <span class="text-xs text-gray-400">Double-click a slider to reset that coordinate.</span>
+                </div>
+            </div>
+            <div class="rounded-lg bg-gray-800 bg-opacity-80 border border-gray-700 px-3 py-2 flex flex-col gap-2">
+                <div class="flex items-center justify-between gap-2">
+                    <p class="text-xs uppercase tracking-wide text-gray-400" id="commandLabel">Relative command</p>
+                    <button id="copyCommand" class="px-3 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-xs font-semibold text-gray-100 transition">Copy code</button>
+                </div>
+                <code id="commandPreview" class="block font-mono text-sm text-gray-100 break-words">/fill ~ ~ ~ ~ ~ ~ stone</code>
+            </div>
+        </div>
+        
+        <!-- This is the 'stacked' UI you described, matching the MakeCode block -->
+        <!-- Changed back to flex-col to stack 'from' and 'to' vertically -->
+        <!-- Reduced gap from 4 to 3 -->
+        <div class="flex flex-col gap-3">
+            
+            <!-- Corner 1 (From) -->
+            <!-- Changed to a flex-row to put 'from' label to the left of sliders -->
+            <!-- Reduced padding from p-4 to p-3 and gap from 4 to 3 -->
+            <div class="p-3 bg-cyan-900 bg-opacity-50 rounded-lg flex flex-row items-center gap-3">
+                <!-- Reduced label width from w-16 to w-12 and text size from xl to lg -->
+                <h3 class="text-lg font-semibold text-cyan-300 w-12 flex-shrink-0">from</h3>
+                <!-- Reduced grid gap from 3 to 2 -->
+                <div class="grid grid-cols-3 gap-2 w-full">
+                    <!-- X1 Slider Group -->
+                    <div class="flex flex-col items-center">
+                        <label for="x1" class="font-mono text-lg text-red-400">X</label>
+                        <span class="font-mono text-xs text-red-300 mb-1">(West/East)</span>
+                        <!-- Value is now ABOVE the slider -->
+                        <span id="x1-val" class="font-mono text-lg text-red-400 mb-1">0</span>
+                        <input type="range" id="x1" min="-20" max="20" value="0" class="accent-red-500 w-full">
+                    </div>
+                    <!-- Y1 Slider Group -->
+                    <div class="flex flex-col items-center">
+                        <label for="y1" class="font-mono text-lg text-green-400">Y</label>
+                        <span class="font-mono text-xs text-green-300 mb-1">(Down/Up)</span>
+                        <!-- Value is now ABOVE the slider -->
+                        <span id="y1-val" class="font-mono text-lg text-green-400 mb-1">0</span>
+                        <input type="range" id="y1" min="-20" max="20" value="0" class="accent-green-500 w-full">
+                    </div>
+                    <!-- Z1 Slider Group -->
+                    <div class="flex flex-col items-center">
+                        <label for="z1" class="font-mono text-lg text-blue-400">Z</label>
+                        <span class="font-mono text-xs text-blue-300 mb-1">(North/South)</span>
+                        <!-- Value is now ABOVE the slider -->
+                        <span id="z1-val" class="font-mono text-lg text-blue-400 mb-1">0</span>
+                        <input type="range" id="z1" min="-20" max="20" value="0" class="accent-blue-500 w-full">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Corner 2 (To) -->
+            <!-- Changed to a flex-row to put 'to' label to the left of sliders -->
+            <!-- Reduced padding from p-4 to p-3 and gap from 4 to 3 -->
+            <div class="p-3 bg-yellow-900 bg-opacity-50 rounded-lg flex flex-row items-center gap-3">
+                <!-- Reduced label width from w-16 to w-12 and text size from xl to lg -->
+                <h3 class="text-lg font-semibold text-yellow-300 w-12 flex-shrink-0">to</h3>
+                <!-- Reduced grid gap from 3 to 2 -->
+                <div class="grid grid-cols-3 gap-2 w-full">
+                    <!-- X2 Slider Group -->
+                    <div class="flex flex-col items-center">
+                        <label for="x2" class="font-mono text-lg text-red-400">X</label>
+                        <span class="font-mono text-xs text-red-300 mb-1">(West/East)</span>
+                        <!-- Value is now ABOVE the slider -->
+                        <span id="x2-val" class="font-mono text-lg text-red-400 mb-1">0</span>
+                        <input type="range" id="x2" min="-20" max="20" value="0" class="accent-red-500 w-full">
+                    </div>
+                    <!-- Y2 Slider Group -->
+                    <div class="flex flex-col items-center">
+                        <label for="y2" class="font-mono text-lg text-green-400">Y</label>
+                        <span class="font-mono text-xs text-green-300 mb-1">(Down/Up)</span>
+                        <!-- Value is now ABOVE the slider -->
+                        <span id="y2-val" class="font-mono text-lg text-green-400 mb-1">0</span>
+                        <input type="range" id="y2" min="-20" max="20" value="0" class="accent-green-500 w-full">
+                    </div>
+                    <!-- Z2 Slider Group -->
+                    <div class="flex flex-col items-center">
+                        <label for="z2" class="font-mono text-lg text-blue-400">Z</label>
+                        <span class="font-mono text-xs text-blue-300 mb-1">(North/South)</span>
+                        <!-- Value is now ABOVE the slider -->
+                        <span id="z2-val" class="font-mono text-lg text-blue-400 mb-1">0</span>
+                        <input type="range" id="z2" min="-20" max="20" value="0" class="accent-blue-500 w-full">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 4. The 3D JavaScript -->
+    <script type="module">
+        import * as THREE from 'three';
+        // Import controls to move the camera
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        // Import renderer for HTML labels
+        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+        let scene, camera, renderer, labelRenderer, controls;
+        let currentBox, gridHelper;
+        let commandOutput, blockInput, copyButton, resetButton;
+        let modeRadios, commandLabel, groundInput, groundRow;
+        let defaultCameraPosition, defaultControlsTarget;
+        let currentMode = 'relative';
+
+        // Store references to all sliders and value displays
+        const sliders = {};
+        const values = {};
+
+        function init() {
+            // --- Basic Scene Setup ---
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x111827); // Match dark background
+
+            // --- Camera ---
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            // Start on the North (-Z) axis, looking "into the screen" towards South (+Z)
+            // This makes +X (East) appear on the left, matching Minecraft's view.
+            
+            // --- THIS IS THE CHANGE ---
+            // Old position: camera.position.set(8, 18, -28);
+            // New position: Pulled back and up even further to ensure
+            // all labels are visible, even in smaller preview windows.
+            camera.position.set(10, 20, -32);
+
+            // --- Renderer ---
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // --- HTML Label Renderer ---
+            labelRenderer = new CSS2DRenderer();
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.domElement.style.position = 'absolute';
+            labelRenderer.domElement.style.top = '0';
+            labelRenderer.domElement.style.pointerEvents = 'none'; // Let mouse events pass through
+            document.body.appendChild(labelRenderer.domElement);
+
+            // --- Camera Controls ---
+            controls = new OrbitControls(camera, renderer.domElement);
+            // Look slightly above the origin, not at the floor
+            controls.target.set(0, 5, 0); 
+            // --- Camera Restrictions ---
+            // Calculate the initial polar angle based on camera position and target
+            const cameraVec = new THREE.Vector3().subVectors(camera.position, controls.target);
+            // phi = angle from positive Y-axis.
+            const initialPolarAngle = Math.atan2(Math.sqrt(cameraVec.x * cameraVec.x + cameraVec.z * cameraVec.z), cameraVec.y);
+
+            // --- THIS IS THE FIX ---
+            // Lock the polar angle (up/down tilt) completely to its initial value.
+            // This forces the Y-axis to always be "up".
+            controls.minPolarAngle = initialPolarAngle; 
+            controls.maxPolarAngle = initialPolarAngle; 
+            
+            // Disable panning (right-click drag) to keep the origin centered
+            controls.enablePan = false;
+            // Apply new target
+            controls.update(); 
+
+            // Save default view for reset button
+            defaultCameraPosition = camera.position.clone();
+            defaultControlsTarget = controls.target.clone();
+            
+            controls.enableDamping = true; // Smooth camera movement
+            controls.dampingFactor = 0.05;
+
+            // --- Lights ---
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(5, 10, 7.5);
+            scene.add(directionalLight);
+
+            // --- Add Minecraft Axes & Grid ---
+            drawAxes();
+            
+            // Grid helper on the Y=0 plane
+            gridHelper = new THREE.GridHelper(40, 40, 0x444444, 0x222222);
+            scene.add(gridHelper);
+
+            // --- Grab UI elements ---
+            blockInput = document.getElementById('blockType');
+            commandOutput = document.getElementById('commandPreview');
+            commandLabel = document.getElementById('commandLabel');
+            copyButton = document.getElementById('copyCommand');
+            resetButton = document.getElementById('resetView');
+            groundInput = document.getElementById('groundLevel');
+            groundRow = document.getElementById('groundRow');
+            modeRadios = document.querySelectorAll('input[name="mode"]');
+
+            if (copyButton) {
+                copyButton.addEventListener('click', () => {
+                    if (!commandOutput) return;
+                    navigator.clipboard.writeText(commandOutput.textContent || '').then(() => {
+                        const original = copyButton.textContent;
+                        copyButton.textContent = 'Copied!';
+                        setTimeout(() => { copyButton.textContent = original; }, 1200);
+                    });
+                });
+            }
+
+            if (resetButton) {
+                resetButton.addEventListener('click', () => {
+                    camera.position.copy(defaultCameraPosition);
+                    controls.target.copy(defaultControlsTarget);
+                    controls.update();
+                });
+            }
+
+            if (blockInput) {
+                blockInput.addEventListener('input', updateCommandPreview);
+            }
+
+            if (groundInput) {
+                groundInput.addEventListener('input', () => {
+                    updateFillBox();
+                    updateCommandPreview();
+                    refreshValueDisplays();
+                });
+            }
+
+            if (modeRadios) {
+                modeRadios.forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        currentMode = radio.value;
+                        if (commandLabel) {
+                            commandLabel.textContent = currentMode === 'relative' ? 'Relative command' : 'World command';
+                        }
+                        if (groundRow) {
+                            groundRow.classList.toggle('hidden', currentMode !== 'world');
+                        }
+                        updateFillBox();
+                        updateCommandPreview();
+                        refreshValueDisplays();
+                    });
+                });
+            }
+
+            // --- Setup UI ---
+            setupUIListeners();
+            refreshValueDisplays();
+
+            // --- Initial Box ---
+            updateFillBox();
+            updateCommandPreview();
+
+            // --- Start Animation Loop ---
+            animate();
+        }
+
+        // --- Draw Labeled Axes (The core teaching tool) ---
+        function drawAxes() {
+            const axisLength = 20.5; // Extends just past the grid
+            
+            // Create a label div
+            const createAxisLabel = (text, className) => {
+                const div = document.createElement('div');
+                div.className = `label ${className}`;
+                div.textContent = text;
+                return new CSS2DObject(div);
+            };
+
+            // X-Axis (East) - Red
+            const xMat = new THREE.LineBasicMaterial({ color: 0xf87171, linewidth: 3 }); // red-400
+            const xGeom = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-axisLength, 0, 0), new THREE.Vector3(axisLength, 0, 0)]);
+            const xAxis = new THREE.Line(xGeom, xMat);
+            scene.add(xAxis);
+            
+            const xLabelPos = createAxisLabel('+X (East)', 'text-red-400');
+            xLabelPos.position.set(axisLength, 0, 0);
+            scene.add(xLabelPos);
+            
+            const xLabelNeg = createAxisLabel('-X (West)', 'text-red-400');
+            xLabelNeg.position.set(-axisLength, 0, 0);
+            scene.add(xLabelNeg);
+
+            // Y-Axis (Up) - Green
+            const yMat = new THREE.LineBasicMaterial({ color: 0x4ade80, linewidth: 3 }); // green-400
+            const yGeom = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, -axisLength, 0), new THREE.Vector3(0, axisLength, 0)]);
+            const yAxis = new THREE.Line(yGeom, yMat);
+            scene.add(yAxis);
+            
+            const yLabelPos = createAxisLabel('+Y (Up)', 'text-green-400');
+            yLabelPos.position.set(0, axisLength, 0);
+            scene.add(yLabelPos);
+            
+            const yLabelNeg = createAxisLabel('-Y (Down)', 'text-green-400');
+            yLabelNeg.position.set(0, -axisLength, 0);
+            scene.add(yLabelNeg);
+
+            // Z-Axis (South) - Blue
+            const zMat = new THREE.LineBasicMaterial({ color: 0x60a5fa, linewidth: 3 }); // blue-400
+            const zGeom = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, -axisLength), new THREE.Vector3(0, 0, axisLength)]);
+            const zAxis = new THREE.Line(zGeom, zMat);
+            scene.add(zAxis);
+            
+            const zLabelPos = createAxisLabel('+Z (South)', 'text-blue-400');
+            zLabelPos.position.set(0, 0, axisLength);
+            scene.add(zLabelPos);
+            
+            const zLabelNeg = createAxisLabel('-Z (North)', 'text-blue-400');
+            zLabelNeg.position.set(0, 0, -axisLength);
+            scene.add(zLabelNeg);
+        }
+
+        // --- Connect Sliders to Functions ---
+        function setupUIListeners() {
+            const sliderIds = ['x1', 'y1', 'z1', 'x2', 'y2', 'z2'];
+            
+            sliderIds.forEach(id => {
+                const input = document.getElementById(id);
+                const valueLabel = document.getElementById(`${id}-val`);
+                sliders[id] = input;
+                values[id] = valueLabel;
+
+                if (!input) return;
+                
+                const updateDisplayAndScene = () => {
+                    if (valueLabel) valueLabel.textContent = getDisplayValue(id, input.value);
+                    updateFillBox();
+                    updateCommandPreview();
+                };
+
+                input.addEventListener('input', updateDisplayAndScene);
+
+                input.addEventListener('dblclick', () => {
+                    input.value = 0;
+                    updateDisplayAndScene();
+                });
+
+                // Initialize display
+                if (valueLabel) valueLabel.textContent = getDisplayValue(id, input.value);
+            });
+        }
+
+        // --- The Core Logic: Update the 3D Box ---
+        function getCoordinates() {
+            const getValue = (id) => {
+                const slider = sliders[id];
+                if (!slider) return 0;
+                const parsed = parseFloat(slider.value);
+                return isNaN(parsed) ? 0 : parsed;
+            };
+            const coords = {
+                x1: getValue('x1'),
+                y1: getValue('y1'),
+                z1: getValue('z1'),
+                x2: getValue('x2'),
+                y2: getValue('y2'),
+                z2: getValue('z2')
+            };
+            return coords;
+        }
+
+        function getGroundLevel() {
+            if (!groundInput) return 0;
+            const parsed = parseFloat(groundInput.value);
+            return isNaN(parsed) ? 0 : parsed;
+        }
+
+        function sanitizeBlockName(raw) {
+            const value = (raw || '').toLowerCase().trim().replace(/\s+/g, '_');
+            const cleaned = value.replace(/[^a-z0-9_:-]/g, '');
+            return cleaned.length === 0 ? 'stone' : cleaned;
+        }
+
+        function getDisplayValue(id, rawValue) {
+            if ((id === 'y1' || id === 'y2') && currentMode === 'world') {
+                const ground = getGroundLevel();
+                const num = parseFloat(rawValue);
+                if (!isNaN(num)) {
+                    const result = Math.round((num + ground) * 100) / 100;
+                    return result.toString();
+                }
+            }
+            return rawValue;
+        }
+
+        function refreshValueDisplays() {
+            Object.keys(sliders).forEach(id => {
+                const slider = sliders[id];
+                const valueSpan = values[id];
+                if (!slider || !valueSpan) return;
+                valueSpan.textContent = getDisplayValue(id, slider.value);
+            });
+        }
+
+        function updateCommandPreview() {
+            if (!commandOutput) return;
+            const coords = getCoordinates();
+            const blockName = sanitizeBlockName(blockInput ? blockInput.value : 'stone');
+            const ground = currentMode === 'world' ? getGroundLevel() : 0;
+
+            if (currentMode === 'relative') {
+                const formatRelative = (value) => {
+                    const num = Math.round(value * 100) / 100;
+                    if (num === 0) return '~';
+                    return `~${num}`;
+                };
+                commandOutput.textContent = `/fill ${formatRelative(coords.x1)} ${formatRelative(coords.y1)} ${formatRelative(coords.z1)} ${formatRelative(coords.x2)} ${formatRelative(coords.y2)} ${formatRelative(coords.z2)} ${blockName}`;
+            } else {
+                const world = getWorldCoordinates(coords, ground);
+                commandOutput.textContent = `/fill ${world.x1} ${world.y1} ${world.z1} ${world.x2} ${world.y2} ${world.z2} ${blockName}`;
+            }
+        }
+
+        function getWorldCoordinates(coords, groundLevel) {
+            const xMin = Math.min(coords.x1, coords.x2);
+            const xMax = Math.max(coords.x1, coords.x2);
+            const yMin = Math.min(coords.y1, coords.y2) + groundLevel;
+            const yMax = Math.max(coords.y1, coords.y2) + groundLevel;
+            const zMin = Math.min(coords.z1, coords.z2);
+            const zMax = Math.max(coords.z1, coords.z2);
+            const round = (n) => Math.round(n * 100) / 100;
+            return {
+                x1: round(xMin),
+                y1: round(yMin),
+                z1: round(zMin),
+                x2: round(xMax),
+                y2: round(yMax),
+                z2: round(zMax)
+            };
+        }
+
+        function updateFillBox() {
+            // 1. Remove the old box if it exists
+            if (currentBox) {
+                scene.remove(currentBox);
+                currentBox.geometry.dispose();
+                currentBox.material.dispose();
+            }
+
+            // 2. Get all coordinate values (as numbers)
+            const coords = getCoordinates();
+
+            // 3. Calculate box dimensions and center (Minecraft block logic)
+            // A fill from (0,0,0) to (0,0,0) is 1 block.
+            // A fill from (0,0,0) to (1,0,0) is 2 blocks.
+            // So, width = abs(x2 - x1) + 1
+            
+            const width  = Math.abs(coords.x2 - coords.x1) + 1;
+            const height = Math.abs(coords.y2 - coords.y1) + 1;
+            const depth  = Math.abs(coords.z2 - coords.z1) + 1;
+
+            // The center of the box is the average of the coordinates
+            const centerX = (coords.x1 + coords.x2) / 2;
+            const centerY = (coords.y1 + coords.y2) / 2;
+            const centerZ = (coords.z1 + coords.z2) / 2;
+
+            // 4. Create new box geometry
+            const geometry = new THREE.BoxGeometry(width, height, depth);
+            
+            // Use EdgesGeometry to create a wireframe
+            const edges = new THREE.EdgesGeometry(geometry);
+            const material = new THREE.LineBasicMaterial({ 
+                color: 0xfde047, // yellow-300
+                linewidth: 3 // Note: linewidth > 1 often doesn't work on Windows, but we'll try.
+            });
+
+            // 5. Create the box (LineSegments) and add to scene
+            currentBox = new THREE.LineSegments(edges, material);
+            currentBox.position.set(centerX, centerY, centerZ);
+            scene.add(currentBox);
+        }
+
+        // --- Animation Loop ---
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Update controls for smooth damping
+            controls.update();
+
+            // Render the main 3D scene
+            renderer.render(scene, camera);
+            
+            // Render the 2D labels
+            labelRenderer.render(scene, camera);
+        }
+
+        // --- Handle Window Resize ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- Start everything ---
+        init();
+
+    </script>
+</body>
+</html>
