@@ -109,22 +109,9 @@
                         </label>
                     </div>
                 </div>
-                <div id="groundRow" class="hidden flex flex-col gap-3">
-                    <div class="flex flex-wrap items-center gap-3">
-                        <label for="groundLevel" class="text-sm text-gray-200">Ground level (Y):</label>
-                        <input id="groundLevel" type="number" value="0" class="w-24 px-3 py-1 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400" />
-                    </div>
-                    <div class="grid grid-cols-3 gap-2 w-full">
-                        <div class="flex flex-col items-center">
-                            <label class="font-mono text-lg text-green-400">Ground Y</label>
-                            <span class="font-mono text-xs text-green-300 mb-1">World height</span>
-                            <span id="ground-val" class="font-mono text-lg text-gray-200 mb-1">0</span>
-                            <input type="range" id="ground" min="-64" max="320" value="0" class="accent-green-500 w-full">
-                        </div>
-                        <div class="flex flex-col justify-center items-start text-xs text-gray-300 col-span-2">
-                            <p>Use the slider to match your world height. The Y sliders now show height above ground.</p>
-                        </div>
-                    </div>
+                <div id="groundRow" class="hidden flex flex-wrap items-center gap-3">
+                    <label for="groundLevel" class="text-sm text-gray-200">Ground level (Y):</label>
+                    <input id="groundLevel" type="number" value="0" class="w-24 px-3 py-1 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400" />
                 </div>
                 <div class="flex flex-wrap items-center gap-3">
                     <button id="resetView" class="px-3 py-1 rounded-md bg-cyan-600 hover:bg-cyan-500 text-sm font-semibold text-gray-900 transition">Reset view</button>
@@ -343,32 +330,9 @@
 
             if (groundInput) {
                 groundInput.addEventListener('input', () => {
-                    const slider = sliders['ground'];
-                    if (slider) slider.value = groundInput.value || '0';
-                    if (document.getElementById('ground-val')) {
-                        document.getElementById('ground-val').textContent = groundInput.value || '0';
-                    }
                     updateFillBox();
                     updateCommandPreview();
-                });
-            }
-
-            if (sliders['ground']) {
-                sliders['ground'].addEventListener('input', (event) => {
-                    const value = event.target.value || '0';
-                    if (groundInput) groundInput.value = value;
-                    const display = document.getElementById('ground-val');
-                    if (display) display.textContent = value;
-                    updateFillBox();
-                    updateCommandPreview();
-                });
-                sliders['ground'].addEventListener('dblclick', () => {
-                    sliders['ground'].value = 0;
-                    if (groundInput) groundInput.value = 0;
-                    const display = document.getElementById('ground-val');
-                    if (display) display.textContent = '0';
-                    updateFillBox();
-                    updateCommandPreview();
+                    refreshValueDisplays();
                 });
             }
 
@@ -384,12 +348,14 @@
                         }
                         updateFillBox();
                         updateCommandPreview();
+                        refreshValueDisplays();
                     });
                 });
             }
 
             // --- Setup UI ---
             setupUIListeners();
+            refreshValueDisplays();
 
             // --- Initial Box ---
             updateFillBox();
@@ -459,26 +425,28 @@
             const sliderIds = ['x1', 'y1', 'z1', 'x2', 'y2', 'z2'];
             
             sliderIds.forEach(id => {
-                sliders[id] = document.getElementById(id);
-                values[id] = document.getElementById(`${id}-val`);
+                const input = document.getElementById(id);
+                const valueLabel = document.getElementById(`${id}-val`);
+                sliders[id] = input;
+                values[id] = valueLabel;
+
+                if (!input) return;
                 
-                // Add event listeners to each slider
-                sliders[id].addEventListener('input', (event) => {
-                    // Update the text display
-                    values[id].textContent = event.target.value;
-                    
-                    // Update the visuals and command preview
+                const updateDisplayAndScene = () => {
+                    if (valueLabel) valueLabel.textContent = getDisplayValue(id, input.value);
                     updateFillBox();
                     updateCommandPreview();
+                };
+
+                input.addEventListener('input', updateDisplayAndScene);
+
+                input.addEventListener('dblclick', () => {
+                    input.value = 0;
+                    updateDisplayAndScene();
                 });
 
-                // Double-click to reset slider to 0
-                sliders[id].addEventListener('dblclick', () => {
-                    sliders[id].value = 0;
-                    values[id].textContent = '0';
-                    updateFillBox();
-                    updateCommandPreview();
-                });
+                // Initialize display
+                if (valueLabel) valueLabel.textContent = getDisplayValue(id, input.value);
             });
         }
 
@@ -502,9 +470,8 @@
         }
 
         function getGroundLevel() {
-            const slider = sliders['ground'];
-            if (!slider) return 0;
-            const parsed = parseFloat(slider.value);
+            if (!groundInput) return 0;
+            const parsed = parseFloat(groundInput.value);
             return isNaN(parsed) ? 0 : parsed;
         }
 
@@ -512,6 +479,27 @@
             const value = (raw || '').toLowerCase().trim().replace(/\s+/g, '_');
             const cleaned = value.replace(/[^a-z0-9_:-]/g, '');
             return cleaned.length === 0 ? 'stone' : cleaned;
+        }
+
+        function getDisplayValue(id, rawValue) {
+            if ((id === 'y1' || id === 'y2') && currentMode === 'world') {
+                const ground = getGroundLevel();
+                const num = parseFloat(rawValue);
+                if (!isNaN(num)) {
+                    const result = Math.round((num + ground) * 100) / 100;
+                    return result.toString();
+                }
+            }
+            return rawValue;
+        }
+
+        function refreshValueDisplays() {
+            Object.keys(sliders).forEach(id => {
+                const slider = sliders[id];
+                const valueSpan = values[id];
+                if (!slider || !valueSpan) return;
+                valueSpan.textContent = getDisplayValue(id, slider.value);
+            });
         }
 
         function updateCommandPreview() {
@@ -528,7 +516,6 @@
                 };
                 commandOutput.textContent = `/fill ${formatRelative(coords.x1)} ${formatRelative(coords.y1)} ${formatRelative(coords.z1)} ${formatRelative(coords.x2)} ${formatRelative(coords.y2)} ${formatRelative(coords.z2)} ${blockName}`;
             } else {
-                const ground = groundInput ? parseFloat(groundInput.value) || 0 : 0;
                 const world = getWorldCoordinates(coords, ground);
                 commandOutput.textContent = `/fill ${world.x1} ${world.y1} ${world.z1} ${world.x2} ${world.y2} ${world.z2} ${blockName}`;
             }
@@ -592,6 +579,10 @@
             currentBox = new THREE.LineSegments(edges, material);
             currentBox.position.set(centerX, centerY, centerZ);
             scene.add(currentBox);
+
+            if (gridHelper) {
+                gridHelper.position.y = currentMode === 'world' ? ground : 0;
+            }
         }
 
         // --- Animation Loop ---
