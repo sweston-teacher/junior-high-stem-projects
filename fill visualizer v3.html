@@ -216,7 +216,9 @@
         let scene, camera, renderer, labelRenderer, controls;
         let currentBox, gridHelper;
         let commandOutput, blockInput, copyButton, resetButton;
+        let modeRadios, commandLabel, groundInput, groundRow;
         let defaultCameraPosition, defaultControlsTarget;
+        let currentMode = 'relative';
 
         // Store references to all sliders and value displays
         const sliders = {};
@@ -445,23 +447,32 @@
 
         // --- The Core Logic: Update the 3D Box ---
         function getCoordinates() {
-            return {
-                x1: parseFloat(sliders.x1?.value ?? '0') || 0,
-                y1: parseFloat(sliders.y1?.value ?? '0') || 0,
-                z1: parseFloat(sliders.z1?.value ?? '0') || 0,
-                x2: parseFloat(sliders.x2?.value ?? '0') || 0,
-                y2: parseFloat(sliders.y2?.value ?? '0') || 0,
-                z2: parseFloat(sliders.z2?.value ?? '0') || 0
+            const getValue = (id) => {
+                const slider = sliders[id];
+                if (!slider) return 0;
+                const parsed = parseFloat(slider.value);
+                return isNaN(parsed) ? 0 : parsed;
             };
+            return {
+                x1: getValue('x1'),
+                y1: getValue('y1'),
+                z1: getValue('z1'),
+                x2: getValue('x2'),
+                y2: getValue('y2'),
+                z2: getValue('z2')
+            };
+        }
+
+        function sanitizeBlockName(raw) {
+            const value = (raw || '').toLowerCase().trim().replace(/\s+/g, '_');
+            const cleaned = value.replace(/[^a-z0-9_:-]/g, '');
+            return cleaned.length === 0 ? 'stone' : cleaned;
         }
 
         function updateCommandPreview() {
             if (!commandOutput) return;
             const coords = getCoordinates();
-            let blockName = blockInput?.value?.trim() || 'stone';
-            blockName = blockName.toLowerCase().replace(/\s+/g, '_');
-            blockName = blockName.replace(/[^a-z0-9_:-]/g, '');
-            if (blockName.length === 0) blockName = 'stone';
+            const blockName = sanitizeBlockName(blockInput ? blockInput.value : 'stone');
 
             if (currentMode === 'relative') {
                 const formatRelative = (value) => {
@@ -471,13 +482,13 @@
                 };
                 commandOutput.textContent = `/fill ${formatRelative(coords.x1)} ${formatRelative(coords.y1)} ${formatRelative(coords.z1)} ${formatRelative(coords.x2)} ${formatRelative(coords.y2)} ${formatRelative(coords.z2)} ${blockName}`;
             } else {
-                const ground = parseFloat(groundInput?.value ?? '0') || 0;
+                const ground = groundInput ? parseFloat(groundInput.value) || 0 : 0;
                 const world = getWorldCoordinates(coords, ground);
                 commandOutput.textContent = `/fill ${world.x1} ${world.y1} ${world.z1} ${world.x2} ${world.y2} ${world.z2} ${blockName}`;
             }
         }
 
-        function getWorldCoordinates(coords, groundLevel = 0) {
+        function getWorldCoordinates(coords, groundLevel) {
             const xMin = Math.min(coords.x1, coords.x2);
             const xMax = Math.max(coords.x1, coords.x2);
             const yMin = Math.min(coords.y1, coords.y2) + groundLevel;
