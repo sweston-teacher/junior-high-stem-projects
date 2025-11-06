@@ -91,17 +91,93 @@
 
         <!-- Command tools -->
         <div class="flex flex-col gap-3 mb-4">
-            <div class="flex flex-wrap items-center gap-3">
-                <label for="blockType" class="text-sm text-gray-200">Block:</label>
-                <input id="blockType" type="text" value="stone" class="flex-1 min-w-[120px] px-3 py-1 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400" />
-                <button id="resetView" class="px-3 py-1 rounded-md bg-cyan-600 hover:bg-cyan-500 text-sm font-semibold text-gray-900 transition">Reset view</button>
+            <div class="grid grid-cols-1 gap-3">
+                <div class="flex flex-wrap items-center gap-3">
+                    <label for="blockType" class="text-sm text-gray-200">Block:</label>
+                    <input id="blockType" type="text" value="stone" class="flex-1 min-w-[120px] px-3 py-1 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400" />
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <label class="text-sm text-gray-200">Command type:</label>
+                    <div class="flex items-center gap-2">
+                        <label class="flex items-center gap-1 text-sm text-gray-100">
+                            <input type="radio" name="mode" value="relative" id="modeRelative" class="accent-cyan-500" checked>
+                            Relative (~)
+                        </label>
+                        <label class="flex items-center gap-1 text-sm text-gray-100">
+                            <input type="radio" name="mode" value="world" id="modeWorld" class="accent-cyan-500">
+                            World
+                        </label>
+                    </div>
+                </div>
+                <div id="groundRow" class="hidden flex flex-wrap items-center gap-3">
+                    <label for="groundLevel" class="text-sm text-gray-200">Ground level (Y):</label>
+                    <input id="groundLevel" type="number" value="0" class="w-24 px-3 py-1 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400" />
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button id="resetView" class="px-3 py-1 rounded-md bg-cyan-600 hover:bg-cyan-500 text-sm font-semibold text-gray-900 transition">Reset view</button>
+                    <span class="text-xs text-gray-400">Double-click a slider to reset that coordinate.</span>
+                </div>
             </div>
             <div class="rounded-lg bg-gray-800 bg-opacity-80 border border-gray-700 px-3 py-2 flex flex-col gap-2">
                 <div class="flex items-center justify-between gap-2">
-                    <p class="text-xs uppercase tracking-wide text-gray-400">Relative command</p>
+                    <p class="text-xs uppercase tracking-wide text-gray-400" id="commandLabel">Relative command</p>
                     <button id="copyCommand" class="px-3 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-xs font-semibold text-gray-100 transition">Copy code</button>
                 </div>
                 <code id="commandPreview" class="block font-mono text-sm text-gray-100 break-words">/fill ~ ~ ~ ~ ~ ~ stone</code>
+            </div>
+
+            <div class="rounded-lg bg-gray-800 bg-opacity-80 border border-gray-700 px-3 py-2 flex flex-col gap-2">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs uppercase tracking-wide text-gray-400">MakeCode block values</p>
+                    <span id="valueModeLabel" class="text-[11px] text-gray-400">Relative (~)</span>
+                </div>
+                <div class="flex flex-col gap-2 text-sm">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="font-semibold text-cyan-200 lowercase tracking-wide">from</span>
+                        <span id="mk-from-mode" class="text-[11px] tracking-wide text-gray-300 hidden">world</span>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-900 bg-opacity-60 border border-gray-700">
+                                <span id="mk-from-x-prefix" class="font-mono text-xs text-gray-300">~</span>
+                                <span id="mk-from-x" class="font-mono text-sm text-gray-100">0</span>
+                            </div>
+                            <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-900 bg-opacity-60 border border-gray-700">
+                                <span id="mk-from-y-prefix" class="font-mono text-xs text-gray-300">~</span>
+                                <span id="mk-from-y" class="font-mono text-sm text-gray-100">0</span>
+                            </div>
+                            <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-900 bg-opacity-60 border border-gray-700">
+                                <span id="mk-from-z-prefix" class="font-mono text-xs text-gray-300">~</span>
+                                <span id="mk-from-z" class="font-mono text-sm text-gray-100">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="font-semibold text-yellow-200 lowercase tracking-wide">to</span>
+                        <span id="mk-to-mode" class="text-[11px] tracking-wide text-gray-300 hidden">world</span>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-900 bg-opacity-60 border border-gray-700">
+                                <span id="mk-to-x-prefix" class="font-mono text-xs text-gray-300">~</span>
+                                <span id="mk-to-x" class="font-mono text-sm text-gray-100">0</span>
+                            </div>
+                            <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-900 bg-opacity-60 border border-gray-700">
+                                <span id="mk-to-y-prefix" class="font-mono text-xs text-gray-300">~</span>
+                                <span id="mk-to-y" class="font-mono text-sm text-gray-100">0</span>
+                            </div>
+                            <div class="flex items-center gap-1 px-3 py-1 rounded-full bg-gray-900 bg-opacity-60 border border-gray-700">
+                                <span id="mk-to-z-prefix" class="font-mono text-xs text-gray-300">~</span>
+                                <span id="mk-to-z" class="font-mono text-sm text-gray-100">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rounded-lg bg-gray-800 bg-opacity-80 border border-gray-700 px-3 py-2 flex flex-col gap-1">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs uppercase tracking-wide text-gray-400">Block estimate</p>
+                    <span id="blockCountStatus" class="text-xs text-emerald-400 font-semibold">Within limit</span>
+                </div>
+                <p id="blockCountDisplay" class="text-sm text-gray-100">1 block</p>
+                <p id="boundsWarning" class="text-xs text-amber-300 hidden">Remember: Y must stay between -64 and 320 in world mode.</p>
             </div>
         </div>
         
@@ -124,7 +200,7 @@
                         <span class="font-mono text-xs text-red-300 mb-1">(West/East)</span>
                         <!-- Value is now ABOVE the slider -->
                         <span id="x1-val" class="font-mono text-lg text-red-400 mb-1">0</span>
-                        <input type="range" id="x1" min="-20" max="20" value="0" class="accent-red-500 w-full">
+                        <input type="range" id="x1" min="-64" max="64" value="0" class="accent-red-500 w-full">
                     </div>
                     <!-- Y1 Slider Group -->
                     <div class="flex flex-col items-center">
@@ -132,7 +208,7 @@
                         <span class="font-mono text-xs text-green-300 mb-1">(Down/Up)</span>
                         <!-- Value is now ABOVE the slider -->
                         <span id="y1-val" class="font-mono text-lg text-green-400 mb-1">0</span>
-                        <input type="range" id="y1" min="-20" max="20" value="0" class="accent-green-500 w-full">
+                        <input type="range" id="y1" min="-64" max="64" value="0" class="accent-green-500 w-full">
                     </div>
                     <!-- Z1 Slider Group -->
                     <div class="flex flex-col items-center">
@@ -140,7 +216,7 @@
                         <span class="font-mono text-xs text-blue-300 mb-1">(North/South)</span>
                         <!-- Value is now ABOVE the slider -->
                         <span id="z1-val" class="font-mono text-lg text-blue-400 mb-1">0</span>
-                        <input type="range" id="z1" min="-20" max="20" value="0" class="accent-blue-500 w-full">
+                        <input type="range" id="z1" min="-64" max="64" value="0" class="accent-blue-500 w-full">
                     </div>
                 </div>
             </div>
@@ -159,7 +235,7 @@
                         <span class="font-mono text-xs text-red-300 mb-1">(West/East)</span>
                         <!-- Value is now ABOVE the slider -->
                         <span id="x2-val" class="font-mono text-lg text-red-400 mb-1">0</span>
-                        <input type="range" id="x2" min="-20" max="20" value="0" class="accent-red-500 w-full">
+                        <input type="range" id="x2" min="-64" max="64" value="0" class="accent-red-500 w-full">
                     </div>
                     <!-- Y2 Slider Group -->
                     <div class="flex flex-col items-center">
@@ -167,7 +243,7 @@
                         <span class="font-mono text-xs text-green-300 mb-1">(Down/Up)</span>
                         <!-- Value is now ABOVE the slider -->
                         <span id="y2-val" class="font-mono text-lg text-green-400 mb-1">0</span>
-                        <input type="range" id="y2" min="-20" max="20" value="0" class="accent-green-500 w-full">
+                        <input type="range" id="y2" min="-64" max="64" value="0" class="accent-green-500 w-full">
                     </div>
                     <!-- Z2 Slider Group -->
                     <div class="flex flex-col items-center">
@@ -175,7 +251,7 @@
                         <span class="font-mono text-xs text-blue-300 mb-1">(North/South)</span>
                         <!-- Value is now ABOVE the slider -->
                         <span id="z2-val" class="font-mono text-lg text-blue-400 mb-1">0</span>
-                        <input type="range" id="z2" min="-20" max="20" value="0" class="accent-blue-500 w-full">
+                        <input type="range" id="z2" min="-64" max="64" value="0" class="accent-blue-500 w-full">
                     </div>
                 </div>
             </div>
@@ -194,7 +270,20 @@
         let scene, camera, renderer, labelRenderer, controls;
         let currentBox, gridHelper;
         let commandOutput, blockInput, copyButton, resetButton;
+        let modeRadios, commandLabel, groundInput, groundRow;
         let defaultCameraPosition, defaultControlsTarget;
+        let currentMode = 'relative';
+        let blockCountDisplay, blockCountStatus, boundsWarning, valueModeLabel;
+        let makeCodeFields = {};
+        let makeCodeModeLabels = {};
+
+        const BLOCK_LIMIT = 32000;
+        const BLOCK_CAUTION = 25000;
+        const SLIDER_MAX = 64;
+        const SCENE_RANGE = 20;
+        const SCALE_FACTOR = SCENE_RANGE / SLIDER_MAX;
+
+        const toScene = (value) => value * SCALE_FACTOR;
 
         // Store references to all sliders and value displays
         const sliders = {};
@@ -274,8 +363,32 @@
             // --- Grab UI elements ---
             blockInput = document.getElementById('blockType');
             commandOutput = document.getElementById('commandPreview');
+            commandLabel = document.getElementById('commandLabel');
             copyButton = document.getElementById('copyCommand');
             resetButton = document.getElementById('resetView');
+            groundInput = document.getElementById('groundLevel');
+            groundRow = document.getElementById('groundRow');
+            modeRadios = document.querySelectorAll('input[name="mode"]');
+            blockCountDisplay = document.getElementById('blockCountDisplay');
+            blockCountStatus = document.getElementById('blockCountStatus');
+            boundsWarning = document.getElementById('boundsWarning');
+            valueModeLabel = document.getElementById('valueModeLabel');
+            makeCodeFields = {
+                from: {
+                    x: { value: document.getElementById('mk-from-x'), prefix: document.getElementById('mk-from-x-prefix') },
+                    y: { value: document.getElementById('mk-from-y'), prefix: document.getElementById('mk-from-y-prefix') },
+                    z: { value: document.getElementById('mk-from-z'), prefix: document.getElementById('mk-from-z-prefix') }
+                },
+                to: {
+                    x: { value: document.getElementById('mk-to-x'), prefix: document.getElementById('mk-to-x-prefix') },
+                    y: { value: document.getElementById('mk-to-y'), prefix: document.getElementById('mk-to-y-prefix') },
+                    z: { value: document.getElementById('mk-to-z'), prefix: document.getElementById('mk-to-z-prefix') }
+                }
+            };
+            makeCodeModeLabels = {
+                from: document.getElementById('mk-from-mode'),
+                to: document.getElementById('mk-to-mode')
+            };
 
             if (copyButton) {
                 copyButton.addEventListener('click', () => {
@@ -300,8 +413,37 @@
                 blockInput.addEventListener('input', updateCommandPreview);
             }
 
+            if (groundInput) {
+                groundInput.addEventListener('input', () => {
+                    const parsed = parseFloat(groundInput.value);
+                    const rounded = isNaN(parsed) ? 0 : Math.round(parsed);
+                    groundInput.value = rounded;
+                    updateFillBox();
+                    updateCommandPreview();
+                    refreshValueDisplays();
+                });
+            }
+
+            if (modeRadios) {
+                modeRadios.forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        currentMode = radio.value;
+                        if (commandLabel) {
+                            commandLabel.textContent = currentMode === 'relative' ? 'Relative command' : 'World command';
+                        }
+                        if (groundRow) {
+                            groundRow.classList.toggle('hidden', currentMode !== 'world');
+                        }
+                        updateFillBox();
+                        updateCommandPreview();
+                        refreshValueDisplays();
+                    });
+                });
+            }
+
             // --- Setup UI ---
             setupUIListeners();
+            refreshValueDisplays();
 
             // --- Initial Box ---
             updateFillBox();
@@ -371,54 +513,208 @@
             const sliderIds = ['x1', 'y1', 'z1', 'x2', 'y2', 'z2'];
             
             sliderIds.forEach(id => {
-                sliders[id] = document.getElementById(id);
-                values[id] = document.getElementById(`${id}-val`);
+                const input = document.getElementById(id);
+                const valueLabel = document.getElementById(`${id}-val`);
+                sliders[id] = input;
+                values[id] = valueLabel;
+
+                if (!input) return;
                 
-                // Add event listeners to each slider
-                sliders[id].addEventListener('input', (event) => {
-                    // Update the text display
-                    values[id].textContent = event.target.value;
-                    
-                    // Update the visuals and command preview
+                const updateDisplayAndScene = () => {
+                    if (valueLabel) valueLabel.textContent = getDisplayValue(id, input.value);
                     updateFillBox();
                     updateCommandPreview();
+                };
+
+                input.addEventListener('input', updateDisplayAndScene);
+
+                input.addEventListener('dblclick', () => {
+                    input.value = 0;
+                    updateDisplayAndScene();
                 });
 
-                // Double-click to reset slider to 0
-                sliders[id].addEventListener('dblclick', () => {
-                    sliders[id].value = 0;
-                    values[id].textContent = '0';
-                    updateFillBox();
-                    updateCommandPreview();
-                });
+                // Initialize display
+                if (valueLabel) valueLabel.textContent = getDisplayValue(id, input.value);
             });
         }
 
         // --- The Core Logic: Update the 3D Box ---
         function getCoordinates() {
-            return {
-                x1: parseFloat(sliders.x1?.value ?? '0') || 0,
-                y1: parseFloat(sliders.y1?.value ?? '0') || 0,
-                z1: parseFloat(sliders.z1?.value ?? '0') || 0,
-                x2: parseFloat(sliders.x2?.value ?? '0') || 0,
-                y2: parseFloat(sliders.y2?.value ?? '0') || 0,
-                z2: parseFloat(sliders.z2?.value ?? '0') || 0
+            const getValue = (id) => {
+                const slider = sliders[id];
+                if (!slider) return 0;
+                const parsed = parseFloat(slider.value);
+                return isNaN(parsed) ? 0 : parsed;
             };
+            const coords = {
+                x1: getValue('x1'),
+                y1: getValue('y1'),
+                z1: getValue('z1'),
+                x2: getValue('x2'),
+                y2: getValue('y2'),
+                z2: getValue('z2')
+            };
+            return coords;
+        }
+
+        function getGroundLevel() {
+            if (!groundInput) return 0;
+            const parsed = parseFloat(groundInput.value);
+            return isNaN(parsed) ? 0 : parsed;
+        }
+
+        function sanitizeBlockName(raw) {
+            const value = (raw || '').toLowerCase().trim().replace(/\s+/g, '_');
+            const cleaned = value.replace(/[^a-z0-9_:-]/g, '');
+            return cleaned.length === 0 ? 'stone' : cleaned;
+        }
+
+        function getDisplayValue(id, rawValue) {
+            if ((id === 'y1' || id === 'y2') && currentMode === 'world') {
+                const ground = getGroundLevel();
+                const num = parseFloat(rawValue);
+                if (!isNaN(num)) {
+                    const result = Math.round((num + ground) * 100) / 100;
+                    return result.toString();
+                }
+            }
+            return rawValue;
+        }
+
+        function refreshValueDisplays() {
+            Object.keys(sliders).forEach(id => {
+                const slider = sliders[id];
+                const valueSpan = values[id];
+                if (!slider || !valueSpan) return;
+                valueSpan.textContent = getDisplayValue(id, slider.value);
+            });
         }
 
         function updateCommandPreview() {
             if (!commandOutput) return;
             const coords = getCoordinates();
-            let blockName = blockInput?.value?.trim() || 'stone';
-            blockName = blockName.toLowerCase().replace(/\s+/g, '_');
-            blockName = blockName.replace(/[^a-z0-9_:-]/g, '');
-            if (blockName.length === 0) blockName = 'stone';
-            const formatRelative = (value) => {
-                const num = Math.round(value * 100) / 100;
-                if (num === 0) return '~';
-                return `~${num}`;
+            const blockName = sanitizeBlockName(blockInput ? blockInput.value : 'stone');
+            const ground = currentMode === 'world' ? getGroundLevel() : 0;
+
+            if (currentMode === 'relative') {
+                const formatRelative = (value) => {
+                    const num = Math.round(value * 100) / 100;
+                    if (num === 0) return '~';
+                    return `~${num}`;
+                };
+                commandOutput.textContent = `/fill ${formatRelative(coords.x1)} ${formatRelative(coords.y1)} ${formatRelative(coords.z1)} ${formatRelative(coords.x2)} ${formatRelative(coords.y2)} ${formatRelative(coords.z2)} ${blockName}`;
+            } else {
+                const world = getWorldCoordinates(coords, ground);
+                commandOutput.textContent = `/fill ${world.x1} ${world.y1} ${world.z1} ${world.x2} ${world.y2} ${world.z2} ${blockName}`;
+            }
+            refreshInsights(coords, ground);
+        }
+
+        function getWorldCoordinates(coords, groundLevel) {
+            const xMin = Math.min(coords.x1, coords.x2);
+            const xMax = Math.max(coords.x1, coords.x2);
+            const yMin = Math.min(coords.y1, coords.y2) + groundLevel;
+            const yMax = Math.max(coords.y1, coords.y2) + groundLevel;
+            const zMin = Math.min(coords.z1, coords.z2);
+            const zMax = Math.max(coords.z1, coords.z2);
+            const round = (n) => Math.round(n * 100) / 100;
+            return {
+                x1: round(xMin),
+                y1: round(yMin),
+                z1: round(zMin),
+                x2: round(xMax),
+                y2: round(yMax),
+                z2: round(zMax)
             };
-            commandOutput.textContent = `/fill ${formatRelative(coords.x1)} ${formatRelative(coords.y1)} ${formatRelative(coords.z1)} ${formatRelative(coords.x2)} ${formatRelative(coords.y2)} ${formatRelative(coords.z2)} ${blockName}`;
+        }
+
+        function updateMakeCodeValues(coords, ground) {
+            if (!makeCodeFields.from) return;
+            const format = (num) => Math.round(num * 100) / 100;
+            const prefixText = currentMode === 'relative' ? '~' : '';
+            const from = { x: coords.x1, y: coords.y1, z: coords.z1 };
+            const to = { x: coords.x2, y: coords.y2, z: coords.z2 };
+
+            if (currentMode === 'world') {
+                from.y = from.y + ground;
+                to.y = to.y + ground;
+                if (valueModeLabel) valueModeLabel.textContent = 'World (absolute)';
+            } else {
+                if (valueModeLabel) valueModeLabel.textContent = 'Relative (~)';
+            }
+
+            if (makeCodeModeLabels.from) {
+                makeCodeModeLabels.from.classList.toggle('hidden', currentMode !== 'world');
+            }
+            if (makeCodeModeLabels.to) {
+                makeCodeModeLabels.to.classList.toggle('hidden', currentMode !== 'world');
+            }
+
+            const setField = (group, axis, value) => {
+                const field = makeCodeFields[group]?.[axis];
+                if (!field) return;
+                if (field.value) {
+                    field.value.textContent = format(value);
+                }
+                if (field.prefix) {
+                    field.prefix.textContent = prefixText;
+                }
+            };
+
+            setField('from', 'x', from.x);
+            setField('from', 'y', from.y);
+            setField('from', 'z', from.z);
+            setField('to', 'x', to.x);
+            setField('to', 'y', to.y);
+            setField('to', 'z', to.z);
+        }
+
+        function updateBlockCount(coords) {
+            if (!blockCountDisplay || !blockCountStatus) return;
+            const dx = Math.abs(coords.x2 - coords.x1) + 1;
+            const dy = Math.abs(coords.y2 - coords.y1) + 1;
+            const dz = Math.abs(coords.z2 - coords.z1) + 1;
+            const total = dx * dy * dz;
+
+            const formatCount = total.toLocaleString();
+            blockCountDisplay.textContent = `${formatCount} block${total === 1 ? '' : 's'}`;
+
+            const setStatus = (text, colorClass) => {
+                blockCountStatus.textContent = text;
+                blockCountStatus.className = `text-xs font-semibold ${colorClass}`;
+            };
+
+            if (total > BLOCK_LIMIT) {
+                setStatus('Too many blocks (>32,000)', 'text-rose-400');
+            } else if (total > BLOCK_CAUTION) {
+                setStatus('Consider shrinking (25k+)', 'text-amber-300');
+            } else {
+                setStatus('Within limit', 'text-emerald-400');
+            }
+        }
+
+        function setValueWarning(id, warn) {
+            const span = values[id];
+            if (!span) return;
+            span.style.color = warn ? '#f87171' : '';
+        }
+
+        function updateBoundsStatus(coords, ground) {
+            if (!boundsWarning) return;
+            const world = getWorldCoordinates(coords, ground);
+            const out = currentMode === 'world' && (world.y1 < -64 || world.y1 > 320 || world.y2 < -64 || world.y2 > 320);
+            boundsWarning.classList.toggle('hidden', !out);
+            if (out) {
+                boundsWarning.textContent = `Y must stay between -64 and 320. Current range: ${world.y1} to ${world.y2}.`;
+            }
+            setValueWarning('y1', out);
+            setValueWarning('y2', out);
+        }
+
+        function refreshInsights(coords, ground) {
+            updateMakeCodeValues(coords, ground);
+            updateBlockCount(coords);
+            updateBoundsStatus(coords, ground);
         }
 
         function updateFillBox() {
@@ -433,18 +729,14 @@
             const coords = getCoordinates();
 
             // 3. Calculate box dimensions and center (Minecraft block logic)
-            // A fill from (0,0,0) to (0,0,0) is 1 block.
-            // A fill from (0,0,0) to (1,0,0) is 2 blocks.
-            // So, width = abs(x2 - x1) + 1
-            
-            const width  = Math.abs(coords.x2 - coords.x1) + 1;
-            const height = Math.abs(coords.y2 - coords.y1) + 1;
-            const depth  = Math.abs(coords.z2 - coords.z1) + 1;
+            const width  = (Math.abs(coords.x2 - coords.x1) + 1) * SCALE_FACTOR;
+            const height = (Math.abs(coords.y2 - coords.y1) + 1) * SCALE_FACTOR;
+            const depth  = (Math.abs(coords.z2 - coords.z1) + 1) * SCALE_FACTOR;
 
-            // The center of the box is the average of the coordinates
-            const centerX = (coords.x1 + coords.x2) / 2;
-            const centerY = (coords.y1 + coords.y2) / 2;
-            const centerZ = (coords.z1 + coords.z2) / 2;
+            // The center of the box is the average of the coordinates (scaled)
+            const centerX = ((coords.x1 + coords.x2) / 2) * SCALE_FACTOR;
+            const centerY = ((coords.y1 + coords.y2) / 2) * SCALE_FACTOR;
+            const centerZ = ((coords.z1 + coords.z2) / 2) * SCALE_FACTOR;
 
             // 4. Create new box geometry
             const geometry = new THREE.BoxGeometry(width, height, depth);
