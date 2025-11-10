@@ -86,17 +86,12 @@
     <!-- 3. UI Panel: This is the 'controller' for the fill command -->
     <!-- Panel width reduced from max-w-2xl to max-w-md -->
     <div class="fixed top-4 left-4 z-10 p-4 bg-gray-900 bg-opacity-80 backdrop-blur-sm rounded-2xl shadow-xl max-w-md w-full">
-        <h1 class="text-xl font-bold mb-4 text-center">Fill Command Visualizer v6</h1>
-        <p class="text-xs text-gray-300 mb-2 text-center">Drag sliders to set the two corners. Click and drag the background to rotate. Scroll to zoom.</p>
-        <p class="text-xs text-amber-300 mb-4 text-center font-semibold uppercase tracking-wide">Underground builds disabled — Y values lock to the surface.</p>
+        <h1 class="text-xl font-bold mb-3 text-center">Fill Command Visualizer v6</h1>
+        <p class="text-xs text-gray-300 mb-4 text-center">Drag sliders to set the two corners. Click and drag the background to rotate. Scroll to zoom.</p>
 
         <!-- Command tools -->
         <div class="flex flex-col gap-3 mb-4">
             <div class="grid grid-cols-1 gap-3">
-                <div class="flex flex-wrap items-center gap-3">
-                    <label for="blockType" class="text-sm text-gray-200">Block:</label>
-                    <input id="blockType" type="text" value="stone" class="flex-1 min-w-[120px] px-3 py-1 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400" />
-                </div>
                 <div class="flex flex-wrap items-center gap-3">
                     <label class="text-sm text-gray-200">Command type:</label>
                     <div class="flex items-center gap-2">
@@ -112,21 +107,9 @@
                 </div>
                 <div id="groundRow" class="hidden flex flex-wrap items-center gap-3">
                     <label for="groundLevel" class="text-sm text-gray-200">Ground level (Y):</label>
-                    <input id="groundLevel" type="number" value="0" class="w-24 px-3 py-1 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400" />
-                </div>
-                <div class="flex flex-wrap items-center gap-3">
-                    <button id="resetView" class="px-3 py-1 rounded-md bg-cyan-600 hover:bg-cyan-500 text-sm font-semibold text-gray-900 transition">Reset view</button>
-                    <span class="text-xs text-gray-400">Double-click a slider to reset that coordinate.</span>
+                    <input id="groundLevel" type="text" inputmode="numeric" pattern="-?[0-9]*" value="0" class="w-28 px-3 py-1 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="0" />
                 </div>
             </div>
-            <div class="rounded-lg bg-gray-800 bg-opacity-80 border border-gray-700 px-3 py-2 flex flex-col gap-2">
-                <div class="flex items-center justify-between gap-2">
-                    <p class="text-xs uppercase tracking-wide text-gray-400" id="commandLabel">Relative command</p>
-                    <button id="copyCommand" class="px-3 py-1 rounded-md bg-gray-700 hover:bg-gray-600 text-xs font-semibold text-gray-100 transition">Copy code</button>
-                </div>
-                <code id="commandPreview" class="block font-mono text-sm text-gray-100 break-words">/fill ~ ~ ~ ~ ~ ~ stone</code>
-            </div>
-
             <div class="rounded-lg bg-gray-800 bg-opacity-80 border border-gray-700 px-3 py-2 flex flex-col gap-2">
                 <div class="flex items-center justify-between">
                     <p class="text-xs uppercase tracking-wide text-gray-400">MakeCode block values</p>
@@ -170,15 +153,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="rounded-lg bg-gray-800 bg-opacity-80 border border-gray-700 px-3 py-2 flex flex-col gap-1">
-                <div class="flex items-center justify-between">
-                    <p class="text-xs uppercase tracking-wide text-gray-400">Block estimate</p>
-                    <span id="blockCountStatus" class="text-xs text-emerald-400 font-semibold">Within limit</span>
-                </div>
-                <p id="blockCountDisplay" class="text-sm text-gray-100">1 block</p>
-                <p id="boundsWarning" class="text-xs text-amber-300 hidden">World Y must stay above the ground level and below 320.</p>
             </div>
         </div>
         
@@ -270,10 +244,9 @@
 
         let scene, camera, renderer, labelRenderer, controls;
         let currentBox, gridHelper;
-        let commandOutput, blockInput, copyButton, resetButton;
-        let modeRadios, commandLabel, groundInput, groundRow;
-        let defaultCameraPosition, defaultControlsTarget;
+        let modeRadios, groundInput, groundRow;
         let currentMode = 'relative';
+        let groundValue = 0;
         let blockCountDisplay, blockCountStatus, boundsWarning, valueModeLabel;
         let makeCodeFields = {};
         let makeCodeModeLabels = {};
@@ -283,6 +256,8 @@
         const SLIDER_MAX = 64;
         const SCENE_RANGE = 20;
         const SCALE_FACTOR = SCENE_RANGE / SLIDER_MAX;
+        const GROUND_MIN = -64;
+        const GROUND_MAX = 320;
 
         const toScene = (value) => value * SCALE_FACTOR;
 
@@ -340,10 +315,6 @@
             // Apply new target
             controls.update(); 
 
-            // Save default view for reset button
-            defaultCameraPosition = camera.position.clone();
-            defaultControlsTarget = controls.target.clone();
-            
             controls.enableDamping = true; // Smooth camera movement
             controls.dampingFactor = 0.05;
 
@@ -362,11 +333,6 @@
             scene.add(gridHelper);
 
             // --- Grab UI elements ---
-            blockInput = document.getElementById('blockType');
-            commandOutput = document.getElementById('commandPreview');
-            commandLabel = document.getElementById('commandLabel');
-            copyButton = document.getElementById('copyCommand');
-            resetButton = document.getElementById('resetView');
             groundInput = document.getElementById('groundLevel');
             groundRow = document.getElementById('groundRow');
             modeRadios = document.querySelectorAll('input[name="mode"]');
@@ -391,37 +357,43 @@
                 to: document.getElementById('mk-to-mode')
             };
 
-            if (copyButton) {
-                copyButton.addEventListener('click', () => {
-                    if (!commandOutput) return;
-                    navigator.clipboard.writeText(commandOutput.textContent || '').then(() => {
-                        const original = copyButton.textContent;
-                        copyButton.textContent = 'Copied!';
-                        setTimeout(() => { copyButton.textContent = original; }, 1200);
-                    });
-                });
-            }
-
-            if (resetButton) {
-                resetButton.addEventListener('click', () => {
-                    camera.position.copy(defaultCameraPosition);
-                    controls.target.copy(defaultControlsTarget);
-                    controls.update();
-                });
-            }
-
-            if (blockInput) {
-                blockInput.addEventListener('input', updateCommandPreview);
-            }
+            const commitGroundValue = () => {
+                if (!groundInput) return;
+                const clamped = clampGroundValue(groundInput.value);
+                if (clamped === null) {
+                    groundInput.value = groundValue.toString();
+                } else {
+                    groundValue = clamped;
+                    groundInput.value = clamped.toString();
+                }
+                updateFillBox();
+                updateCommandPreview();
+                refreshValueDisplays();
+            };
 
             if (groundInput) {
                 groundInput.addEventListener('input', () => {
-                    const parsed = parseFloat(groundInput.value);
-                    const rounded = isNaN(parsed) ? 0 : Math.round(parsed);
-                    groundInput.value = rounded;
+                    const value = groundInput.value;
+                    if (value === '' || value === '-' || value === '+') {
+                        updateFillBox();
+                        updateCommandPreview();
+                        refreshValueDisplays();
+                        return;
+                    }
+                    const parsed = parseFloat(value);
+                    if (isNaN(parsed)) return;
+                    const clamped = Math.min(GROUND_MAX, Math.max(GROUND_MIN, parsed));
+                    groundValue = clamped;
                     updateFillBox();
                     updateCommandPreview();
                     refreshValueDisplays();
+                });
+                groundInput.addEventListener('blur', commitGroundValue);
+                groundInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        commitGroundValue();
+                        groundInput.blur();
+                    }
                 });
             }
 
@@ -429,9 +401,6 @@
                 modeRadios.forEach(radio => {
                     radio.addEventListener('change', () => {
                         currentMode = radio.value;
-                        if (commandLabel) {
-                            commandLabel.textContent = currentMode === 'relative' ? 'Relative command' : 'World command';
-                        }
                         if (groundRow) {
                             groundRow.classList.toggle('hidden', currentMode !== 'world');
                         }
@@ -559,25 +528,17 @@
         }
 
         function getGroundLevel() {
-            if (!groundInput) return 0;
-            const parsed = parseFloat(groundInput.value);
-            return isNaN(parsed) ? 0 : parsed;
+            return groundValue;
         }
 
-        function normalizeAscii(text) {
-            if (typeof text !== 'string') return '';
-            return text
-                .replace(/[\u2012\u2013\u2014\u2015\u2212]/g, '-')
-                .replace(/[\u2018\u2019]/g, "'")
-                .replace(/[\u201C\u201D]/g, '"')
-                .replace(/\u00A0/g, ' ');
-        }
-
-        function sanitizeBlockName(raw) {
-            const ascii = normalizeAscii(raw || '');
-            const value = ascii.toLowerCase().trim().replace(/\s+/g, '_');
-            const cleaned = value.replace(/[^a-z0-9_:-]/g, '');
-            return cleaned.length === 0 ? 'stone' : cleaned;
+        function clampGroundValue(raw) {
+            const str = (raw ?? '').toString();
+            const trimmed = str.trim();
+            if (trimmed === '' || trimmed === '-' || trimmed === '+') return null;
+            const parsed = parseFloat(trimmed);
+            if (isNaN(parsed)) return null;
+            const rounded = Math.round(parsed);
+            return Math.min(GROUND_MAX, Math.max(GROUND_MIN, rounded));
         }
 
         function getDisplayValue(id, rawValue) {
@@ -602,24 +563,8 @@
         }
 
         function updateCommandPreview() {
-            if (!commandOutput) return;
             const coords = getCoordinates();
-            const blockName = sanitizeBlockName(blockInput ? blockInput.value : 'stone');
             const ground = currentMode === 'world' ? getGroundLevel() : 0;
-
-            if (currentMode === 'relative') {
-                const formatRelative = (value) => {
-                    const num = Math.round(value * 100) / 100;
-                    if (num === 0) return '~';
-                    return `~${num}`;
-                };
-                const command = `/fill ${formatRelative(coords.x1)} ${formatRelative(coords.y1)} ${formatRelative(coords.z1)} ${formatRelative(coords.x2)} ${formatRelative(coords.y2)} ${formatRelative(coords.z2)} ${blockName}`;
-                commandOutput.textContent = normalizeAscii(command);
-            } else {
-                const world = getWorldCoordinates(coords, ground);
-                const command = `/fill ${world.x1} ${world.y1} ${world.z1} ${world.x2} ${world.y2} ${world.z2} ${blockName}`;
-                commandOutput.textContent = normalizeAscii(command);
-            }
             refreshInsights(coords, ground);
         }
 
