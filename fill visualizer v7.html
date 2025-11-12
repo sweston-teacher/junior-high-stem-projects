@@ -97,18 +97,18 @@
                     <label class="text-sm text-gray-200">Command type:</label>
                     <div class="flex items-center gap-2">
                         <label class="flex items-center gap-1 text-sm text-gray-100">
-                            <input type="radio" name="mode" value="relative" id="modeRelative" class="accent-cyan-500" checked>
+                            <input type="radio" name="mode" value="relative" id="modeRelative" class="accent-cyan-500">
                             Relative (~)
                         </label>
                         <label class="flex items-center gap-1 text-sm text-gray-100">
-                            <input type="radio" name="mode" value="world" id="modeWorld" class="accent-cyan-500">
+                            <input type="radio" name="mode" value="world" id="modeWorld" class="accent-cyan-500" checked>
                             World
                         </label>
                     </div>
                 </div>
-                <div id="groundRow" class="hidden flex flex-wrap items-center gap-3">
+                <div id="groundRow" class="flex flex-wrap items-center gap-3">
                     <label for="groundLevel" class="text-sm text-gray-200">Ground level (Y):</label>
-                    <input id="groundLevel" type="text" inputmode="numeric" pattern="-?[0-9]*" value="0" class="w-28 px-3 py-1 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="0" />
+                    <input id="groundLevel" type="text" inputmode="numeric" pattern="-?[0-9]*" value="-60" class="w-28 px-3 py-1 rounded-md bg-gray-800 border border-gray-700 text-sm text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-400" placeholder="-60" />
                 </div>
             </div>
             <div class="rounded-lg bg-gray-800 bg-opacity-80 border border-gray-700 px-3 py-2 flex flex-col gap-2">
@@ -246,8 +246,8 @@
         let scene, camera, renderer, labelRenderer, controls;
         let currentBox, gridHelper;
         let modeRadios, groundInput, groundRow;
-        let currentMode = 'relative';
-        let groundValue = 0;
+        let currentMode = 'world';
+        let groundValue = -60;
         let blockCountDisplay, blockCountStatus, boundsWarning, valueModeLabel;
         let makeCodeFields = {};
         let makeCodeModeLabels = {};
